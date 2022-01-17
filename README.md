@@ -1,2 +1,4 @@
 # MUSA_801_PPR
-The repository for the practicum project of MUSA
+This is the repository for the practicum project of MUSA.
+
+[Notes for the class](notes.md)
