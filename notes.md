@@ -51,6 +51,10 @@ This project will also contain <u>an exploratory analysis</u> designed to assess
 
 Safegraph: Repository
 
+> **Information We Collect and How We Collect It** 
+>
+> We obtain a variety of information (collectively the “Information”), the data categories of which we have listed below, from trusted third-party data partners such as mobile application developers and companies that aggregate information from those developers' mobile apps.
+
 PPR: https://www.phila.gov/services/culture-recreation/find-a-playground-or-recreation-center/
 
 Public: OpenDataPhilly
