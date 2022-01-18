@@ -100,7 +100,6 @@ Team meet;
 ## 1.2 Structure of the client meeting
 
 - Thank them for their willingness to partner with us.
-
 - Self-introduction
 
 - Ask questions ( Especially their decision-making needs)
@@ -111,33 +110,38 @@ Team meet;
 >
 >> Philadelphia Parks and Recreation
 >
->- What the client do?
+>- Are they on the technical side with knowledge of the data or are they on the domain expert side?
+>
+>- What does the PPR do?
 >- Who are the other relevant stakeholders besides the PPR ?
 >- Their day job.
->- Are they on the technical side with knowledge of the data or are they on the domain expert side?
 >
 >b. Current business model
 >
->- Our task is to allocate the particular resources, SO WHAT IS THIS DONE CURRENTLY?
+>- Our task is to allocate the particular resources, SO HOW IS THIS DONE CURRENTLY?
 >- What kind of human resources are currently involved in the current model?
 >- If any, what are the frictions or complexities in the above decision making process.
 >- **What is the successful criteria for this project? Metrics?** 
 >
 >c. Current human resources' responsibility
 >
->- what their roving programming crews do
->- where they can go
->- when they work
->- what sorts of facilities they can staff. 
+>- what do their roving programming crews do?
+>- where can they go?  The entire park or administration office?
+>- when do they work? Office hour?
+>- what sorts of facilities can they staff. 
 >
 >d. Facilities and amenities
 >
->- What facilities are relevant to this analysis
->- What the hierarchy of amenities is in the parks system
->- how various types of facilities are substitutes for one another
->- think about different kinds of parks as higher or lower ordered goods 
+>- What facilities are relevant to this analysis?
+>- What the hierarchy of amenities is in the parks system?
+>- How various types of facilities are substitutes for one another?
+>- What the hierarchy of parks is in the system? Which kind of parks have higher or lower priority?
 >
 >e. Data Side
+>
+>- the client is in the process (1/6/2022) of securing access to the backend data associated with PPR’s activity finder, 
+>
+>  > <span style="color:red">Do you know when can we have the access to the backend data?</span>
 >
 >- Can you describe the data we've been given?
 >- What other information are needed
