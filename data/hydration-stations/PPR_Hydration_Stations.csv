@@ -1,0 +1,138 @@
+﻿X,Y,OBJECTID,AMENITY_NAME,PARK_NAME,DISPLAY_LABEL,STATION_TYPE,LOCATION,DISPLAY_TYPE,COMMENTS,DATA_SOURCE
+-75.0616481005925,40.0873506027183,1,Verree Road Picnic Area Restrooms,Pennypack Park,,FOUNTAIN,OUTDOOR,ALL,,"PPR Assets 2019; Initial Trails Web App"
+-75.101102238296,40.0454963277533,2,Lawncrest Recreation Center,Lawncrest Recreation Center,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.0535811707263,40.0262600237304,3,Franklin Delano Roosevelt Recreation Center,Franklin Delano Roosevelt Playground,Roosevelt,HYDRATION,INDOOR,ALL,Installed 4/2019,Hydrate Philly Project
+-75.0464271657902,40.0147562335663,4,Lardners Point Park,Lardners Point Park,,FOUNTAIN,OUTDOOR,ALL,,"Initial Trails Web App, Pictometry 2020"
+-75.1211402969434,40.021424700748,5,Feltonville Recreation Center,Feltonville Recreation Center,Feltonville,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.2312633450791,40.0693983088844,6,Samuel F Houston Recreation Center,Samuel F Houston Playground,,FOUNTAIN,OUTDOOR,ALL,,Initial Trails Web App
+-75.0492134944423,40.0277410581783,7,Joseph F Vogt Recreation Center,Joseph F Vogt Playground,Vogt*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.0801355472481,40.0238792189667,8,Joseph C McIlvain Recreation Center,Joseph C McIlvain Playground,McIlvain,HYDRATION,INDOOR,ALL,,"Hydrate Philly Project, PPR Buildings & Structures"
+-75.2287229274697,40.0340477740005,9,Hillside Recreation Center,Hillside Recreation Center,Hillside,HYDRATION,INDOOR,ALL,Installed in 2018,Hydrate Philly Project
+-75.1677365371031,39.9934967623616,10,Cecil B Moore Recreation Center,Cecil B Moore Recreation Center,C.B. Moore*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1875313997958,39.9892589175862,11,Joseph E Mander Recreation Center,Joseph E Mander Playground,Mander*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1746718142687,39.987261350543,12,Eric W (Hank) Gathers Jr Recreation Center,Eric W (Hank) Gathers Jr Recreation Center,Gathers,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1519547677445,39.9860276567925,13,Penrose Memorial Recreation Center,Penrose Memorial Playground,Penrose,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1456001385693,39.9731533131141,14,Narcissa S Cruz Recreation Center (North),Narcissa S Cruz Recreation Center,Cruz,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1512921634167,39.9661270220916,15,East Poplar Recreation Center,East Poplar Playground,East Poplar*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1911843792096,39.9639068778525,16,James L Wright Recreation Center,James L Wright Playground,Wright,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.210382445208,39.9615750979123,17,John A Lee Cultural Center,John A Lee Cultural Center,Lee,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.2279657915384,39.9346307874729,18,Francis J Myers Recreation Center,Francis J Myers Recreation Center,Myers*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1460654586795,40.0504643963436,19,Morris Estate Cultural Center,Morris Estate Cultural Center,Morris Estate,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1600370593222,40.0495565429699,20,Lonnie Young Recreation Center of East Germantown,Lonnie Young Recreation Center of East Germantown,Lonnie Young,HYDRATION,INDOOR,ALL,Spring 2019 Installation,Hydrate Philly Project
+-75.116954717036,40.0426947055919,21,Olney Recreation Center,Olney Recreation Center,Olney*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.0485037242355,40.021223939108,22,Frank JG Dorsey Memorial Recreation Center,Frank JG Dorsey Memorial Playground,Dorsey,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.075908489355,40.0144963770371,23,William (Billy) Gambrel Recreation Center,William (Billy) Gambrel Playground,Gambrel,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.138036572413,40.0004241451475,24,Ramonita Negron Rivera Recreation and Community Center,Ramonita Negron Rivera Recreation and Community Center,Rivera*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1210605608885,40.0003031058964,25,Sergeant John J McVeigh Recreation Center,Sergeant John J McVeigh Recreation Center,McVeigh*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1011594143986,39.9864094016074,26,Frank Glavin Recreation Center,Frank Glavin Playground,Glavin*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1130623375423,39.9840729424073,27,Cohocksink Recreation Center,Cohocksink Recreation Center,Cohocksink*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.2409591093284,39.9817812603925,28,Ernest L Tustin Recreation Center,Ernest L Tustin Recreation Center,Tustin,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.2565018301595,39.9743316370998,29,Charles A Papa Recreation Center,Charles A Papa Playground,Papa,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.2346077160828,39.9487335235858,30,Albert W Christy Sr Recreation Center,Albert W Christy Sr Recreation Center,Christy,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.2171570087032,39.9427432092278,31,Kingsessing Recreation Center,Kingsessing Recreation Center,Kingsessing*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.1871994212922,39.9255452343371,32,Thomas B Smith Recreation Center,Thomas B Smith Recreation Center,Smith,HYDRATION,INDOOR,ALL,Installed Spring 2019,Hydrate Philly Project
+-75.1727613265107,39.9229453206148,33,Thomas I Guerin Recreation Center Gym,Thomas I Guerin Recreation Center,Guerin,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.2481885680978,39.9581341876,34,Johnny Sample Recreation Center,Johnny Sample Recreation Center,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.2604825909956,39.9731439992616,35,Samuel Rose Recreation Center,Samuel Rose Recreation Center,,FOUNTAIN,INDOOR,PARKS,,Water Fountain Work Orders (DPP-May-July 2018)
+-75.1623556424754,39.931460524377,36,South Philadelphia Older Adult Center,South Philadelphia Older Adult Center,,FOUNTAIN,INDOOR,PARKS,,Water Fountain Work Orders (DPP-May-July 2018)
+-75.188727826523,39.9312439051342,37,George A Vare Recreation Center,George A Vare Recreation Center,,FOUNTAIN,INDOOR,,Currently Closed,Communications 2021
+-75.2021782911328,39.9854730189693,38,Kelly Drive Regatta Comfort Station,East Fairmount Park,,FOUNTAIN,INDOOR,ALL,,Water Fountain Work Orders (DPP-May-July 2018)
+-75.2018382986059,39.9859977852374,39,Kelly Drive Regatta Reviewing Stand,East Fairmount Park,,HYDRATION,OUTDOOR,ALL,,"PHLASK Map - Health Data; Street Smart 2020"
+-74.9983940522737,40.0590588484856,40,Torresdale Recreation Center,Torresdale Recreation Center,,FOUNTAIN,INDOOR,PARKS,,Water Fountain Work Orders (DPP-May-July 2018)
+-74.9892678741422,40.0805993467249,41,Elizabeth M Picariello Recreation Center,Elizabeth M Picariello Playground,,FOUNTAIN,INDOOR,PARKS,,Water Fountain Work Orders (DPP-May-July 2018)
+-75.0544689611463,40.0184841240415,42,American Legion Recreation Center,American Legion Playground,,FOUNTAIN,INDOOR,PARKS,,"PHLASK Map - Health Data, Pictometry 2020"
+-75.1563364413747,40.0416189397988,43,Belfield Recreation Center,Belfield Recreation Center,,FOUNTAIN,INDOOR,PARKS,,PHLASK Map - Health Data
+-75.1659590165312,40.0242417058221,44,Happy Hollow Recreation Center,Happy Hollow Recreation Center,,FOUNTAIN,INDOOR,PARKS,,PHLASK Map - Health Data
+-75.1050455704914,40.0148547655256,45,Joseph A Ferko Recreation Center,Joseph A Ferko Playground,,FOUNTAIN,INDOOR,PARKS,,PHLASK Map - Health Data
+-75.1348748969499,39.978548507001,46,Michael J Towey Recreation Center,Michael J Towey Playground,,FOUNTAIN,INDOOR,PARKS,,PHLASK Map - Health Data
+-75.1942052024373,39.9926756028287,47,East Fairmount Park,East Fairmount Park,,HYDRATION,OUTDOOR,ALL,North to St Joseph's Boathouse. east to the parking lot,"PHLASK Map - Health Data, Pictometry 2020"
+-75.1833595315963,39.9672314884376,48,Philadelphia Museum of Art,Philadelphia Museum of Art,,HYDRATION,OUTDOOR,ALL,,"PHLASK Map - Health Data; Street Smart 2020"
+-75.1813236421858,39.9506537458924,49,Schuylkill Banks,Schuylkill Banks,,FOUNTAIN,OUTDOOR,ALL,,"PHLASK Map - Health Data, Pictometry 2020"
+-75.1590733572581,39.9437642972513,50,Charles Seger Recreation Center,Charles Seger Park,,FOUNTAIN,INDOOR,PARKS,,PHLASK Map - Health Data
+-75.1835007337003,39.947599391016,51,William H (Billy) Markward Memorial Playground,William H (Billy) Markward Memorial Playground,,FOUNTAIN,OUTDOOR,PARKS,,Google Street View 2018
+-75.1743822627634,39.937973084859,52,Charles H Chew Jr Recreation Center,Charles H Chew Jr Playground,Chew*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.2343335895822,39.967244471897,53,Haddington-Marshall L Shepard Sr Recreation Center,Haddington-Marshall L Shepard Sr Recreation Center,,FOUNTAIN,OUTDOOR,ALL,,"Street Smart 2020; Pictometry 2020"
+-75.2323342567815,39.9152707126885,54,J Francis Finnegan Recreation Center,J Francis Finnegan Playground,,FOUNTAIN,INDOOR,PARKS,,PHLASK Map - Health Data
+-75.1877918145347,39.9892504564969,55,Joseph E Mander Playground,Joseph E Mander Playground,,FOUNTAIN,OUTDOOR,ALL,Near the basketball courts.,Pictometry 2020
+-75.2341257961899,39.9675303157493,56,Haddington-Marshall L Shepard Sr Recreation Center,Haddington-Marshall L Shepard Sr Recreation Center,Shepard*,HYDRATION,INDOOR,ALL,,Hydrate Philly Project
+-75.0614900615369,40.0290278454112,57,Lower Mayfair Recreation Center,Lower Mayfair Playground,,FOUNTAIN,INDOOR,PARKS,,PHLASK Map - Health Data
+-74.9694964867798,40.1028868743929,58,Jim Junod Recreation Center,Jim Junod Recreation Center,,FOUNTAIN,INDOOR,PARKS,,Initial Trails Web App
+-75.1524382641278,39.9428526343195,59,Starr Garden Recreation Center,Starr Garden Playground,,FOUNTAIN,INDOOR,PARKS,,Initial Trails Web App
+-75.1482988497216,39.930501428574,60,Nelson M Herron Recreation Center,Nelson M Herron Playground and Recreation Center,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.2401263266048,39.9259563077372,61,John J McCreesh Sr Recreation Center,John J McCreesh Sr Playground,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.2387065014917,39.9564501459297,62,Howard Sayre Morris Recreation Center,Howard Sayre Morris Recreation Center,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.1579480435283,39.988833778029,63,Marie Winchester Recreation Center,Marie Winchester Playground,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.1572134782365,40.0617930139056,64,William B Simons Recreation Center,William B Simons Recreation Center,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.1703213481372,40.064758405747,65,Charles M Finley Recreation Center,Charles M Finley Playground,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.1613052513941,40.0060723978839,66,Jerome Brown Recreation Center,Jerome Brown Playground,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.1603266741109,40.0321658215329,67,Wister Recreation Center,Wister Playground,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.2179024717039,40.054007211881,68,Wissahickon Valley Park,Wissahickon Valley Park,,FOUNTAIN,OUTDOOR,ALL,In front of Valley Green Inn,"Initial Trails Web App, Pictometry 2020"
+-75.2090577143714,39.9470480003213,69,Clarence H Clark Park,Clarence H Clark Park,,FOUNTAIN,OUTDOOR,ALL,,Street Smart 2020
+-75.1883770392523,40.0174189144495,70,McMichael Park,McMichael Park,,FOUNTAIN,OUTDOOR,ALL,In a stone pillar,Street Smart 2020
+-75.1833656986036,39.9659050445502,71,Water Works Engine House,Fairmount Water Works Historic Area,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.185209092397,39.9689337868252,72,Lloyd Hall Recreation Center,Lloyd Hall Recreation Center,,FOUNTAIN,INDOOR,ALL,,Initial Trails Web App
+-75.1831123186288,39.9655388072332,73,Fairmount Water Works Historic Area,Fairmount Water Works Historic Area,,FOUNTAIN,OUTDOOR,ALL,Outside Water Works Engine House,Google Street View 2019
+-75.1738604654406,39.9619187247279,74,Rodin Museum,Rodin Museum,,FOUNTAIN,INDOOR,ALL,Located on the Benjamin Franklin Parkway,PPR Buildings
+-75.1850363359343,39.9689591917697,75,Lloyd Hall Recreation Center,Lloyd Hall Recreation Center,,FOUNTAIN,OUTDOOR,ALL,On the outside wall near the restrooms,Street Smart 2020
+-75.0242004088047,40.0480589760573,76,Restrooms,James J Ramp Playground,Ramp,FOUNTAIN,OUTDOOR,PARKS,,On-Site Assessment
+-74.9743445374411,40.0797859453366,77,Corporal Jimmy OConnor Memorial Recreation Center,Corporal Jimmy OConnor Memorial Playground,,FOUNTAIN,INDOOR,PARKS,Formerly Chalfont Playground,NaturePHL 2018
+-74.9917691828019,40.0678365677223,78,Thomas Mitchell Recreation Center,Thomas Mitchell Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0120397623176,40.0562724467181,79,Thomas Holme School Recreation Center,Thomas Holme School Playground,,FOUNTAIN,OUTDOOR,PARKS,,NaturePHL 2018
+-74.9932187094211,40.0417450868792,80,Restrooms,Fish Hatchery at Pleasant Hill Park,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0337233486672,40.1004486700837,81,William A Lackman Memorial Recreation Center,William A Lackman Memorial Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0208339344597,40.0917129876018,82,Officer Robert Hayes Recreation Center,Officer Robert Hayes Memorial Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0263845112389,40.0364088265549,83,Holmesburg Recreation Center,Holmesburg Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0712212143702,40.0384176290739,84,Max Myers Recreation Center,Max Myers Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0756450069671,40.0562083640267,85,Thomas E Jardel Recreation Center,Thomas E Jardel Memorial Field,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0509523315103,40.0621104666882,86,George C Pelbano Recreation Center,George C Pelbano Playground,,FOUNTAIN,INDOOR,PARKS,No exterior access.,GIS Field Verified 9/2020.
+-75.0854409133217,40.0764540603998,87,Northeast Lions Park,Northeast Lions Park,,FOUNTAIN,OUTDOOR,PARKS,,NaturePHL 2018
+-75.0819899262515,40.0741541903932,88,Fox Chase Recreation Center,Fox Chase Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.088635008139,40.0686294678565,89,Ryerss Museum and Library,Burholme Park,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0729784431244,40.0111212943346,90,Carmella A DiTizio Recreation Center,Carmella A DiTizio Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.0971541422088,40.0131207017102,91,Boniface Piccoli Recreation Center,Boniface Piccoli Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1653625406396,40.0534923361823,92,Awbury Recreation Center,Awbury Park and Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1683604227838,40.0453413554723,93,Waterview Recreation Center,Waterview Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1795178302756,40.0477187528023,94,Daniel E Rumph II Recreation Center,Daniel E Rumph II Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1826559339111,40.056751686487,95,Pleasant Recreation Center,Pleasant Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1758641543891,40.0811800881598,96,Dorothy Emanuel Recreation Center,Dorothy Emanuel Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.2056989417097,40.0705754876951,97,Pastorius Park Restroom Building,Pastorius Park,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.2008209019748,40.0754905249964,98,Water Tower Recreation Center,Water Tower Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.2338956458782,40.0811910376348,99,Wissahickon Environmental Center,Wissahickon Environmental Center,,FOUNTAIN,INDOOR,ALL,,NaturePHL 2018
+-75.2113206721507,40.0290434985757,100,W Freeland Kendrick Recreation Center,W Freeland Kendrick Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.143788886152,40.0173930456626,101,Hunting Park Recreation Center,Hunting Park Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.174724591539,40.0019280981238,102,James Allen Shuler Recreation Center,James Allen Shuler Playground,,FOUNTAIN,INDOOR,PARKS,,"NaturePHL 2018, Pictometry 2020"
+-75.1659296050085,40.0020966493036,103,Vincent G Panati Recreation Center,Vincent G Panati Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.138090191531,39.9893615368644,104,Frank S Nelson Jr Memorial Recreation Center,Frank S Nelson Jr Memorial Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.107055872524,39.9821714854173,105,Thomas P Stokley Playground Building,Thomas P Stokley Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1004787062496,39.983154196017,106,Reverend M Monkiewicz Recreation Center,Reverend M Monkiewicz Recreation Center,,FOUNTAIN,INDOOR,ALL,,NaturePHL 2018
+-75.1280389250445,39.9719199601643,107,Fishtown Recreation Center,Fishtown Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1437878241609,39.9628200963702,108,Northern Liberties Recreation Center,Northern Liberties Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1501622990392,39.9556014284004,109,Franklin Square,Franklin Square,,FOUNTAIN,OUTDOOR,PARKS,Just outside the restroom building.,"NaturePHL 2018, PPR Buildings & Structures"
+-75.1667387486111,39.9686867931261,110,Francisville Recreation Center,Francisville Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1675095472896,39.9657479244482,111,Roberto Clemente Recreation Center,Roberto Clemente Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1956170883795,39.9817482837431,112,Smith Memorial Playhouse,Smith Memorial Playground and Playhouse,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1929799746563,39.9827457608044,113,Discovery Center Building,Discovery Center at East Fairmount Reservoir,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.19907022089,39.973416052175,114,Clayborne and Lewis Recreation Center,Clayborne and Lewis Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.2130780269957,39.9791317372339,115,Carousel House Recreation Center,Carousel House Recreation Center,,FOUNTAIN,INDOOR,,Currently Closed,Communications 2021
+-75.2263788955345,39.9823979495792,116,Parkside Evans Recreation Center,Parkside Evans Recreation Center,,FOUNTAIN,INDOOR,ALL,,NaturePHL 2018
+-75.23703650182,39.9709814022416,117,Shed,Carroll Park,,FOUNTAIN,OUTDOOR,PARKS,,"NaturePHL 2018, Pictometry 2020"
+-75.2225616302792,39.9666019353404,118,West Mill Creek Recreation Center,West Mill Creek,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1954410596823,39.9674183506336,119,Miles Mack Recreation Center,Miles Mack Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1767791535105,39.9630113544921,120,Von Colln Field,Von Colln Field,,FOUNTAIN,OUTDOOR,ALL,,NaturePHL 2018
+-75.1762378241325,39.9639323450563,121,Von Colln Community Center Building,Von Colln Field,,FOUNTAIN,INDOOR,ALL,,NaturePHL 2018
+-75.1691529841159,39.9579402790001,122,Sister Cities Park Building,Sister Cities Park,,FOUNTAIN,INDOOR,ALL,,NaturePHL 2018
+-75.2097176298158,39.9421472469053,123,48th and Woodland Recreation Center,48th and Woodland Playground,,FOUNTAIN,INDOOR,ALL,,NaturePHL 2018
+-75.2122408552743,39.9326067895595,124,Bartrams Garden Gift Shop,Bartrams Garden,,FOUNTAIN,INDOOR,ALL,,NaturePHL 2018
+-75.1711667761818,39.9418395979827,125,Marian Anderson Recreation Center,Marian Anderson Recreation Center,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.15923098875,39.9339151836382,126,Dr Nicola Capitolo Recreation Center,Dr Nicola Capitolo Playground,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1698159331957,39.9292632970676,127,A Giuseppe DiSilvestro Playground,A Giuseppe DiSilvestro Playground,,FOUNTAIN,OUTDOOR,PARKS,Just outside South Philadelphia Community Health and Literacy Center,"NaturePHL 2018, Pictometry 2020"
+-75.1827884913643,39.9355609790319,128,Wharton Square Recreation Center,Wharton Square,,FOUNTAIN,INDOOR,PARKS,,NaturePHL 2018
+-75.1813078073452,39.8989834827961,129,Restrooms,Franklin Delano Roosevelt Park,,FOUNTAIN,OUTDOOR,ALL,Just outside the restroom building near the Richie Ashburn Fields.,Street Smart 2020
+-75.1760909264476,39.9040733968435,130,Picnic Shelter,Franklin Delano Roosevelt Park,,FOUNTAIN,OUTDOOR,ALL,Just outside the FDR Park Picnic Shelter in NE portion of FDR Park.,"NaturePHL 2018, Pictometry 2020"
+-75.2146174754577,39.9921298188258,131,Belmont Grove Restrooms,Belmont Grove,,FOUNTAIN,OUTDOOR,PARKS,Attached to exterior of restroom building,Street Smart 2020
+-75.1964936929511,39.9712742786103,132,Zoo Comfort Station 3,Philadelphia Zoo,,FOUNTAIN,OUTDOOR,PARKS,,Google Map Street View 2016
+-75.1975827482395,39.9726621440813,133,Zoo Comfort Station 2,Philadelphia Zoo,,FOUNTAIN,OUTDOOR,PARKS,,Google Map Street View 2015
+-75.2217746953392,39.9838927908473,134,Mann Center for the Performing Arts,Mann Center for the Performing Arts,,FOUNTAIN,OUTDOOR,PARKS,Located within the Mann Center,Pictometry 2020
+-75.2222586683341,39.9833939130867,135,Mann Center for the Performing Arts,Mann Center for the Performing Arts,,FOUNTAIN,OUTDOOR,PARKS,Located within the Mann Center,Pictometry 2020
+-75.1375332120783,39.9724712267219,136,Hancock Playground,Hancock Playground,,HYDRATION,OUTDOOR,PARKS,Installed during Rebuild 2020 Renovations.,"Rebuild Construction Updates 2020; Site Visit (2021)"
+-75.1475089879759,39.9834118357317,137,8th and Diamond Recreation Center,8th and Diamond Playground,,HYDRATION,INDOOR,ALL,Installed 2021 (Rebuild),Capital Drawings 2021
