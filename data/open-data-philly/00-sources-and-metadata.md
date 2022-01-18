@@ -14,6 +14,8 @@ Adult exercise equipment: https://www.opendataphilly.org/dataset/ppr-adult-exerc
 
 Swimming pools: https://www.opendataphilly.org/dataset/ppr-swimming-pools
 
+Tennis Courts: https://www.opendataphilly.org/dataset/ppr-tennis-courts
+
 Spraygrounds: https://www.opendataphilly.org/dataset/ppr-swimming-pools
 
 Hydration stations: https://www.opendataphilly.org/dataset/ppr-hydration-stations
