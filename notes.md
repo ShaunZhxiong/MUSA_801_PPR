@@ -45,7 +45,11 @@ This project will also contain <u>an exploratory analysis</u> designed to assess
 - a third person should be in charge of domain research and project management
 - a fourth should lead research on ***gravity model***
 
-
+<figure>
+    <img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/img/Screenshot 2022-01-18 110611.png"
+         alt="Project LifeCircle">
+    <center><figcaption>Project LifeCircle</figcaption></center>
+</figure>
 
 ## 0.6 Data Sources
 
@@ -205,3 +209,13 @@ Team meet;
 - [x] Background Reading
 
 - [x] Learn data sources
+
+
+
+# Jan.25 Deliverables
+
+<figure>
+    <img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/img/Screenshot 2022-01-18 111023.png"
+         alt="Project Timeline Example">
+    <center><figcaption>Project Timeline Example, Should be submitted by next class</figcaption></center>
+</figure>
