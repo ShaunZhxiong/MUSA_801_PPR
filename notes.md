@@ -104,54 +104,100 @@ Team meet;
 
 - Ask questions ( Especially their decision-making needs)
 
->a. Background of the client
+>#### a. Background of the client
 >
->- who the client is.  
+>- **<u>Who the client is.</u>**  
 >
->> Philadelphia Parks and Recreation
+>1. Philadelphia Parks and Recreation
 >
->- Are they on the technical side with knowledge of the data or are they on the domain expert side?
+>- **<u>Are they on the technical side with knowledge of the data or are they on the domain expert side?</u>**
 >
->- What does the PPR do?
->- Who are the other relevant stakeholders besides the PPR ?
->- Their day job.
+>1. `Bill Salvatore` - Dir of Strategic Development, PPR (training, recruitment, partnership work, etc)
 >
->b. Current business model
+>2. `Andy Viren` - Lead evaluation on the recreation side of parks and rec, 700 employees, works on the programming side
 >
->- Our task is to allocate the particular resources, SO HOW IS THIS DONE CURRENTLY?
->- What kind of human resources are currently involved in the current model?
->- If any, what are the frictions or complexities in the above decision making process.
->- **What is the successful criteria for this project? Metrics?** 
+>- **<u>What does the PPR do?</u>**
 >
->c. Current human resources' responsibility
+>1. 700 Employees
+>2. 150-160 recreation centers
 >
->- what do their roving programming crews do?
->- where can they go?  The entire park or administration office?
->- when do they work? Office hour?
->- what sorts of facilities can they staff. 
+>- <u>Who are the other relevant stakeholders besides the PPR ?</u>
+>- <u>Their day job.</u>
 >
->d. Facilities and amenities
 >
->- What facilities are relevant to this analysis?
->- What the hierarchy of amenities is in the parks system?
->- How various types of facilities are substitutes for one another?
->- What the hierarchy of parks is in the system? Which kind of parks have higher or lower priority?
 >
->e. Data Side
+>#### b. Current business model
 >
->- the client is in the process (1/6/2022) of securing access to the backend data associated with PPR’s activity finder, 
+>- **<u>Our task is to allocate the particular resources, SO HOW IS THIS DONE CURRENTLY? If any, what are the frictions or complexities in the above decision making process.</u>**
 >
->  > <span style="color:red">Do you know when can we have the access to the backend data?</span>
+>1. Only based on the size of the building, don't take into consideration amenities, neighborhood, crime,  neighboring parks, etc.
 >
->- Can you describe the data we've been given?
->- What other information are needed
+>2. Do the schedule in ONE SEASON advanced.
 >
->f. Thanks and Communication Frequency
+>- **<u>What is the successful criteria for this project? Metrics?</u>** 
 >
->- What is the communication frequency the client prefers?
->- Can we email the questions?
+>1. Identify a priority score to evaluate every park and recreation center
+>2. Figure out what the market is for the park.
+>3. Metric for citizens' usage (Know the activity and how people use the services)
+>4. Metrics for park quality (now, only the "amount of trash collected"; should look at Michael's nighttime business dashboard)
+>5. Give suggestions on how to staff the whole neighborhood (Community Area - 1 sq mile rectangular area)
 >
->- Thanks again for their help and time!
+>
+>
+>### c. Current human resources' responsibility
+>
+>- **<u>What kind of human resources are currently involved in the current model?</u>**
+>
+>1. 700 employees working on the programming side. These programmers will provide activities toward citizens.
+>
+>- **<u>What do their roving programming crews do?</u>**
+>
+>1. Buckets of events: athletic, cultural, educational, environmental (7 types of activities, 80-90kinds)
+>2. Wait for the list
+>
+>- **<u>Where can they go?</u>** 
+>
+>1. 150-160 recreation centers and parks
+>
+>- **<u>When do they work?</u>** 
+>
+>1. Wait for the Scheduled list of 2021.
+>
+>
+>
+>### d. Facilities and amenities
+>
+>- **<u>What facilities are relevant to this analysis?</u>**
+>
+>1. Recreation Centers
+>2. Parks
+>3. Community Service Area
+>
+>- <u>What the hierarchy of amenities is in the parks system?</u>
+>- <u>How various types of facilities are substitutes for one another?</u>
+>- <u>What the hierarchy of parks is in the system? Which kind of parks have higher or lower priority?</u>
+>
+>
+>
+>### e. Data Side
+>
+>- <u>**What is the time window that we should focus on this proof-concept project?**</u>
+>
+>1. 2021
+>
+>- **<u>the client is in the process (1/6/2022) of securing access to the backend data associated with PPR’s activity finder,</u>** 
+>
+><span style="color:red">Do you know when can we have the access to the backend data?</span>
+>
+>- **<u>SafeGraph</u>**
+>
+>not necessary to look outside service areas;
+>
+>- **<u>How can we disentangle adults from adults+childrens?</u>**
+>
+>1. No data from kids under 13. But we can use origin location information (block group) to estimate
+
+
 
 ### 1.2.1 Things need to be done before the meeting
 
