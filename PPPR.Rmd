@@ -1,0 +1,79 @@
+---
+title: "PPPR"
+author: "PPPR Team"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    code_folding: hide
+    theme: paper
+  pdf_document: default
+---
+
+<style>
+p.caption {
+  font-size: 0.8em;
+  text-align: center;
+  font-weight: normal;
+}
+    caption {
+      color: grey;
+      font-size: 0.8em;
+    }
+@font-face{
+  font-family: Helvetica; 
+  src:url('Helvetica.ttf');
+}
+body{
+  font-size: 11pt;
+  font-family: Helvetica;
+}
+h1,h2,h3,h4,h5,h6{
+  font-family: Helvetica;
+}
+td{
+  font-size: 9pt;
+  font-family: Helvetica;
+}
+th{
+  font-size: 0.8em;
+  font-family: Helvetica;
+  color: black;
+}
+</style>
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r library, message=FALSE, warning=FALSE, results='hide'}
+library(vroom)
+
+root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
+source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
+
+windowsFonts(font = windowsFont('Helvetica'))
+
+palette5 <- c("#f9b294","#f2727f","#c06c86","#6d5c7e","#315d7f")
+palette4 <- c("#f9b294","#f2727f","#c06c86","#6d5c7e")
+palette2 <- c("#f9b294","#f2727f")
+palette1_main <- "#F2727F"
+palette1_assist <- '#F9B294'
+```
+
+### Exploratory Analysis
+
+```{r moves2018, warning=FALSE, message=FALSE}
+moves2018 <- vroom("data/OneDrive-2021-12-07/moves_2018.csv")
+colnames(moves2018)
+```
+
+```{r moves2020, message=FALSE, warning=FALSE}
+moves_monthly2020 <- vroom("data/OneDrive-2021-12-07/moves_monthly2020.csv")
+colnames(moves_monthly2020)
+```
+
+The above two data are from the folder "OneDrive-2021-12-07". Looking at the content, we find out it is the safegraph data. Based on the common ground, we only used the data of 2021. Therefore, these two files should not be used.
