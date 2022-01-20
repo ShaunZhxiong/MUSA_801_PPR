@@ -51,11 +51,77 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 library(vroom)
+library(sf)
+library(ggplot2)
+library(ggmap)
+library(kableExtra)
+library(tidyverse)
+library(data.table)
+#remotes::install_github("CityOfPhiladelphia/rphl")
+library(rphl)
+
+ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
 source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
 
 windowsFonts(font = windowsFont('Helvetica'))
+
+crs = 'EPSG:2272'
+
+plotTheme <- function(base_size = 9, title_size = 10){
+  theme(
+    text = element_text(family = 'font', color = "black"),
+    plot.title = element_text(family = 'font',
+                              size = title_size, colour = "black", hjust = 0.5), 
+    plot.subtitle = element_text(family = 'font', face = 'italic',
+                                 size = base_size, colour = "black", hjust = 0.5),
+    plot.caption = element_text(family = 'font', hjust=0),
+    axis.ticks = element_blank(),
+    panel.background = element_blank(),
+    panel.grid.major = element_line("grey80", size = 0.01),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(colour = "black", fill=NA, size=.5),
+    strip.background = element_blank(),
+    strip.text = element_text(family = 'font', size=9),
+    axis.title = element_text(family = 'font', size=9),
+    axis.text = element_text(family = 'font', size=7),
+    axis.text.y = element_text(family = 'font', size=7),
+    plot.background = element_blank(),
+    legend.background = element_blank(),
+    legend.title = element_text(family = 'font', colour = "black", face = "italic", size = 9),
+    legend.text = element_text(family = 'font', colour = "black", face = "italic", size = 7),
+    strip.text.x = element_text(family = 'font', size = 9),
+    legend.key.size = unit(.5, 'line')
+  )
+}
+
+mapTheme <- function(base_size = 9, title_size = 10){
+  theme(
+    text = element_text(family = 'font', color = "black"),
+    plot.title = element_text(family = 'font',
+                              size = title_size, colour = "black", hjust = 0.5), 
+    plot.subtitle = element_text(family = 'font', face = 'italic',
+                                 size = base_size, colour = "black", hjust = 0.5),
+    plot.caption = element_text(family = 'font', hjust=0),
+    axis.ticks = element_blank(),
+    panel.background = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    strip.background = element_blank(),
+    strip.text = element_text(size=base_size),
+    axis.title = element_text(family = 'font', size=9),
+    axis.text = element_blank(),
+    axis.text.y = element_blank(),
+    plot.background = element_blank(),
+    legend.background = element_blank(),
+    legend.title = element_text(family = 'font', colour = "black", face = "italic", size = 9),
+    legend.text = element_text(family = 'font', colour = "black", face = "italic", size = 7),
+    strip.text.x = element_text(size=base_size),
+    legend.key.size = unit(.5, 'line')
+  )
+}
 
 palette5 <- c("#f9b294","#f2727f","#c06c86","#6d5c7e","#315d7f")
 palette4 <- c("#f9b294","#f2727f","#c06c86","#6d5c7e")
@@ -65,6 +131,8 @@ palette1_assist <- '#F9B294'
 ```
 
 ### Exploratory Analysis
+
+#### Folder: OneDrive-2021-12-07
 
 ```{r moves2018, warning=FALSE, message=FALSE}
 moves2018 <- vroom("data/OneDrive-2021-12-07/moves_2018.csv")
@@ -76,4 +144,345 @@ moves_monthly2020 <- vroom("data/OneDrive-2021-12-07/moves_monthly2020.csv")
 colnames(moves_monthly2020)
 ```
 
-The above two data are from the folder "OneDrive-2021-12-07". Looking at the content, we find out it is the safegraph data. Based on the common ground, we only used the data of 2021. Therefore, these two files should not be used.
+The above two data are from the folder "OneDrive-2021-12-07". Looking at the content, we find out it is the safegraph data. Based on the common ground, we only used the data of 2021. **Therefore, these two files should not be used.**
+
+
+
+#### Folder: safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17
+
+**These two data sets seems like dictionary data.**
+
+"data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv"
+```{r brand_info, message=FALSE, warning=FALSE}
+brand_info <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv")
+colnames(brand_info)
+
+kable(head(brand_info,3),align = 'c',caption = '<center>Table 1. brand_info of SafeGraph data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+```
+
+"data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv"
+```{r core_poi, message=FALSE, warning=FALSE}
+core_poi <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv")
+colnames(core_poi)
+
+kable(head(core_poi,3),align = 'c',caption = '<center>Table 2. core_poi of SafeGraph data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+```
+
+
+
+#### Folder: safegraph/SafeGraph Data Purchase Dec-16-2021
+
+**This is the whole safegraph raw data**
+
+```{r wholeRawSG, message=FALSE, warning=FALSE}
+#HPS = home_panel_summary
+#NS = normalization_stats
+#VPS = visit_panel_summary
+
+monthList = c("01","02","03","04","05","06","07","08","09","10","11")
+
+# home_panel_summary
+hpsAllMonth = data.frame()
+
+for (i in monthList){
+  currentMonth = vroom(paste("data/safegraph/SafeGraph Data Purchase Dec-16-2021/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-PATTERNS-2021_",
+       i,
+       "-2021-12-17/home_panel_summary.csv",sep = ""))%>%
+    filter(region=="pa")
+  hpsAllMonth = rbind(hpsAllMonth,currentMonth)
+  #print(paste("Current input home_panel_summary dataframe is in ",i," month",sep = ""))
+}
+
+kable(head(hpsAllMonth,3),align = 'c',caption = '<center>Table 3. home pannel summary of 2021 whole year in SafeGraph data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+
+# normalization_Stats
+nsAllMonth = data.frame()
+
+for (i in monthList){
+  currentMonth = vroom(paste("data/safegraph/SafeGraph Data Purchase Dec-16-2021/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-PATTERNS-2021_",
+       i,
+       "-2021-12-17/normalization_stats.csv",sep = ""))%>%
+    filter(region=="pa")
+  nsAllMonth = rbind(nsAllMonth,currentMonth)
+  #print(paste("Current input normalization_stats dataframe is in ",i," month",sep = ""))
+}
+
+kable(head(nsAllMonth,3),align = 'c',caption = '<center>Table 4. normalization stats of 2021 whole year in SafeGraph data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+
+# visit_panel_summary
+vpsAllMonth = data.frame()
+
+for (i in monthList){
+  currentMonth = vroom(paste("data/safegraph/SafeGraph Data Purchase Dec-16-2021/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-PATTERNS-2021_",
+       i,
+       "-2021-12-17/visit_panel_summary.csv",sep = ""))%>%
+    filter(region=="pa")
+  vpsAllMonth = rbind(vpsAllMonth,currentMonth)
+  #print(paste("Current input visit_panel_summary dataframe is in ",i," month",sep = ""))
+}
+
+kable(head(vpsAllMonth,3),align = 'c',caption = '<center>Table 5. visit panel summary of 2021 whole year in SafeGraph data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+
+# Pattern
+patternAllMonth = data.frame()
+
+for (i in monthList){
+  currentMonth = vroom(paste("data/safegraph/SafeGraph Data Purchase Dec-16-2021/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-PATTERNS-2021_",
+       i,
+       "-2021-12-17/patterns.csv.gz",sep = ""))%>%
+    filter(region=="PA")%>%
+    mutate(month=paste(i,sep = ""))
+  patternAllMonth = rbind(patternAllMonth,currentMonth)
+  #print(paste("Current input patterns dataframe is in ",i," month",sep = ""))
+}
+
+kable(head(patternAllMonth,3),align = 'c',caption = '<center>Table 6. patterns of 2021 whole year in SafeGraph data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+```
+
+
+
+#### Folder: OpenDataPhilly
+
+**Relevant data of PPR finder**
+
+```{r openDataPhilly_pprDistrict,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 1. Locations of pprDistrict'}
+pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
+  st_transform(crs)
+
+base_map <- get_map(location = unname(st_bbox(ll(st_buffer(st_union(pprDistrict),11000)))),maptype = "terrian")
+
+ggmap(base_map) + 
+  geom_sf(data=ll(st_union(pprDistrict)),color="black",size=2,fill = "transparent",inherit.aes = FALSE)+
+  geom_sf(data=ll(pprDistrict),color=palette1_main,size=2,fill = "transparent",inherit.aes = FALSE)+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+
+```{r openDataPhilly_pprProperty,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 2. Locations of pprProperties'}
+pprProperties <- st_read('https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprProperties,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+
+```{r openDataPhilly_pprTrail,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 3. Locations of pprTrails'}
+pprTrails <- st_read('https://opendata.arcgis.com/datasets/48323d574068405bbf5336b9b5b29455_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprTrails,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_Out of school time programs,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 4. Out of school time programs'}
+pprOutPrograms <- st_read('https://opendata.arcgis.com/datasets/1f5d8108e06d457783538d4b7808c246_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprOutPrograms,color=palette1_main,size=8,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+This program data is intact
+
+```{r openDataPhilly_pprPicnicSites,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 5. Locations of pprPicnicSites'}
+pprPicnicSites <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_picnic_sites&filename=ppr_picnic_sites&format=geojson&skipfields=cartodb_id')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprPicnicSites,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprAdultExercise,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 6. Locations of pprAdultExercise'}
+pprAdExercise <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_adult_exercise_equipment&filename=ppr_adult_exercise_equipment&format=geojson&skipfields=cartodb_id')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprAdExercise,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprSwimmingPool,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 7. Locations of pprSwimmingPool'}
+pprSwimmingPool <- st_read('https://opendata.arcgis.com/datasets/c6f6176968f04d3f88adbc4c362af55d_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprSwimmingPool,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprTennisCourt,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 8. Locations of pprTennisCourt'}
+pprTennisCourt <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_tennis_courts&filename=ppr_tennis_courts&format=geojson&skipfields=cartodb_id')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprTennisCourt,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprSpraygrounds,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 9. Locations of pprSpraygrounds'}
+pprSpraygrounds <- st_read('https://opendata.arcgis.com/datasets/a148cc904d374b22bd456e44a044d554_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprSpraygrounds,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprHydrationStations,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 10. Locations of pprHydrationStations'}
+pprHydrationStations <- st_read('https://opendata.arcgis.com/datasets/cc35dc98180249fb9a6f2f5f06657df1_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprHydrationStations,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprPlaygrounds,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 11. Locations of pprPlaygrounds'}
+pprPlaygrounds <- st_read('https://opendata.arcgis.com/datasets/899c807e205244278b3f39421be8489c_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprPlaygrounds,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprBoatLaunches,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 12. Locations of pprBoatLaunches'}
+pprBoatLaunches <- st_read('https://opendata.arcgis.com/api/v3/datasets/ba32e1ac9c5341e1916274c2df3fbe22_0/downloads/data?format=geojson&spatialRefId=4326')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprBoatLaunches,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprBuildingStructures,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 13. Locations of pprBuildingStructures'}
+pprBuildingStructures <- st_read('https://opendata.arcgis.com/datasets/97e90a049a35453ba0c51f974b3c77b4_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprBuildingStructures,color=palette1_main,size=1,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprTreeCanopy,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 14. Locations of pprTreeCanopy'}
+query <- paste("SELECT objectid, avg_height, shape_area",
+               "FROM ppr_tree_canopy_outlines_2015",
+               "ORDER BY objectid ASC")
+
+pprTreeCanopyWithArea <- get_carto(query, format = "csv",
+  base_url = "https://phl.carto.com/api/v2/sql", stringsAsFactors = F)
+
+
+pprTreeCanopy <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_tree_canopy_points_2015&filename=ppr_tree_canopy_points_2015&format=geojson&skipfields=cartodb_id')%>%
+  st_transform(crs)%>%
+  left_join(pprTreeCanopyWithArea,by = "objectid")
+
+ggplot() + 
+  geom_sf(data=pprTreeCanopy,color=palette1_main,aes(size=shape_area),fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+```{r openDataPhilly_pprPermittableSpace,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 15. Locations of pprPermittableSpace'}
+pprPermittableSpace <- st_read('https://opendata.arcgis.com/datasets/811b67c999bd4e839abb68b16c16f623_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprPermittableSpace,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```

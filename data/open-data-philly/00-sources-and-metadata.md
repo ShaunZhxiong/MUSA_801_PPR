@@ -1,33 +1,33 @@
 Metadata for each dataset are available from main dataset page...
 
-PPR Districts: https://www.opendataphilly.org/dataset/ppr-districts
+- [x] PPR Districts: https://www.opendataphilly.org/dataset/ppr-districts
 
-PPR Properties: https://www.opendataphilly.org/dataset/ppr-properties
+- [x] PPR Properties: https://www.opendataphilly.org/dataset/ppr-properties
 
-PPR Trails: https://www.opendataphilly.org/dataset/ppr-major-multiuse-trails
+- [x] PPR Trails: https://www.opendataphilly.org/dataset/ppr-major-multiuse-trails
 
-Out of school time programs: https://www.opendataphilly.org/dataset/ppr-out-of-school-time-programs
+- [x] Out of school time programs: https://www.opendataphilly.org/dataset/ppr-out-of-school-time-programs
 
-Picnic sites: https://www.opendataphilly.org/dataset/ppr-picnic-sites
+- [x] Picnic sites: https://www.opendataphilly.org/dataset/ppr-picnic-sites
 
-Adult exercise equipment: https://www.opendataphilly.org/dataset/ppr-adult-exercise-equipment
+- [x] Adult exercise equipment: https://www.opendataphilly.org/dataset/ppr-adult-exercise-equipment
 
-Swimming pools: https://www.opendataphilly.org/dataset/ppr-swimming-pools
+- [x] Swimming pools: https://www.opendataphilly.org/dataset/ppr-swimming-pools
 
-Tennis Courts: https://www.opendataphilly.org/dataset/ppr-tennis-courts
+- [x] Tennis Courts: https://www.opendataphilly.org/dataset/ppr-tennis-courts
 
-Spraygrounds: https://www.opendataphilly.org/dataset/ppr-swimming-pools
+- [x] Spraygrounds: https://www.opendataphilly.org/dataset/ppr-spraygrounds
 
-Hydration stations: https://www.opendataphilly.org/dataset/ppr-hydration-stations
+- [x] Hydration stations: https://www.opendataphilly.org/dataset/ppr-hydration-stations
+
 * shp file does not exist, links to geojson
 
-Playgrounds: https://www.opendataphilly.org/dataset/ppr-playgrounds
+- [x] Playgrounds: https://www.opendataphilly.org/dataset/ppr-playgrounds
 
-Boat launches: https://www.opendataphilly.org/dataset/boat-launches
+- [x] Boat launches: https://www.opendataphilly.org/dataset/boat-launches
 
-Building structures: https://www.opendataphilly.org/dataset/ppr-building-structures
+- [x] Building structures: https://www.opendataphilly.org/dataset/ppr-building-structures
 
-Tree canopy: https://www.opendataphilly.org/dataset/ppr-tree-canopy
-* did not download datasets for canopy change because very large
+- [x] Tree canopy: https://www.opendataphilly.org/dataset/ppr-tree-canopy
 
-Permittable space: https://www.opendataphilly.org/dataset/ppr-building-structures
+- [x] Permittable space:https://www.opendataphilly.org/dataset/ppr-permittable-space/resource/05560d88-7503-4275-bcd8-cd7eb3ee285f
