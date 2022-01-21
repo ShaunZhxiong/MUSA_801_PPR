@@ -1,11 +1,22 @@
 # MUSA_801_PPR
 This is the repository for the practicum project of MUSA.
 
-[Notes for the class](notes.md)
+[Notes for the class](notes.md) (Keep Updating)
+
+[Management Plan](https://docs.google.com/spreadsheets/d/1FgCO618cihtmxwfZZv87nweTDBh2rQip/edit?usp=sharing&ouid=107802804023877926203&rtpof=true&sd=true) (Keep Updating)
 
 ## Project Path
-Jan. 17 First read the SOP and project materials
+#### [Week0](Process/Week0)
 
-Jan. 18 Fist Kick-off meeting with client
+Read the SOP and project materials
 
-Jan. 19 Encoded all available datasets into R, attempt to understand the Safegraph data, and do the first exploratory visualization
+Fist Kick-off meeting with client - [Interview Notes](Process/Week0/interviewnotes_0118.md)
+
+Download all available [datasets](data/open-data-philly/00-sources-and-metadata.md) into R
+
+#### [Week1](Process/Week1)
+
+Data Relationship
+SOP- Metrics
+App Sketches
+Safepgrah & gravity model Reference Summary
