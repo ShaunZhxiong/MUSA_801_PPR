@@ -17,6 +17,9 @@ Download all available [datasets](data/open-data-philly/00-sources-and-metadata.
 #### [Week1](Process/Week1)
 
 Data Relationship
+
 [SOP- Metrics](Process/Week1/sopMetrics/sucessfulMetrics.md)
+
 App Sketches
+
 Safepgrah & gravity model Reference Summary
