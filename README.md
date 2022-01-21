@@ -12,7 +12,7 @@ Read the SOP and project materials
 
 Fist Kick-off meeting with client - [Interview Notes](Process/Week0/interviewnotes_0118.md)
 
-Download all available [datasets](data/open-data-philly/00-sources-and-metadata.md) into R
+Download all available [datasets](data/open-data-philly/00-sources-and-metadata.md) into [R](Process/Week0/PPPR.html)
 
 #### [Week1](Process/Week1)
 
