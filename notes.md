@@ -210,15 +210,6 @@ Team meet;
 
 
 
-### 1.2.1 Things need to be done before the meeting
-
-- [x] Read SOP
-- [x] Background Reading
-
-- [x] Learn data sources
-
-
-
 # Jan.25 Deliverables
 
 <figure>
