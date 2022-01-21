@@ -134,25 +134,25 @@ Team meet;
 >
 >- **<u>Our task is to allocate the particular resources, SO HOW IS THIS DONE CURRENTLY? If any, what are the frictions or complexities in the above decision making process.</u>**
 >
->1. Only based on the size of the building, don't take into consideration amenities, neighborhood, crime,  neighboring parks, etc.
+>1. Only based on the size of the amenity, don't take into consideration amenities, neighborhood, crime,  neighboring parks, etc.
 >
 >2. Do the schedule in ONE SEASON advanced.
 >
 >- **<u>What is the successful criteria for this project? Metrics?</u>** 
 >
->1. Identify a priority score to evaluate every park and recreation center
+>1. Figure out what the market is for the park. 
 >
->2. Figure out what the market is for the park. 
 >
->   **(origin neighborhood + demographic composition + how many people + seasonal/hourly characteristic + activity)**
+>  **(origin neighborhood + demographic composition + how many people + seasonal/hourly characteristic + activity)**
 >
->3. Metric for citizens' usage (Know the activity and how people use the services)
+>2. Metric for citizens' usage (Know the activity and how people use the services)
+>3. Prediction about usage
 >
->4. Metrics for park quality (now, only the "amount of trash collected"; should look at Michael's nighttime business dashboard)
+>3. Metrics for park quality (now, only the "amount of trash collected"; should look at Michael's nighttime business dashboard)
 >
->5. Give suggestions on how to staff the whole neighborhood (Community Area - 1 sq mile rectangular area)
+>4. Give suggestions on how to staff the whole neighborhood (Community Area - 1 sq mile rectangular area)
 >
->    (the interest of users for various places may be different between the plan and reality)
+>   (the interest of users for various places may be different between the plan and reality)
 >
 >
 >
@@ -181,8 +181,7 @@ Team meet;
 >
 >- **<u>What facilities are relevant to this analysis?</u>**
 >
->1. Recreation Centers
->2. Parks
+>1. Recreation Centers & Parks
 >3. Community Service Area
 >
 >- <u>What the hierarchy of amenities is in the parks system?</u>
