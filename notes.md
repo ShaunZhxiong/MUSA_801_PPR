@@ -141,10 +141,18 @@ Team meet;
 >- **<u>What is the successful criteria for this project? Metrics?</u>** 
 >
 >1. Identify a priority score to evaluate every park and recreation center
->2. Figure out what the market is for the park.
+>
+>2. Figure out what the market is for the park. 
+>
+>   **(origin neighborhood + demographic composition + how many people + seasonal/hourly characteristic + activity)**
+>
 >3. Metric for citizens' usage (Know the activity and how people use the services)
+>
 >4. Metrics for park quality (now, only the "amount of trash collected"; should look at Michael's nighttime business dashboard)
+>
 >5. Give suggestions on how to staff the whole neighborhood (Community Area - 1 sq mile rectangular area)
+>
+>    (the interest of users for various places may be different between the plan and reality)
 >
 >
 >
