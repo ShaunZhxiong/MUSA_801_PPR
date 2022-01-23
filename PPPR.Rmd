@@ -31,6 +31,7 @@ body{
 }
 h1,h2,h3,h4,h5,h6{
   font-family: Helvetica;
+  color: red;
 }
 td{
   font-size: 9pt;
@@ -152,6 +153,7 @@ The above two data are from the folder "OneDrive-2021-12-07". Looking at the con
 
 **These two data sets seems like dictionary data.**
 
+
 "data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv"
 ```{r brand_info, message=FALSE, warning=FALSE}
 brand_info <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv")
@@ -163,7 +165,10 @@ kable(head(brand_info,3),align = 'c',caption = '<center>Table 1. brand_info of S
   scroll_box(width = "100%", height = "400px")
 ```
 
+
+
 "data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv"
+
 ```{r core_poi, message=FALSE, warning=FALSE}
 core_poi <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv")
 colnames(core_poi)
@@ -322,7 +327,7 @@ ggplot() +
   mapTheme()
 ```
 
-This program data is intact
+This above program data is intact
 
 ```{r openDataPhilly_pprPicnicSites,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 5. Locations of pprPicnicSites'}
 pprPicnicSites <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_picnic_sites&filename=ppr_picnic_sites&format=geojson&skipfields=cartodb_id')%>%
@@ -485,4 +490,32 @@ ggplot() +
        subtitle = "",
        x="",y="")+
   mapTheme()
+```
+
+
+#### Folder: FromPPR
+"data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp"
+
+```{r fromPPR_ServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 15. Locations of pprServiceArea'}
+library(rgdal)
+pprServiceArea <- read_sf(dsn="data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp")%>%
+  st_transform(crs = crs)
+
+ggplot() + 
+  geom_sf(data=pprServiceArea,color=palette1_main,size=1,fill = "transparent")+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+"data/FromPPR/PPR-recreation-permits-2021.csv"
+
+```{r fromPPR-recreation-permits-2021, warning=FALSE, message=FALSE}
+program2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
+kable(head(program2021,3),align = 'c',caption = '<center>Table 7. Program information of PPR data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
 ```
