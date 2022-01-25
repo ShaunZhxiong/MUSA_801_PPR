@@ -16,7 +16,7 @@
 
 - **Staff Allocations**
 
-  1. Use citizen usage prediction to give suggestions about allocate staff resources
+  1. Use market area predictions to give suggestions about allocate staff resources
 
      (who should be sent to where and when)
 
