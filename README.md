@@ -16,7 +16,7 @@ Download all available [datasets](data/open-data-philly/00-sources-and-metadata.
 
 #### [Week1](Process/Week1)
 
-Data Relationship
+[Data Relationship](/Process/Week1/dataRelationship/note_Database_Relationship.md)
 
 [SOP- Metrics](Process/Week1/sopMetrics/sucessfulMetrics.md)
 
