@@ -4,7 +4,7 @@
 
   1. Use related information (facilities and others) to construct the park attractiveness metric
 
-  2. Use Huff model to calculate the area, and compare it with existing community service area
+  2. Use Huff model to calculate the market area, and compare it with existing community service area
 
 - **Citizens' Usage (History and Prediction)**
 
