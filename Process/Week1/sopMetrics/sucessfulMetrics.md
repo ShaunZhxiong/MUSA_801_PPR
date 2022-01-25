@@ -8,7 +8,7 @@
  
   3. Use safegraph usage data and others to predict the future usage in temporal and spatial granularity
 
-- **Citizens' Usage (History and Prediction)**
+- **Citizens' Usage**
 
   *whether the granularity is park or activity should be decided in the modeling process*
 
