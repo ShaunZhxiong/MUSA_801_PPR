@@ -11,6 +11,7 @@ output:
   pdf_document: default
 ---
 
+```{=html}
 <style>
 p.caption {
   font-size: 0.8em;
@@ -43,12 +44,13 @@ th{
   color: black;
 }
 </style>
----
+```
+
+------------------------------------------------------------------------
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 library(vroom)
@@ -66,45 +68,43 @@ ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
 source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
 
-windowsFonts(font = windowsFont('Helvetica'))
+#windowsFonts(font = windowsFont('Helvetica'))
 
 crs = 'EPSG:2272'
 
 plotTheme <- function(base_size = 9, title_size = 10){
   theme(
-    text = element_text(family = 'font', color = "black"),
-    plot.title = element_text(family = 'font',
-                              size = title_size, colour = "black", hjust = 0.5), 
-    plot.subtitle = element_text(family = 'font', face = 'italic',
+    text = element_text( color = "black"),
+    plot.title = element_text(size = title_size, colour = "black", hjust = 0.5), 
+    plot.subtitle = element_text( face = 'italic',
                                  size = base_size, colour = "black", hjust = 0.5),
-    plot.caption = element_text(family = 'font', hjust=0),
+    plot.caption = element_text( hjust=0),
     axis.ticks = element_blank(),
     panel.background = element_blank(),
     panel.grid.major = element_line("grey80", size = 0.01),
     panel.grid.minor = element_blank(),
     panel.border = element_rect(colour = "black", fill=NA, size=.5),
     strip.background = element_blank(),
-    strip.text = element_text(family = 'font', size=9),
-    axis.title = element_text(family = 'font', size=9),
-    axis.text = element_text(family = 'font', size=7),
-    axis.text.y = element_text(family = 'font', size=7),
+    strip.text = element_text( size=9),
+    axis.title = element_text( size=9),
+    axis.text = element_text( size=7),
+    axis.text.y = element_text( size=7),
     plot.background = element_blank(),
     legend.background = element_blank(),
-    legend.title = element_text(family = 'font', colour = "black", face = "italic", size = 9),
-    legend.text = element_text(family = 'font', colour = "black", face = "italic", size = 7),
-    strip.text.x = element_text(family = 'font', size = 9),
+    legend.title = element_text( colour = "black", face = "italic", size = 9),
+    legend.text = element_text( colour = "black", face = "italic", size = 7),
+    strip.text.x = element_text( size = 9),
     legend.key.size = unit(.5, 'line')
   )
 }
 
 mapTheme <- function(base_size = 9, title_size = 10){
   theme(
-    text = element_text(family = 'font', color = "black"),
-    plot.title = element_text(family = 'font',
-                              size = title_size, colour = "black", hjust = 0.5), 
-    plot.subtitle = element_text(family = 'font', face = 'italic',
+    text = element_text( color = "black"),
+    plot.title = element_text(size = title_size, colour = "black", hjust = 0.5), 
+    plot.subtitle = element_text( face = 'italic',
                                  size = base_size, colour = "black", hjust = 0.5),
-    plot.caption = element_text(family = 'font', hjust=0),
+    plot.caption = element_text( hjust=0),
     axis.ticks = element_blank(),
     panel.background = element_blank(),
     panel.grid.major = element_blank(),
@@ -112,13 +112,13 @@ mapTheme <- function(base_size = 9, title_size = 10){
     panel.border = element_blank(),
     strip.background = element_blank(),
     strip.text = element_text(size=base_size),
-    axis.title = element_text(family = 'font', size=9),
+    axis.title = element_text( size=9),
     axis.text = element_blank(),
     axis.text.y = element_blank(),
     plot.background = element_blank(),
     legend.background = element_blank(),
-    legend.title = element_text(family = 'font', colour = "black", face = "italic", size = 9),
-    legend.text = element_text(family = 'font', colour = "black", face = "italic", size = 7),
+    legend.title = element_text( colour = "black", face = "italic", size = 9),
+    legend.text = element_text( colour = "black", face = "italic", size = 7),
     strip.text.x = element_text(size=base_size),
     legend.key.size = unit(.5, 'line')
   )
@@ -147,14 +147,12 @@ colnames(moves_monthly2020)
 
 The above two data are from the folder "OneDrive-2021-12-07". Looking at the content, we find out it is the safegraph data. Based on the common ground, we only used the data of 2021. **Therefore, these two files should not be used.**
 
-
-
 #### Folder: safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17
 
 **These two data sets seems like dictionary data.**
 
-
 "data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv"
+
 ```{r brand_info, message=FALSE, warning=FALSE}
 brand_info <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv")
 colnames(brand_info)
@@ -164,8 +162,6 @@ kable(head(brand_info,3),align = 'c',caption = '<center>Table 1. brand_info of S
   kable_styling(position = "center")%>% 
   scroll_box(width = "100%", height = "400px")
 ```
-
-
 
 "data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv"
 
@@ -178,8 +174,6 @@ kable(head(core_poi,3),align = 'c',caption = '<center>Table 2. core_poi of SafeG
   kable_styling(position = "center")%>% 
   scroll_box(width = "100%", height = "400px")
 ```
-
-
 
 #### Folder: safegraph/SafeGraph Data Purchase Dec-16-2021
 
@@ -262,8 +256,6 @@ kable(head(patternAllMonth,3),align = 'c',caption = '<center>Table 6. patterns o
   scroll_box(width = "100%", height = "400px")
 ```
 
-
-
 #### Folder: OpenDataPhilly
 
 **Relevant data of PPR finder**
@@ -283,7 +275,6 @@ ggmap(base_map) +
   mapTheme()
 ```
 
-
 ```{r openDataPhilly_pprProperty,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 2. Locations of pprProperties'}
 pprProperties <- st_read('https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson')%>%
   st_transform(crs)
@@ -297,7 +288,6 @@ ggplot() +
        x="",y="")+
   mapTheme()
 ```
-
 
 ```{r openDataPhilly_pprTrail,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 3. Locations of pprTrails'}
 pprTrails <- st_read('https://opendata.arcgis.com/datasets/48323d574068405bbf5336b9b5b29455_0.geojson')%>%
@@ -327,7 +317,7 @@ ggplot() +
   mapTheme()
 ```
 
-This above program data is intact
+This above program data is not intact
 
 ```{r openDataPhilly_pprPicnicSites,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 5. Locations of pprPicnicSites'}
 pprPicnicSites <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_picnic_sites&filename=ppr_picnic_sites&format=geojson&skipfields=cartodb_id')%>%
@@ -390,7 +380,7 @@ pprSpraygrounds <- st_read('https://opendata.arcgis.com/datasets/a148cc904d374b2
   st_transform(crs)
 
 ggplot() + 
-  geom_sf(data=pprSpraygrounds,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=pprSpraygrounds,color=palette1_main)+
   geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
   geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
   labs(title = "", 
@@ -492,11 +482,11 @@ ggplot() +
   mapTheme()
 ```
 
-
 #### Folder: FromPPR
+
 "data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp"
 
-```{r fromPPR_ServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 15. Locations of pprServiceArea'}
+```{r fromPPR_ServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width ='75%',fig.align = 'center',fig.cap = 'Figure 15. Locations of pprServiceArea'}
 library(rgdal)
 pprServiceArea <- read_sf(dsn="data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp")%>%
   st_transform(crs = crs)
