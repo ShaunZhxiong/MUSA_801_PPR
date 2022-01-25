@@ -513,8 +513,18 @@ ggplot() +
 "data/FromPPR/PPR-recreation-permits-2021.csv"
 
 ```{r fromPPR-recreation-permits-2021, warning=FALSE, message=FALSE}
-program2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
-kable(head(program2021,3),align = 'c',caption = '<center>Table 7. Program information of PPR data <center/>')%>%
+recreation2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
+kable(head(recreation2021,3),align = 'c',caption = '<center>Table 7. Program information of PPR Recreation data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+```
+
+"PPR-programs-attended-2021-with-schedules.csv"
+
+```{r fromPPR-programs-attended-2021, warning=FALSE, message=FALSE}
+program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
+kable(head(program2021,3),align = 'c',caption = '<center>Table 8. Program information of PPR Programs data <center/>')%>%
   kable_classic(full_width = F)%>%
   kable_styling(position = "center")%>% 
   scroll_box(width = "100%", height = "400px")
