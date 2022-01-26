@@ -217,3 +217,11 @@ Team meet;
          alt="Project Timeline Example">
     <center><figcaption>Project Timeline Example, Should be submitted by next class</figcaption></center>
 </figure>
+
+
+Email memo
+
+1. **Focused service ares**: This spring’s pilot is focused on the service areas in Districts 7,8,9.
+2. **Location data**: pprBuildingStructures - Buildings; pprProperty - Land
+3. **Programs**:  program2021 doesn't have exact date. All *AttendanceWeekDate* records use the Monday date of each week. Program schedule data is needed for this.
+4. 
