@@ -558,4 +558,83 @@ program2021.clean <- program2021.clean %>%
   ))
 ```
 
+```{r wrangle ppr land data}
+propertyParent <- pprProperties %>% 
+  filter(NESTED=="N")
+
+propertyKid <- pprProperties %>% 
+  filter(NESTED=="Y")
+
+
+```
+
+```{r join property and program data}
+print(unique(program2021.clean$Facility))
+```
+
+```{r}
+print(unique(propertyParent$PUBLIC_NAME))
+```
+
+```{r}
+program2021.clean <- program2021.clean %>% 
+  mutate(facilityForJoin = gsub("&","and",Facility))
+
+keyProgram <- unique(program2021.clean$facilityForJoin)
+keyProperty <- unique(pprProperties$PUBLIC_NAME)
+
+for (i in c(1:3924)){
+  for (g in c(1:524)){
+    if (grepl(program2021.clean[i,19],keyProperty[g])){
+      program2021.clean[i,19] = keyProperty[g]
+    }
+  }
+}
+
+join <- left_join(program2021.clean, pprProperties, by = c("facilityForJoin"="PUBLIC_NAME"))
+
+join_false <- join %>% 
+  filter(is.na(join$PARENT_NAME))
+
+keyLabel <- pprProperties %>% 
+  dplyr::select(LABEL) %>% 
+  st_drop_geometry() %>% 
+  unique()%>%
+  mutate(nouse=1)
+
+for (i in c(1:766)){
+  for (g in c(1:493)){
+    if (grepl(keyLabel[g,1],join_false[[i,2]])){
+      print("k")
+      #join_false[i,2] = keyLabel[g,1]
+    }
+  }
+}
+```
+
+```{r}
+keyProgram <- unique(program2021.clean$facilityForJoin)
+keyProperty <- unique(pprProperties$PUBLIC_NAME)
+
+for (i in c(1:42)){
+  for (g in c(1:524)){
+    if (grepl(keyProgram[i],keyProperty[g])){
+      keyProgram[i] = keyProperty[g]
+    }
+  }
+}
+
+a =0
+for (i in keyProgram){
+  for (g in keyProperty){
+    if (i==g){
+      a = a+1
+    }
+  }
+}
+a
+```
+
 \
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAaCAYAAADFTB7LAAAAcElEQVR4Xu3OwQmAQAxE0bClWYCW5N06tM6V2YPg5CjoF/JhLoHAi6iqn9eOefUbqrYvHY0cQDLyAlKRNyARmYA0ZMLRkAlGQyaU72tkAtlim7r/vJqDUDjlKBROOQyFU2icQuMUGqfQuBEaV1XPOwEx96nYACK8+wAAAABJRU5ErkJggg== "Run Current Chunk")
