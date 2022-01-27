@@ -11,6 +11,7 @@ output:
   pdf_document: default
 ---
 
+```{=html}
 <style>
 p.caption {
   font-size: 0.8em;
@@ -31,6 +32,7 @@ body{
 }
 h1,h2,h3,h4,h5,h6{
   font-family: Helvetica;
+  color: red;
 }
 td{
   font-size: 9pt;
@@ -42,12 +44,13 @@ th{
   color: black;
 }
 </style>
----
+```
+
+------------------------------------------------------------------------
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 library(vroom)
@@ -59,51 +62,50 @@ library(tidyverse)
 library(data.table)
 #remotes::install_github("CityOfPhiladelphia/rphl")
 library(rphl)
+library(lubridate)
 
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
 source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
 
-windowsFonts(font = windowsFont('Helvetica'))
+#windowsFonts(font = windowsFont('Helvetica'))
 
 crs = 'EPSG:2272'
 
 plotTheme <- function(base_size = 9, title_size = 10){
   theme(
-    text = element_text(family = 'font', color = "black"),
-    plot.title = element_text(family = 'font',
-                              size = title_size, colour = "black", hjust = 0.5), 
-    plot.subtitle = element_text(family = 'font', face = 'italic',
+    text = element_text( color = "black"),
+    plot.title = element_text(size = title_size, colour = "black", hjust = 0.5), 
+    plot.subtitle = element_text( face = 'italic',
                                  size = base_size, colour = "black", hjust = 0.5),
-    plot.caption = element_text(family = 'font', hjust=0),
+    plot.caption = element_text( hjust=0),
     axis.ticks = element_blank(),
     panel.background = element_blank(),
     panel.grid.major = element_line("grey80", size = 0.01),
     panel.grid.minor = element_blank(),
     panel.border = element_rect(colour = "black", fill=NA, size=.5),
     strip.background = element_blank(),
-    strip.text = element_text(family = 'font', size=9),
-    axis.title = element_text(family = 'font', size=9),
-    axis.text = element_text(family = 'font', size=7),
-    axis.text.y = element_text(family = 'font', size=7),
+    strip.text = element_text( size=9),
+    axis.title = element_text( size=9),
+    axis.text = element_text( size=7),
+    axis.text.y = element_text( size=7),
     plot.background = element_blank(),
     legend.background = element_blank(),
-    legend.title = element_text(family = 'font', colour = "black", face = "italic", size = 9),
-    legend.text = element_text(family = 'font', colour = "black", face = "italic", size = 7),
-    strip.text.x = element_text(family = 'font', size = 9),
+    legend.title = element_text( colour = "black", face = "italic", size = 9),
+    legend.text = element_text( colour = "black", face = "italic", size = 7),
+    strip.text.x = element_text( size = 9),
     legend.key.size = unit(.5, 'line')
   )
 }
 
 mapTheme <- function(base_size = 9, title_size = 10){
   theme(
-    text = element_text(family = 'font', color = "black"),
-    plot.title = element_text(family = 'font',
-                              size = title_size, colour = "black", hjust = 0.5), 
-    plot.subtitle = element_text(family = 'font', face = 'italic',
+    text = element_text( color = "black"),
+    plot.title = element_text(size = title_size, colour = "black", hjust = 0.5), 
+    plot.subtitle = element_text( face = 'italic',
                                  size = base_size, colour = "black", hjust = 0.5),
-    plot.caption = element_text(family = 'font', hjust=0),
+    plot.caption = element_text( hjust=0),
     axis.ticks = element_blank(),
     panel.background = element_blank(),
     panel.grid.major = element_blank(),
@@ -111,13 +113,13 @@ mapTheme <- function(base_size = 9, title_size = 10){
     panel.border = element_blank(),
     strip.background = element_blank(),
     strip.text = element_text(size=base_size),
-    axis.title = element_text(family = 'font', size=9),
+    axis.title = element_text( size=9),
     axis.text = element_blank(),
     axis.text.y = element_blank(),
     plot.background = element_blank(),
     legend.background = element_blank(),
-    legend.title = element_text(family = 'font', colour = "black", face = "italic", size = 9),
-    legend.text = element_text(family = 'font', colour = "black", face = "italic", size = 7),
+    legend.title = element_text( colour = "black", face = "italic", size = 9),
+    legend.text = element_text( colour = "black", face = "italic", size = 7),
     strip.text.x = element_text(size=base_size),
     legend.key.size = unit(.5, 'line')
   )
@@ -130,7 +132,7 @@ palette1_main <- "#F2727F"
 palette1_assist <- '#F9B294'
 ```
 
-### Exploratory Analysis
+### Data Loading
 
 #### Folder: OneDrive-2021-12-07
 
@@ -146,13 +148,12 @@ colnames(moves_monthly2020)
 
 The above two data are from the folder "OneDrive-2021-12-07". Looking at the content, we find out it is the safegraph data. Based on the common ground, we only used the data of 2021. **Therefore, these two files should not be used.**
 
-
-
 #### Folder: safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17
 
 **These two data sets seems like dictionary data.**
 
 "data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv"
+
 ```{r brand_info, message=FALSE, warning=FALSE}
 brand_info <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv")
 colnames(brand_info)
@@ -164,6 +165,7 @@ kable(head(brand_info,3),align = 'c',caption = '<center>Table 1. brand_info of S
 ```
 
 "data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv"
+
 ```{r core_poi, message=FALSE, warning=FALSE}
 core_poi <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv")
 colnames(core_poi)
@@ -173,8 +175,6 @@ kable(head(core_poi,3),align = 'c',caption = '<center>Table 2. core_poi of SafeG
   kable_styling(position = "center")%>% 
   scroll_box(width = "100%", height = "400px")
 ```
-
-
 
 #### Folder: safegraph/SafeGraph Data Purchase Dec-16-2021
 
@@ -257,8 +257,6 @@ kable(head(patternAllMonth,3),align = 'c',caption = '<center>Table 6. patterns o
   scroll_box(width = "100%", height = "400px")
 ```
 
-
-
 #### Folder: OpenDataPhilly
 
 **Relevant data of PPR finder**
@@ -278,7 +276,6 @@ ggmap(base_map) +
   mapTheme()
 ```
 
-
 ```{r openDataPhilly_pprProperty,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 2. Locations of pprProperties'}
 pprProperties <- st_read('https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson')%>%
   st_transform(crs)
@@ -292,7 +289,6 @@ ggplot() +
        x="",y="")+
   mapTheme()
 ```
-
 
 ```{r openDataPhilly_pprTrail,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 3. Locations of pprTrails'}
 pprTrails <- st_read('https://opendata.arcgis.com/datasets/48323d574068405bbf5336b9b5b29455_0.geojson')%>%
@@ -322,7 +318,7 @@ ggplot() +
   mapTheme()
 ```
 
-This program data is intact
+This above program data is not intact
 
 ```{r openDataPhilly_pprPicnicSites,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 5. Locations of pprPicnicSites'}
 pprPicnicSites <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_picnic_sites&filename=ppr_picnic_sites&format=geojson&skipfields=cartodb_id')%>%
@@ -385,7 +381,7 @@ pprSpraygrounds <- st_read('https://opendata.arcgis.com/datasets/a148cc904d374b2
   st_transform(crs)
 
 ggplot() + 
-  geom_sf(data=pprSpraygrounds,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=pprSpraygrounds,color=palette1_main)+
   geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
   geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
   labs(title = "", 
@@ -486,3 +482,159 @@ ggplot() +
        x="",y="")+
   mapTheme()
 ```
+
+#### Folder: FromPPR
+
+"data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp"
+
+```{r fromPPR_ServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width ='75%',fig.align = 'center',fig.cap = 'Figure 15. Locations of pprServiceArea'}
+library(rgdal)
+pprServiceArea <- read_sf(dsn="data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp")%>%
+  st_transform(crs = crs)
+
+ggplot() + 
+  geom_sf(data=pprServiceArea,color=palette1_main,size=1,fill = "transparent")+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+"data/FromPPR/PPR-recreation-permits-2021.csv"
+
+```{r fromPPR-recreation-permits-2021, warning=FALSE, message=FALSE}
+perimit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
+kable(head(perimit2021,3),align = 'c',caption = '<center>Table 7. Program information of PPR Recreation data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+```
+
+"PPR-programs-attended-2021-with-schedules.csv"
+
+```{r fromPPR-programs-attended-2021, warning=FALSE, message=FALSE}
+program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
+kable(head(program2021,3),align = 'c',caption = '<center>Table 8. Program information of PPR Programs data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+```
+
+## Data Wrangling
+
+```{r wrangle program data}
+# define date 
+program2021.clean <- program2021 %>% 
+  mutate(AttendanceWeekDate = mdy(AttendanceWeekDate),
+         DateFrom = mdy(DateFrom),
+         DateTo = mdy(DateTo))
+
+# create a df only containing records without program scheduel info
+program2021.NA <- program2021.clean[is.na(program2021.clean$ProgramScheduleID),]
+
+# filter by attendance date
+program2021.clean <- program2021.clean %>% 
+  filter(AttendanceWeekDate > DateFrom & AttendanceWeekDate < DateTo)
+
+# original data is recorded by week, here we change it into being recorded by occurence
+program2021.clean <- separate(program2021.clean, Days,into= c("1","2","3","4","5","6","7"))
+
+program2021.clean <- program2021.clean %>% 
+  gather(colNames, weekday, 15:21) %>% 
+  select(-colNames) %>% 
+  na.omit(cols='weekday')
+
+# create exact attendance date
+program2021.clean <- program2021.clean %>% 
+  mutate(AttendenceRealDate = case_when(
+    weekday == "Monday" ~ AttendanceWeekDate,
+    weekday == "Tuesday" ~ AttendanceWeekDate+1,
+    weekday == "Wednesday" ~ AttendanceWeekDate+2,
+    weekday == "Thursday" ~ AttendanceWeekDate+3,
+    weekday == "Friday" ~ AttendanceWeekDate+4,
+    weekday == "Saturday" ~ AttendanceWeekDate+5,
+    weekday == "Sunday" ~ AttendanceWeekDate+6,
+  ))
+```
+
+```{r wrangle ppr land data}
+propertyParent <- pprProperties %>% 
+  filter(NESTED=="N")
+
+propertyKid <- pprProperties %>% 
+  filter(NESTED=="Y")
+
+
+```
+
+```{r join property and program data}
+print(unique(program2021.clean$Facility))
+```
+
+```{r}
+print(unique(propertyParent$PUBLIC_NAME))
+```
+
+```{r}
+program2021.clean <- program2021.clean %>% 
+  mutate(facilityForJoin = gsub("&","and",Facility))
+
+keyProgram <- unique(program2021.clean$facilityForJoin)
+keyProperty <- unique(pprProperties$PUBLIC_NAME)
+
+for (i in c(1:3924)){
+  for (g in c(1:524)){
+    if (grepl(program2021.clean[i,19],keyProperty[g])){
+      program2021.clean[i,19] = keyProperty[g]
+    }
+  }
+}
+
+join <- left_join(program2021.clean, pprProperties, by = c("facilityForJoin"="PUBLIC_NAME"))
+
+join_false <- join %>% 
+  filter(is.na(join$PARENT_NAME))
+
+keyLabel <- pprProperties %>% 
+  dplyr::select(LABEL) %>% 
+  st_drop_geometry() %>% 
+  unique()%>%
+  mutate(nouse=1)
+
+for (i in c(1:766)){
+  for (g in c(1:493)){
+    if (grepl(keyLabel[g,1],join_false[[i,2]])){
+      print("k")
+      #join_false[i,2] = keyLabel[g,1]
+    }
+  }
+}
+```
+
+```{r}
+keyProgram <- unique(program2021.clean$facilityForJoin)
+keyProperty <- unique(pprProperties$PUBLIC_NAME)
+
+for (i in c(1:42)){
+  for (g in c(1:524)){
+    if (grepl(keyProgram[i],keyProperty[g])){
+      keyProgram[i] = keyProperty[g]
+    }
+  }
+}
+
+a =0
+for (i in keyProgram){
+  for (g in keyProperty){
+    if (i==g){
+      a = a+1
+    }
+  }
+}
+a
+```
+
+\
+
+![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAaCAYAAADFTB7LAAAAcElEQVR4Xu3OwQmAQAxE0bClWYCW5N06tM6V2YPg5CjoF/JhLoHAi6iqn9eOefUbqrYvHY0cQDLyAlKRNyARmYA0ZMLRkAlGQyaU72tkAtlim7r/vJqDUDjlKBROOQyFU2icQuMUGqfQuBEaV1XPOwEx96nYACK8+wAAAABJRU5ErkJggg== "Run Current Chunk")
