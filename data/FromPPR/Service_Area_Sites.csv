@@ -1,0 +1,395 @@
+Service Area PPR District,Service Area ID,Service Area Name,PPR Site Name,PPR Parent Site Name,Alias(es),Short Name,911 Address,Zip Code,Alias Address(es), Acreage ,PPR Operations District,City Council District,Police District
+1,1A,Boyle Area,Officer Daniel Boyle Memorial Recreation Center,Officer Daniel Boyle Memorial Recreation Center,Boyle Recreation Center,Boyle,13024 STEVENS RD,19116,13024 STEVENS RD, 10.69 ,1,10,7
+1,1A,Boyle Area,Officer Robert Hayes Memorial Playground,Officer Robert Hayes Memorial Playground,"Hayes, Swenson Park, Conwell, Hayes Playground",Hayes,9949 PRESIDENT ST,19115,9850 E ROOSEVELT BLV, 39.24 ,1,10,7
+1,1A,Boyle Area,Tomlinson & Gifford Playground,Tomlinson & Gifford Playground,"Gifford, Gifford Playground",Gifford,575 TOMLINSON RD,19116,575 TOMLINSON RD, 6.40 ,1,10,7
+1,1A,Boyle Area,William A. Lackman Memorial Playground,William A. Lackman Memorial Playground,"Lackman, Lackman Playground",Lackman,1165 BARTLETT ST,19115,"800 BARTLETT ST, 1101 BARTLETT ST; Chesworth & Bartlett", 11.44 ,1,10,7
+1,1B,Junod Area,Chalfont Playground,Chalfont Playground,"Chalfont, Chalfont & Deerpath Playground",Chalfont,4200 DEERPATH LN,19154,"4336 DEERPATH LA, 4330-40 DEERPATH LN", 13.74 ,1,10,8
+1,1B,Junod Area,Eileen Fitzpatrick Playground,Eileen Fitzpatrick Playground,Fitzpatrick Playground,Fitzpatrick,3500 ACADEMY RD,19154,"12501 TORREY RD, Academy & Torrey", 4.94 ,1,10,8
+1,1B,Junod Area,Elizabeth M. Picariello Playground,Elizabeth M. Picariello Playground,Picariello Playground,Picariello,3325 RED LION RD,19154,"10801 CALERA RD, Red Lion & Calera", 9.44 ,1,10,8
+1,1B,Junod Area,Jim Junod Recreation Center,Jim Junod Recreation Center,"Junod, Junod Playground",Junod,3102 MECHANICSVILLE RD,19154,"12770 DUNKSFERRY RD, Dunksferry & Mechanicsville", 23.52 ,1,10,8
+1,1B,Junod Area,Michael Palmer Playground,Michael Palmer Playground,Far NE Athletic Association,Palmer,2972 COMLY RD,19154,"11701 THORNTON RD, 3035 COMLY RD, Comly & Thornton", 74.16 ,1,10,8
+1,1B,Junod Area,Parkwood,Parkwood,Parkwood Youth Organization Recreation Center,Parkwood,3359 MECHANICSVILLE RD,19154,Dunksferry & Mechanicsville, 30.82 ,1,10,8
+1,1B,Junod Area,Thomas Mitchell Memorial Playground,Thomas Mitchell Memorial Playground,,Mitchell,3694 CHESTERFIELD RD,19114,"3700 WHITEHALL LN, Morrel & Crown", 6.84 ,1,10,8
+1,1C,Fox Chase Area,Baldi School Playground,Baldi School Playground,,Baldi School,8725 VERREE RD,19115,, 4.62 ,1,10,7
+1,1C,Fox Chase Area,Bradford Park,Bradford Park,,Bradford Park,2400 FAUNCE ST,19152,"Faunce & Bradford, Calvert & Shelmire", 8.51 ,1,10,2
+1,1C,Fox Chase Area,Burholme Park,Burholme Park,,Burholme Park,7370 CENTRAL AVE,19111,Cottman & Central, 67.92 ,1,10,2
+1,1C,Fox Chase Area,Fox Chase Farm,Fox Chase Farm,"Butler Exhibit Farm, Butler Tract",Fox Chase Farm,8821 PINE RD,19111,8700 PINE RD, 120.00 ,1,10,7
+1,1C,Fox Chase Area,Fox Chase Recreation Center,Fox Chase Recreation Center,"Fox Chase ,Fox Chase Playground",Fox Chase,601 BORBECK AVE,19111,"7901 RIDGEWAY ST, Rockwell & Ridgeway", 16.37 ,1,10,2
+1,1C,Fox Chase Area,George C. Pelbano Playground,George C. Pelbano Playground,"Rhawnhurst,Pelbano",Pelbano,2138 SOLLY AVE,19152,"8101 BUSTLETON AVE, Bustleton & Solly", 11.16 ,1,10,7
+1,1C,Fox Chase Area,Northeast Lions Park,Northeast Lions Park,"Barnes & Loney Park, Fox Chase Park",Northeast Lions Park,7966 OXFORD AVE,19111,, 0.38 ,1,10,2
+1,1C,Fox Chase Area,Pennypack Environmental Education Center,Pennypack Park,Verree Rd Interpretive Center,Pennypack Environmental Center,8600 VERREE RD,19115,, 2.35 ,1,10,7
+1,1C,Fox Chase Area,Verree and Susquehanna Playground,Pennypack Park,"Champions, Pennypack Park Playground",Verree and Susquehanna,8543 VERREE RD,19111,, 3.85 ,1,10,7
+1,1D,Ramp Area,Frank McArdle Memorial Recreation Center,Frank McArdle Memorial Recreation Center,,McArdle,2951 WELSH RD,19152,"2801 WELSH RD, 8930 ASHTON RD, Welsh & Tolbut", 6.14 ,1,6,8
+1,1D,Ramp Area,Frankford & Pennypack Park,Frankford & Pennypack Park,Frankford Neighborhood Park,Frankford & Pennypack Park,4400 PENNYPACK ST,19136,4400 Pennypack St, 0.92 ,1,6,8
+1,1D,Ramp Area,Frankford and Solly Playground,Pennypack Park,,Frankford and Solly,8318 FRANKFORD AVE,19136,8300 FRANKFORD AVE, 2.20 ,1,6,8
+1,1D,Ramp Area,George Jacobs Playground,George Jacobs Playground,"Jacobs, Jacobs Playground",Jacobs,9050 TORRESDALE AVE,19136,"4500 LINDEN AVE, Linden & Jackson", 14.69 ,1,6,8
+1,1D,Ramp Area,Glen Foerd,Glen Foerd,,Glen Foerd,5001 GRANT AVE,19114,, 21.29 ,1,6,8
+1,1D,Ramp Area,Holme Playground,Holme Playground,Thomas Holme,Holme,9152 ACADEMY RD,19114,9152 ACADEMY RD, 10.13 ,1,6,8
+1,1D,Ramp Area,Holme Street Field,Pennypack Park,,Holme St Field,2761 HOLME AVE,19152,, 1.16 ,1,6,8
+1,1D,Ramp Area,Holme-Crispin Park,Holme-Crispin Park,Pennypack Community Center,Holme Crispin Park,2999 HOLME AVE,19136,Holme & Convent, 31.50 ,1,6,8
+1,1D,Ramp Area,Joseph C. Fluehr Memorial Park,Joseph C. Fluehr Memorial Park,Fluehr Park,Fluehr Park,4800 GRANT AVE,19114,4200 Grant Ave, 62.77 ,1,6,8
+1,1D,Ramp Area,Lincoln Pool,Lincoln Pool,Mayfair Memorial Playground,Lincoln Pool,7437 ROWLAND AVE,19136,3201 RYAN AVE, 1.64 ,1,6,15
+1,1D,Ramp Area,Pennypack on the Delaware,Pennypack on the Delaware,Pennypack Park at Mouth of Delaware,Pennypack on the Delaware,8201 STATE RD,19136,"7801 State Rd, 7999 STATE RD", 165.27 ,1,6,"8, 15"
+1,1D,Ramp Area,Pleasant Hill Park,Pleasant Hill Park,"Torresdale Fish Hatchery,Pleasant Hill Beach",Pleasant Hill Park,9201 N DELAWARE AVE,19136,Delaware River & Linden, 35.21 ,1,6,8
+1,1D,Ramp Area,Ramp Playground,Ramp Playground,"Ramp, James J Ramp Playground",Ramp,3350 SOLLY AVE,19136,"3300-40 SOLLY AVE, Solly & Rowland", 9.49 ,1,6,8
+1,1D,Ramp Area,Torresdale and Enfield Fields,Pennypack Park,,Torresdale and Enfield Fields,4600 ENFIELD AVE,19136,, 6.59 ,1,6,8
+1,1D,Ramp Area,Torresdale Playground,Torresdale Playground,"Torresdale, Torresdale Recreation Center",Torresdale,9550 FRANKFORD AVE,19114,Frankford & Aubrey, 14.22 ,1,6,8
+1,1D,Ramp Area,Trumbette Playground,Trumbette Playground,,Trumbette,9050 TORRESDALE AVE,19136,Torresdale & Tolbut, 8.47 ,1,6,8
+2,2A,Lawcrest Area,Lawncrest Recreation Center,Lawncrest Recreation Center,Lawncrest,Lawncrest,6030 RISING SUN AVE,19111,"6000 RISING SUN AVE, Rising Sun & Comly", 17.37 ,3,9,2
+2,2A,Lawcrest Area,Max Myers Playground,Max Myers Playground,Max Myers,Max Myers,1805 HELLERMAN ST,19149,"1601 HELLERMAN ST, Horrocks & Magee", 12.37 ,1,7,2
+2,2A,Lawcrest Area,Tarken Recreation Center,Tarken Recreation Center,Tarken,Tarken,6350 FRONTENAC ST,19111,"6250 FRONTENAC ST, Frontenac & Levick", 8.89 ,1,9,2
+2,2A,Lawcrest Area,Thomas E. Jardel Memorial Field,Thomas E. Jardel Memorial Field,"Jardel, Jardel Recreation Center",Jardel,1400 COTTMAN AVE,19111,"1400 COTTMAN AVE, Cottman & Pennway", 10.78 ,1,9,2
+2,2B,McIlvain Area,American Legion Playground,American Legion Playground,American Legion,American Legion,6201 TORRESDALE AVE,19135,"6201 TORRESDALE AVE, Torresdale & Devereaux", 15.72 ,2,6,15
+2,2B,McIlvain Area,Frankford Boat Launch,Frankford Boat Launch,"PA Fish & Boat,Frankford Arsenal Boat Launch",Frankford Boat Launch,5625 TACONY ST,19137,5650 Tacony St, 10.84 ,2,6,15
+2,2B,McIlvain Area,Joseph C. McIlvain Playground,Joseph C. McIlvain Playground,Frankford Playground,McIlvain,5200 N PENN ST,19124,5200 PENN ST, 3.85 ,2,7,15
+2,2B,McIlvain Area,Lardner's Point Park,Lardner's Point Park,,Lardner's Point,5202 LEVICK ST,19135,, 4.57 ,2,6,15
+2,2B,McIlvain Area,Lower Mayfair Playground,Lower Mayfair Playground,Lower Mayfair,Lower Mayfair,3001 ROBBINS ST,19149,"3001 ROBBINS AVE, Battersby & Robbins", 2.99 ,2,6,15
+2,2B,McIlvain Area,Roosevelt Playground,Roosevelt Playground,Roosevelt,Roosevelt,4301 LEVICK ST,19135,"6455 WALKER ST, Levick & Walker", 5.45 ,2,6,15
+2,2B,McIlvain Area,Victor J. Moss Memorial Field,Victor J. Moss Memorial Field,"Moss, Moss Playground",Moss,5700 TORRESDALE AVE,19135,"5700 TORRESDALE AVE, Torresdale & Cheltenham", 3.69 ,2,6,15
+2,2B,McIlvain Area,Wissinoming Playground,Wissinoming Playground,Wissinoming,Wissinoming,5801 FRANKFORD AVE,19135,"5801 FRANKFORD AVE, Frankford & Comly", 42.63 ,2,6,15
+2,2C,Vogt Area,Disston Park,Disston Park,"Disston, Keystone",Disston Park,6447 KEYSTONE ST,19135,"6401 KEYSTONE ST, 6501-6951 KEYSTONE ST, 4423 LONGSHORE AVE; Keystone & Princeton", 23.50 ,2,6,15
+2,2C,Vogt Area,Disston Recreation Center,Disston Recreation Center,,Disston Rec,4423 LONGSHORE AVE,19135,, 3.33 ,2,6,15
+2,2C,Vogt Area,Frank J.G. Dorsey Memorial Playground,Frank J.G. Dorsey Memorial Playground,"Dorsey, Dorsey Playground",Dorsey,6501 HEGERMAN ST,19135,"6501 HEGERMAN ST, Magee & Edmunds", 2.42 ,2,6,15
+2,2C,Vogt Area,Holmesburg Recreation Center,Holmesburg Recreation Center,Crispin School,Holmesburg,4500 RHAWN ST,19136,<Null>, 4.68 ,1,6,15
+2,2C,Vogt Area,Mayfair Recreation Center,Mayfair Recreation Center,"Mayfair, Mayfair Playground",Mayfair,2901 PRINCETON AVE,19149,2990 SAINT VINCENT ST, 6.48 ,1,6,15
+2,2C,Vogt Area,Russo Park Playground,Russo Park Playground,Russo Park,Russo Park,7301 TORRESDALE AVE,19136,"7321 TORRESDALE AVE, Torresdale & Cottman", 12.46 ,1,6,15
+2,2C,Vogt Area,Senator William Vincent Mullin Playground,Senator William Vincent Mullin Playground,"Mullin, Mullin Playground",Mullin,4301 PRINCETON AVE,19135,"4301 PRINCETON AVE, Princeton & Walker", 3.89 ,2,6,15
+2,2C,Vogt Area,Tacony Boat Launch,Tacony Boat Launch,Princeton Avenue Boat Launch,Tacony Boat Launch,5198 PRINCETON AVE,19135,7071R MILNOR ST, 2.90 ,2,6,15
+2,2C,Vogt Area,Vogt Recreation Center,Vogt Recreation Center,Vogt,Vogt,4131 UNRUH AVE,19135,4131 UNRUH AVE, 15.83 ,2,6,15
+3,3A,Olney Area,A. Albert Cherashore Playground,A. Albert Cherashore Playground,"Cherashore, Cherashore Playground",Cherashore,851 W OLNEY AVE,19141,"851-951 W OLNEY AVE, 9th & Olney", 5.24 ,3,9,35
+3,3A,Olney Area,Fisher Park,Fisher Park,"Fisher Park, Fisher Playground",Fisher Park,6000 N 05TH ST,19120,"571 W SPENCER ST, 5th & Nedro", 24.50 ,3,9,35
+3,3A,Olney Area,Garland & Bingham Fields,Tacony Creek Park,Tabor and Garland Play Area,Garland & Bingham Fields,5153 E TABOR RD,19120,Tabor & Garland, 3.54 ,3,9,2
+3,3A,Olney Area,Hammond & Nedro Fields,Tacony Creek Park,,Hammond & Nedro,5901 HAMMOND AVE,19120,, 3.97 ,3,9,35
+3,3A,Olney Area,Helen G. Sturgis Playground,Helen G. Sturgis Playground,Sturgis,Sturgis,210 W 65TH AVE,19126,"200-20 W 65TH AVE, 2nd & 65th", 5.84 ,3,9,35
+3,3A,Olney Area,Morris Estate Cultural Center,Morris Estate Cultural Center,,Morris Estate,1610 CHELTEN AVE,19141,, 6.38 ,4,8,35
+3,3A,Olney Area,Olney Recreation Center,Olney Recreation Center,Olney,Olney,6000 A ST,19120,"100 E GODFREY AVE, A & Champlost", 13.62 ,3,9,35
+3,3A,Olney Area,Ziehler Playground,Ziehler Playground,Ziehler,Zeihler,5530 B ST,19120,"200-64 E OLNEY AVE, B & Olney", 7.11 ,3,9,35
+3,3B,Happy Hollow Area,Clarkson Park,Clarkson Park,,Clarkson Park,5475 N BROAD ST,19141,"5401-55 N BROAD ST, Board & Somerville", 2.07 ,3,9,35
+3,3B,Happy Hollow Area,Fernhill Park,Fernhill Park,,Fernhill Park,4600 MORRIS ST,19144,Abbottsford & Morris, 42.30 ,4,8,39
+3,3B,Happy Hollow Area,Happy Hollow Playground,Happy Hollow Playground,Happy Hollow,Happy Hollow,4800 WAYNE AVE,19144,"4740 WAYNE AVE, Wayne & Logan", 4.59 ,4,8,39
+3,3B,Happy Hollow Area,Hunting Park,Hunting Park,Hunting Park,Hunting Park,1101 W HUNTING PARK AVE,19140,"900 HUNTING PARK AVE, 9th & Roosevelt", 76.47 ,3,"5, 7",25
+3,3B,Happy Hollow Area,Hunting Park Recreation Center,Hunting Park,,Hunting Park Rec Center,1101 W HUNTING PARK AVE,19140,9th & Roosevelt, 5.37 ,3,5,25
+3,3B,Happy Hollow Area,John L. Barrett Playground,John L. Barrett Playground,Lindley Playground,Barrett,641 LINDLEY AVE,19120,"641 LINDLEY AVE, 8th & Lindley", 5.78 ,3,"8, 9",35
+3,3B,Happy Hollow Area,Kay Park,Kay Park,Vandergrift Estate,Kay Park,4712 PULASKI AVE,19144,, 1.79 ,4,8,39
+3,3B,Happy Hollow Area,Loudoun Park,Loudoun Park,,Loudoun Park,4650 GERMANTOWN AVE,19144,Germantown & Apsley, 7.67 ,4,8,39
+3,3B,Happy Hollow Area,Shevchenko Park,Shevchenko Park,,Shevchenko Park,5301 N BROAD ST,19141,, 1.32 ,3,9,35
+3,3B,Happy Hollow Area,Stenton Park Playground,Stenton Park Playground,Stenton Park,Stenton Park,4600 N 16TH ST,19140,"4600 N 16TH ST, 16th & Wyoming", 11.53 ,4,8,35
+3,3B,Happy Hollow Area,Wakefield Park,Wakefield Park,,Wakefield Park,5300 N 16TH ST,19141,16th & Lindley, 14.65 ,4,8,35
+3,3B,Happy Hollow Area,Wingohocking Park,Wingohocking Park,,Wingohocking Park,1200 W WINGOHOCKING ST,19140,4101 OLD YORK RD, 8.34 ,3,8,35
+3,3B,Happy Hollow Area,Wister Playground,Wister Playground,Wister,Wister,4971 BAYNTON ST,19144,"4971 BAYNTON ST, Baynton & Shedaker", 2.85 ,4,8,14
+3,3B,Happy Hollow Area,Wister's Woods Park,Wister's Woods Park,,Wister's Woods Park,1998 BELFIELD AVE,19141,"432-60 E WISTER ST, Duncannon & Wister", 63.94 ,4,8,"14, 35"
+3,3C,Feltonville Area,Edward Houseman Playground,Edward Houseman Playground,"Houseman, Houseman Playground",Houseman,5091 SUMMERDALE AVE,19124,"802 E GODFREY AVE, Summerdale & Godfrey", 8.67 ,3,9,2
+3,3C,Feltonville Area,Feltonville Recreation Center,Feltonville Recreation Center,Feltonville,Feltonville,283 E WYOMING AVE,19120,231-37 E WYOMING AVE, 3.28 ,3,7,25
+3,3C,Feltonville Area,Joseph A. Ferko Playground,Tacony Creek Park,"Ferko, Juniata Park, Ferko Playground",Ferko,1101 E CAYUGA ST,19124,"1101 E CAYUGA ST, J & Cayuga", 10.37 ,3,7,24
+3,3C,Feltonville Area,Joseph Deni Recreation Center,Joseph Deni Recreation Center,Deni Recreation Center,Deni,1381 RUAN ST,19124,Adams & Church, 3.52 ,3,7,15
+3,3C,Feltonville Area,Lauretha Vaird Boys/Girls Club,Tacony Creek Park,Tabor Rams Club,Boys & Girls Club of Philadelphia,4800 WHITAKER AVE,19120,Whitaker & Loudon, 6.07 ,3,7,25
+3,3C,Feltonville Area,Northwood Park,Northwood Park,,Northwood Park,999 ARROTT ST,19124,Arrott & Castor, 3.00 ,3,7,15
+3,3C,Feltonville Area,Overington Park,Overington Park,,Overington Park,4600 LEIPER ST,19124,Orthodox & Leiper, 4.12 ,3,7,15
+3,3C,Feltonville Area,Piccoli Playground,Piccoli Playground,Piccoli,Piccoli,1501 E BRISTOL ST,19124,"1501 E BRISTOL ST, O & Bristol", 6.01 ,3,7,24
+3,3C,Feltonville Area,Simpson Playground,Simpson Playground,Simpson,Simpson,1010 ARROTT ST,19124,"1010 ARROTT ST, Arrott & Large", 4.55 ,3,7,15
+3,3C,Feltonville Area,Womrath Park,Womrath Park,,Womrath Park,4098 FRANKFORD AVE,19124,Kensington & Frankford, 2.17 ,3,7,15
+4,4A,Simon Area,Buckley Park,Buckley Park,,Buckley Park,8199 GERMANTOWN AVE,19118,, 0.16 ,4,8,14
+4,4A,Simon Area,Charles M. Finley Playground,Charles M. Finley Playground,Whitehall Commons,Finley,7701 MANSFIELD AVE,19150,"7701 MANSFIELD AVE, Upsal & Mansfield", 6.64 ,4,9,14
+4,4A,Simon Area,Dorothy Emanuel Recreation Center,Dorothy Emanuel Recreation Center,Dorothy Emanuel Recreation and Teen Center,Emanuel,8500 PICKERING AVE,19150,"8500 PICKERING AVE, Pickering & Gowen", 3.68 ,4,9,14
+4,4A,Simon Area,Pastorius Park,Pastorius Park,,Pastorius Park,200 W HARTWELL LN,19118,"Pocono & Southhampton, Lincoln Dr & Abington Ave", 16.46 ,4,8,14
+4,4A,Simon Area,Simons Youth Center & Teen Center,Simons Youth Center & Teen Center,,Simons,7224 WOOLSTON AVE,19138,"1601-35 E WALNUT LA, 7200 WOOLSTON AVE, Walnut & Rodney", 13.12 ,4,9,14
+4,4A,Simon Area,Water Tower Recreation Center,Water Tower Recreation Center,Water Tower,Water Tower,267 E HARTWELL LN,19118,"209-99 E HARTWELL LA, Hartwell & Ardleigh", 9.55 ,4,8,14
+4,4A,Simon Area,Winston Park,Winston Park,,Winston Park,185 E WILLOW GROVE AVE,19118,181-85 E WILLOW GROVE AVE, 1.02 ,4,8,14
+4,4A,Simon Area,Woodward Pines,Woodward Pines,,Woodward Pines,7922 LINCOLN DR,19118,7930-34 LINCOLN DR, 1.35 ,4,8,14
+4,4B,Waterview Area,Clifford Park,Wissahickon Valley Park,Thomas Mansion Grounds,Clifford,6141 WISSAHICKON AVE,19144,, 25.74 ,4,8,14
+4,4B,Waterview Area,Cliveden Park,Cliveden Park,,Cliveden,501 E JOHNSON ST,19119,"6400 Chew Ave, Chew & Cliveden", 5.95 ,4,8,14
+4,4B,Waterview Area,Cloverly Park,Cloverly Park,,Cloverly Park,5425 WISSAHICKON AVE,19144,Wissahickon & School House, 2.54 ,4,8,39
+4,4B,Waterview Area,Daniel E. Rumph II Recreation Center,Daniel E. Rumph II Recreation Center,Mallery,Rumph,108 E JOHNSON ST,19144,"100-70 E JOHNSON ST, Morton & Johnson", 3.68 ,4,8,14
+4,4B,Waterview Area,Gilbert Stuart Park,Gilbert Stuart Park,,Gilbert Stuart Park,5132 GERMANTOWN AVE,19144,, 0.29 ,4,8,39
+4,4B,Waterview Area,Howell Park,Howell Park,,Howell Park,5215 GREENE ST,19144,, 1.56 ,4,8,39
+4,4B,Waterview Area,Lovett Park,Lovett Park,,Lovett Park,6941 GERMANTOWN AVE,19119,6923-45 GERMANTOWN AVE, 1.23 ,4,8,14
+4,4B,Waterview Area,Morton Playground,Morton Playground,,Morton,88 E HAINES ST,19144,Haines & Baynton, 2.60 ,4,8,14
+4,4B,Waterview Area,Mount Airy Playground,Mount Airy Playground,Mount Airy,Mt Airy,7001 GERMANTOWN AVE,19119,"7001 GERMANTOWN AVE, Germantown & Sedgwick", 4.06 ,4,8,14
+4,4B,Waterview Area,Pleasant Playground,Pleasant Playground,Pleasant,Pleasant,6750 BOYER ST,19119,"6720 BOYER ST, Boyer & Pleasant; 6757 Chew Ave", 4.76 ,4,8,14
+4,4B,Waterview Area,Price Street Play Lot,Price Street Play Lot,,Price St Play Lot,185 W PRICE ST,19144,177-85 W PRICE ST, 0.18 ,4,8,14
+4,4B,Waterview Area,Vernon Park,Vernon Park,,Vernon Park,5800 GERMANTOWN AVE,19144,"5710-18 GERMANTOWN AVE, Germantown & Chelten", 8.47 ,4,8,14
+4,4B,Waterview Area,Waterview Recreation Center,Waterview Recreation Center,Waterview,Waterview,5826 MC MAHON AVE,19144,"5826 MCMAHON ST, Haines & McMahon", 5.16 ,4,8,14
+4,4B,Waterview Area,Wolf Park,Wolf Park,Ned Wolf Park,Wolf Park,7018 MC CALLUM ST,19119,, 0.25 ,4,8,14
+4,4C,Awbury Area,Awbury Park and Recreation Center,Awbury Park and Recreation Center,,Awbury Park,6101 ARDLEIGH ST,19138,"6101 ARDLEIGH ST, Ardleigh & Haines", 27.92 ,4,8,14
+4,4C,Awbury Area,Belfield Recreation Center,Belfield Recreation Center,Belfield,Belfield,2109 W CHEW AVE,19138,"2109 W CHEW AVE, 21st & Chew", 4.01 ,4,8,35
+4,4C,Awbury Area,Fanny Kemble Abolitionist Memorial Park,Fanny Kemble Abolitionist Memorial Park,Kemble Park,Kemble Park,5641 OGONTZ AVE,19141,16th & Chew, 8.00 ,4,8,35
+4,4C,Awbury Area,Harper's Hollow Park,Harper's Hollow Park,,Harper's Hollow Park,5850 OGONTZ AVE,19141,Ogontz & Conlyn, 3.60 ,4,8,35
+4,4C,Awbury Area,Lonnie Young Recreation Center of East Germantown,Lonnie Young Recreation Center of East Germantown,East Germantown Recreation Center,Lonnie Young,1100 E CHELTEN AVE,19138,1100 E CHELTEN AVE, 5.23 ,4,8,14
+4,4D,Kendrick Area,Arrow Field,Wissahickon Valley Park,,Arrow Field,640 W WALNUT LN,19128,, 2.32 ,4,4,5
+4,4D,Kendrick Area,Blue Bell Area,Wissahickon Valley Park,"Blue Bell Hill, Blue Bell Park",Blue Bell,844 W WALNUT LN,19144,Walnut & Park, 16.29 ,4,4,"14, 39"
+4,4D,Kendrick Area,Boone Park,Boone Park,Manayunk Park,Boone Park,4200 BOONE ST,19128,Boone & Churchview, 1.80 ,4,4,5
+4,4D,Kendrick Area,Boyce Field,Wissahickon Valley Park,,Boyce Field,5901 HENRY AVE,19128,, 2.68 ,4,4,5
+4,4D,Kendrick Area,David Montgomery Field,Wissahickon Valley Park,Daisy Fields,David Montgomery Field,5366 HERMIT LN,19128,"5000 HERMIT LN, Quentin & Vicaris", 3.46 ,4,4,5
+4,4D,Kendrick Area,Fairview Park,Fairview Park,,Fairview Park,4418 MANAYUNK AVE,19128,, 1.01 ,4,4,5
+4,4D,Kendrick Area,Harry S. McDevitt Playground,Harry S. McDevitt Playground,,McDevitt,3580 SCOTTS LN,19129,3531 SCOTTS LN, 6.25 ,4,4,39
+4,4D,Kendrick Area,Hillside Recreation Center,Hillside Recreation Center,Hillside,Hillside,201 FOUNTAIN ST,19127,"201 FOUNTAIN ST, Fountain & Fowler", 4.08 ,4,4,5
+4,4D,Kendrick Area,Jack Horgan Memorial Field,Jack Horgan Memorial Field,Old Line Park,Jack Horgan Field,8730 OLD LINE RD,19128,, 6.15 ,4,4,5
+4,4D,Kendrick Area,Joseph V. Kelly Memorial Playground,Joseph V. Kelly Memorial Playground,Kelly Park,Kelly Playground,440 PARKER AVE,19128,440-42 PARKER AVE, 2.77 ,4,4,5
+4,4D,Kendrick Area,McMichael Park,McMichael Park,,McMichael Park,3201 MIDVALE AVE,19129,"3201-45 MIDVALE AVE, Midvale & Henry", 5.84 ,4,4,39
+4,4D,Kendrick Area,Pretzel Park,Pretzel Park,Manayunk Park,Pretzel Park,4300 SILVERWOOD ST,19127,Silverwood & Rector, 2.02 ,4,4,5
+4,4D,Kendrick Area,Roxborough Reservoir,Roxborough Reservoir,,Roxborough Reservoir,601 PORT ROYAL AVE,19128,, 37.29 ,4,4,5
+4,4D,Kendrick Area,Sabatino S. LaNoce Park,Sabatino S. LaNoce Park,La Noce Park,LaNoce,5119 ROCHELLE AVE,19128,, 0.64 ,4,4,5
+4,4D,Kendrick Area,Salvatore Pachella Memorial Field,Wissahickon Valley Park,Pachella Field,Pachella Field,6901 HENRY AVE,19128,700 LIVEZEY LA, 10.69 ,4,4,5
+4,4D,Kendrick Area,Samuel F. Houston Playground,Wissahickon Valley Park,"Houston, Houston Playground",Houston,900 GRAKYN LA,19128,"900 GRAKYN LN, Grakyn & Wissahickon", 6.73 ,4,4,5
+4,4D,Kendrick Area,Susan Gorgas Park,Susan Gorgas Park,Gorgas Park,Gorgas Park,6424 RIDGE AVE,19128,"6300 RIDGE AVE, Ridge & Hermitage", 21.12 ,4,4,5
+4,4D,Kendrick Area,Venice Island Playground,Venice Island Playground,Venice Island,Venice Island,1 RECTOR ST,19127,"SCHUYLKILL and COTTON, 7 Lock St", 4.84 ,4,4,5
+4,4D,Kendrick Area,W. Freeland Kendrick Recreation Center,W. Freeland Kendrick Recreation Center,"Kendrick ,Kendrick Recreation Center",Kendrick,5878 RIDGE AVE,19128,"5822-24 RIDGE AVE, Ridge & Pensdale", 8.02 ,4,4,5
+4,4D,Kendrick Area,Wissahickon Environmental Education Center,Wissahickon Valley Park,"Tree House, Andorra Nature Center",Wissahickon Environmental Center,300 W NORTHWESTERN AVE,19128,, 2.13 ,4,4,5
+4,4D,Kendrick Area,Wissahickon Neighbors Playground,Wissahickon Neighbors Playground,,Wissahickon Neighbors,3901 TERRACE ST,19128,3901 TERRACE ST, 0.40 ,4,4,5
+5,5A,Gambrel Area,Billy Gambrel Playground,Billy Gambrel Playground,White Hall Commons,Gambrel,1900 WAKELING ST,19124,1900 WAKELING ST, 11.54 ,2,7,15
+5,5A,Gambrel Area,Bridesburg Recreation Center,Bridesburg Recreation Center,Bridesburg,Bridesburg,4649 RICHMOND ST,19137,"4625 RICHMOND ST, Richmond & Ash", 7.98 ,2,6,15
+5,5A,Gambrel Area,Carmella A. DiTizio Playground,Carmella A. DiTizio Playground,"Carmella Playground, Whitehall Playground",Carmella,2150 WAKELING ST,19124,"2100 WAKELING ST, 2180 WAKELING ST", 11.18 ,2,7,15
+5,5A,Gambrel Area,Hedge Street Park,Hedge Street Park,"Plum, Hedge & Plum",Hedge St Park,4610 HEDGE ST,19124,4628 Hedge St, 0.43 ,2,7,15
+5,5A,Gambrel Area,Orthodox Street Parcel,Orthodox Street Parcel,,Orthodox,3101 ORTHODOX ST,19137,, 10.51 ,2,6,15
+5,5A,Gambrel Area,Wilmot Park Playground,Wilmot Park Playground,,Wilmot Park,1801 MEADOW ST,19124,Hawthorne & Mulberry, 0.42 ,2,7,15
+5,5B,McVeigh Area,Harrowgate Park,Harrowgate Park,Gates Park,Harrowgate Park,3455 KENSINGTON AVE,19134,Tioga & Kensington, 4.91 ,2,1,24
+5,5B,McVeigh Area,Marian Winfield Hissey Recreation Center,Marian Winfield Hissey Recreation Center,Hissey Playground,Hissey,424 E INDIANA AVE,19134,"400-32 E INDIANA AVE, Indiana & C", 1.44 ,3,7,24
+5,5B,McVeigh Area,McPherson Square,McPherson Square,,McPherson Square,601 E INDIANA AVE,19134,Kensington & Indiana, 6.39 ,3,7,24
+5,5B,McVeigh Area,Merritt Square,Merritt Square,,Merritt Square Park,1321 STEINBER ST,19124,Steinber & Carey, 0.56 ,3,7,24
+5,5B,McVeigh Area,Ramblers Recreation Center,Ramblers Recreation Center,"Ramblers, Harrowgate, Ramblers PAL Center",Ramblers,851 E TIOGA ST,19134,801-41 E ATLANTIC ST, 3.17 ,3,7,24
+5,5B,McVeigh Area,Robert T. Heitzman Recreation Center,Robert T. Heitzman Recreation Center,"Heitzman, Heitzman Playground",Heitzman,2136 CASTOR AVE,19134,"2136 CASTOR AVE, Castor & Amber", 2.91 ,2,1,24
+5,5B,McVeigh Area,Scanlon Recreation Center,Scanlon Recreation Center,"Scanlon, Webster Playground, Scanlon Ice Rink",Scanlon,1099 E TIOGA ST,19134,"1099 E TIOGA ST, Tioga & J", 6.14 ,3,7,24
+5,5B,McVeigh Area,Sergeant John J. McVeigh Recreation Center,Sergeant John J. McVeigh Recreation Center,McKinley Playground,McVeigh,3390 D ST,19134,400-64 E ONTARIO ST, 6.32 ,3,7,25
+5,5C,Cohocksink/Shissler Area,Black-Coyle-McBride Playground,Black-Coyle-McBride Playground,Pop's Playground,Black-Coyle-McBride,2137 E HAZZARD ST,19125,2150-72 E HUNTINGDON ST, 1.07 ,2,1,26
+5,5C,Cohocksink/Shissler Area,Campbell Square,Campbell Square,Allegheny Square,Campbell Square,2525 E ALLEGHENY AVE,19134,Allegheny & Belgrade, 2.61 ,2,6,24
+5,5C,Cohocksink/Shissler Area,Cohocksink Recreation Center,Cohocksink Recreation Center,Cohocksink,Cohocksink,2901 CEDAR ST,19134,"2889 CEDAR ST, Cedar & Cambria", 5.12 ,2,1,24
+5,5C,Cohocksink/Shissler Area,Dave Dougherty Field,Dave Dougherty Field,Hetzell Playground,Dave Dougherty Field,1301 E COLUMBIA AVE,19125,Thompson St and Columbia Ave, 2.46 ,2,5,26
+5,5C,Cohocksink/Shissler Area,Fishtown Recreation Center,Fishtown Recreation Center,"Fishtown, Lederer Recreation Center",Fishtown,1222 E MONTGOMERY AVE,19125,1202-32 E MONTGOMERY AVE, 1.42 ,2,5,26
+5,5C,Cohocksink/Shissler Area,Frank Glavin Playground,Frank Glavin Playground,"Glavin, Glavin Playground",Glavin,2612 E WESTMORELAND ST,19134,"3267-81 ALMOND ST, 2600 E WESTMORELAND ST; Westmoreland & Almond", 0.63 ,2,6,24
+5,5C,Cohocksink/Shissler Area,Frederick Cione Playground,Frederick Cione Playground,Aramingo Sqaure,Cione,2600 ARAMINGO AVE,19125,"2600 EAST ARAMINGO AVE, Aramingo & Lehigh", 4.75 ,2,1,26
+5,5C,Cohocksink/Shissler Area,Hagert Street Playground,Hagert Street Playground,Hagert Playground,Hagert,2034 E HAGERT ST,19125,"2024-40 E HAGERT ST, Hagert & Coral", 0.49 ,2,1,26
+5,5C,Cohocksink/Shissler Area,Konrad Square,Konrad Square,,Konrad Square,2200 E DAUPHIN ST,19125,"2200-26 E DAUPHIN ST, Tulip & Dauphin", 1.02 ,2,1,26
+5,5C,Cohocksink/Shissler Area,Lederer Pool,Lederer Pool,Fishtown & Lederer Pool,Lederer Pool,618 MOYER ST,19125,"1219-25 E MONTGOMERY AVE, Montgomery & Moyer", 0.29 ,2,5,26
+5,5C,Cohocksink/Shissler Area,Palmer Park,Palmer Park,,Palmer Park,1701 FRANKFORD AVE,19125,"1701-21 FRANKFORD AVE, Frankford & Palmer", 0.82 ,2,5,26
+5,5C,Cohocksink/Shissler Area,Penn Treaty Park,Penn Treaty Park,,Penn Treaty Park,1299 BEACH ST,19125,"1201-1301 BEACH ST, Beach & Columbia", 8.16 ,2,"1, 5",26
+5,5C,Cohocksink/Shissler Area,Powers Park,Powers Park,,Powers Park,2987 ALMOND ST,19134,Ann & Almond, 0.90 ,2,1,24
+5,5C,Cohocksink/Shissler Area,Pulaski Park,Pulaski Park,,Pulaski Park,3001 E ALLEGHENY AVE,19134,, 1.55 ,2,"1, 6",24
+5,5C,Cohocksink/Shissler Area,Rev. M. Monkiewicz Recreation Center,Rev. M. Monkiewicz Recreation Center,"Monkiewicz, Monkiewicz Playground",Monkiewicz,3201 RICHMOND ST,19134,"3201 RICHMOND ST, Richmond & Allegheny", 9.56 ,2,6,24
+5,5C,Cohocksink/Shissler Area,Samuel Recreation Center,Samuel Recreation Center,"Samuel, Fox Square",Samuel,3539 GAUL ST,19134,"3539 GAUL ST, 2501 E TIOGA ST; Tioga & Gaul", 2.43 ,2,1,24
+5,5C,Cohocksink/Shissler Area,Shissler Recreation Center,Shissler Recreation Center,"Shissler, Daniel Shissler Recreation Center",Shissler,1826 BLAIR ST,19125,"1800-56 BLAIR ST, 1800 BLAIR ST; Blair & Berks", 3.90 ,2,7,26
+5,5C,Cohocksink/Shissler Area,Thomas P. Stokley Recreation Center,Thomas P. Stokley Recreation Center,Stokley,Stokley,3000 EDGEMONT ST,19134,"3000 EDGEMONT ST, Edgemont & Indiana", 0.84 ,2,1,24
+5,5C,Cohocksink/Shissler Area,Trenton & Auburn Playground,Trenton & Auburn Playground,Auburn & Trenton Playground,Trenton & Auburn,2222 E AUBURN ST,19134,2200 E AUBURN, 0.81 ,2,1,24
+5,5C,Cohocksink/Shissler Area,Webb Street Play Lot,Webb Street Play Lot,Sergeant Tot Lot,Webb St Play Lot,2544 WEBB ST,19125,"2536-38 WEBB ST, Webb & Thompson", 0.10 ,2,1,26
+6,6A,CB Moore Area,20th & Tioga Field,20th & Tioga Field,,20th & Tioga Field,2001 W TIOGA ST,19140,, 1.20 ,4,8,39
+6,6A,CB Moore Area,22nd & Ontario Playground,22nd & Ontario Playground,,22nd & Ontario,3400 N 22ND ST,19140,3400-02 N 22ND ST, 0.15 ,4,8,39
+6,6A,CB Moore Area,29th & Chalmers Park,29th & Chalmers Park,,29th & Chalmers,2900 N 29TH ST,19132,3001 W LEHIGH AVE, 15.03 ,6,4,39
+6,6A,CB Moore Area,Cecil B. Moore Recreation Center,Cecil B. Moore Recreation Center,C.B. Moore,C.B. Moore,2563 N 22ND ST,19132,"2020-50 W LEHIGH AVE, 2551 N 22ND ST, 20th & Lehigh", 2.14 ,6,5,22
+6,6A,CB Moore Area,Heritage Park Playground,Heritage Park Playground,,Heritage Park,1533 W CLEARFIELD ST,19132,1517-33 W CLEARFIELD ST, 0.67 ,4,8,39
+6,6A,CB Moore Area,Jerome Brown/Kenderton Playground,Jerome Brown/Kenderton Playground,"Jerome Brown, Kenderton",Jerome Brown/Kenderton,1987 W ONTARIO ST,19140,"1927-41 W ONTARIO ST, 1919-41 W ONTARIO ST", 1.38 ,4,8,39
+6,6A,CB Moore Area,Reyburn Park,Reyburn Park,,Reyburn Park,1950 W LEHIGH AVE,19132,21st & Lehigh, 7.25 ,6,5,22
+6,6A,CB Moore Area,Shuler Playground,Shuler Playground,"James Allen Shuler Playground,Whittier Playground",Shuler,2901 N 29TH ST,19132,"3000 N 27TH ST, 27th & Clearfield", 2.99 ,6,4,39
+6,6A,CB Moore Area,Vincent G. Panati Playground,Vincent G. Panati Playground,"Panati, Panati Playground",Panati,3115 N 22ND ST,19132,"3101-27 N 22ND ST, 22nd & Clearfield", 0.70 ,6,8,39
+6,6B,Rivera Area,11th & Venango Play Lot,11th & Venango Play Lot,,11th & Venango Play Lot,3600 N 11TH ST,19140,, 0.98 ,3,5,25
+6,6B,Rivera Area,12th & Cambria Playground,12th & Cambria Playground,12th & Cambria,12th & Cambria,2900 N 12TH ST,19133,"1149 W CAMBRIA ST, 2900-30 N 11TH ST", 2.34 ,3,5,25
+6,6B,Rivera Area,Butler and Percy Play Lot,Butler and Percy Play Lot,,Butler & Percy Play Lot,919 W BUTLER ST,19140,913-921 BUTLER ST, 0.14 ,3,5,25
+6,6B,Rivera Area,Daly Park,Daly Park,,Daly Park,1240 W SEDGELY AVE,19133,12th & Sedgley, 0.08 ,3,5,25
+6,6B,Rivera Area,Gerald J. Maguire Playground,Gerald J. Maguire Playground,Maguire Playground,Maguire,155 W LEHIGH AVE,19133,"155-59 W LEHIGH AVE, Mascher & Lehigh", 0.56 ,3,7,25
+6,6B,Rivera Area,Hope Park,Hope Park,,Hope Park,201 E INDIANA AVE,19134,201-19 E INDIANA AVE, 1.23 ,3,7,24
+6,6B,Rivera Area,Jose Manuel Collazo Park,Jose Manuel Collazo Park,Collazo Playground,Collazo,3261 MASCHER ST,19140,130-60 W WESTMORELAND ST, 1.54 ,3,7,25
+6,6B,Rivera Area,Ramonita Negron Rivera Rec & Comm Center,Ramonita Negron Rivera Rec & Comm Center,"Rivera, Mann Recreation Center",Rivera,3201 N 05TH ST,19140,"3201 N 05TH ST, 5th & Allegheny", 5.45 ,3,7,25
+6,6B,Rivera Area,Reed Playground,Reed Playground,,Reed,213 W ONTARIO ST,19140,Ontario & Decatur, 0.40 ,3,7,25
+6,6B,Rivera Area,Schmidt Playground,Schmidt Playground,Schmidt,Schmidt,113 W ONTARIO ST,19140,"113-23 W ONTARIO ST, Howard & Ontario", 0.37 ,3,7,25
+6,6C,MLK Area,3rd & Norris Playground,3rd & Norris Playground,,3rd & Norris,273 W NORRIS ST,19122,253-73 W NORRIS ST, 0.23 ,6,7,26
+6,6C,MLK Area,8th & Diamond Playground,8th & Diamond Playground,8th & Diamond,8th & Diamond,2062 N 08TH ST,19122,"2032-62 N 08TH ST, 800 DIAMOND ST", 0.72 ,6,5,26
+6,6C,MLK Area,Danny Boyle Community Park,Danny Boyle Community Park,Vandergift,Danny Boyle Community Park,2401 GERMANTOWN AVE,19133,"2401-13 GERMANTOWN AVE, 8th & York", 0.35 ,6,5,26
+6,6C,MLK Area,Duckrey School Playground,Duckrey School Playground,Duckrey Playground,Duckrey,2155 N 15TH ST,19121,1501-43 DIAMOND ST, 1.02 ,6,5,22
+6,6C,MLK Area,Eric N. Casiano Field,Eric N. Casiano Field,"Dauphin & Oriana Fields,4th & York,4th & Dauphin",Casiano Field,2301 N 04TH ST,19133,4th St and York St, 1.87 ,6,7,26
+6,6C,MLK Area,"Eric W. ""Hank"" Gathers, Jr. Center","Eric W. ""Hank"" Gathers, Jr. Center","Gathers, Gathers Recreation Center, Moylan",Gathers,2501 W DIAMOND ST,19121,"2501-59 DIAMOND ST, 2501-19 W DIAMOND ST, 25th & Diamond", 3.69 ,6,5,22
+6,6C,MLK Area,Fairhill Square,Fairhill Square,,Fairhill Square,2649 N LAWRENCE ST,19133,2601-61 N LAWRENCE ST, 2.86 ,6,7,26
+6,6C,MLK Area,Fletcher B. Amos Playground,Fletcher B. Amos Playground,"Amos, Amos Playground",Amos,1843 N 16TH ST,19121,1817-59 N 16TH ST, 1.02 ,6,5,22
+6,6C,MLK Area,"Frank S. Nelson, Jr. Memorial Recreation Center","Frank S. Nelson, Jr. Memorial Recreation Center","Nelson, Nelson Playground",Nelson,2528 N 03RD ST,19133,"2500-34 N 03RD ST, 3rd & Cumberland", 0.72 ,6,7,26
+6,6C,MLK Area,Martin Luther King Recreation Center,Martin Luther King Recreation Center,M.L. King,King Recreation,2101 W CECIL B MOORE AVE,19121,2101-35 CECIL B MOORE AVE, 5.58 ,6,5,22
+6,6C,MLK Area,Montgomery & Croskey Playground,Montgomery & Croskey Playground,,Montgomery & Croskey,2235 W MONTGOMERY AVE,19121,2225-37 W MONTGOMERY AVE, 0.20 ,6,5,22
+6,6C,MLK Area,Norris Square,Norris Square,,Norris Square,2100 N HOWARD ST,19122,"2100-60 N HOWARD ST, Diamond & Hancock", 6.40 ,6,7,26
+6,6C,MLK Area,Penrose Playground,Penrose Playground,Penrose,Penrose,1101 W SUSQUEHANNA AVE,19133,"1101 W SUSQUEHANNA AVE, 12th & Susquehanna", 1.96 ,6,5,22
+6,6C,MLK Area,Rainbow De Colores Playground,Rainbow De Colores Playground,"Dauphin Street Play Lot, 5th Street",Rainbow De Colores,2326 N 05TH ST,19133,"2324-30 N 05TH ST, 2300 N 5th St", 0.27 ,6,7,26
+6,6C,MLK Area,Stephen E. Fotteral Square,Stephen E. Fotteral Square,Fotteral Square,Fotteral Square,2400 N 11TH ST,19133,11th & York, 5.07 ,6,5,22
+6,6C,MLK Area,Veterans Playground,Veterans Playground,Veterans Memorial Playground,Veterans,800 W CUMBERLAND ST,19133,9th & Cumberland, 0.66 ,6,5,26
+6,6C,MLK Area,Waterloo Playground,Waterloo Playground,Waterloo,Waterloo,2501 WATERLOO ST,19133,"2502-12 N HOWARD ST, Waterloo & Cumberland", 1.04 ,6,7,26
+6,6C,MLK Area,Winchester Playground,Winchester Playground,,Winchester,2326 N 15TH ST,19132,2330 N 15th St, 0.61 ,6,5,22
+6,6C,MLK Area,York Street Mini Park,York Street Mini Park,,York St Mini Park,2400 W YORK ST,19132,, 0.04 ,6,5,22
+7,7A,Mander Area,33rd & Oxford Driving Range,East Fairmount Park,33rd St Driving Range,33rd & Oxford Driving Range,3300 RESERVOIR DR,19121,, 9.40 ,5,4,22
+7,7A,Mander Area,Belmont & Edgley Cricket Fields,West Fairmount Park,"Cricket/Archery,Edgley Ultimate,Frisbee & Archery",Belmont & Edgely Cricket Fields,4105 EDGLEY AVE,19131,"4105 EDGLEY AVE, 4001 EDGELEY DR", 9.58 ,5,4,16
+7,7A,Mander Area,Belmont Grove,West Fairmount Park,Belmont Grove Picnic Area,Belmont Grove,2076 BELMONT MANSION DR,19131,Belmont & Chamounix, 11.76 ,5,4,16
+7,7A,Mander Area,Belmont Plateau,West Fairmount Park,,Belmont Plateau,1800 BELMONT MANSION DR,19131,Belmont and Montgomery, 46.63 ,5,4,16
+7,7A,Mander Area,Chamounix Fields North,West Fairmount Park,Chamounix North Softball Field,,3299 CHAMOUNIX DR,19131,, 4.22 ,5,4,16
+7,7A,Mander Area,Chamounix Fields South,West Fairmount Park,,,3701 CHAMOUNIX DR,19131,, 4.34 ,5,4,16
+7,7A,Mander Area,Chamounix Tennis Courts,West Fairmount Park,,Chamounix Tennis,3601 CHAMOUNIX DR,19131,, 4.13 ,5,4,16
+7,7A,Mander Area,Dairy Fields,East Fairmount Park,,Dairy Fields,3700 MOUNT PLEASANT DR,19121,, 14.79 ,5,4,22
+7,7A,Mander Area,Dell Music Center,East Fairmount Park,"Robin Hood,Georgie Woods",Dell Music Center,3101 STRAWBERRY MANSION DR,19132,"2499 STRAWBERRY MN BR DR, 2400 STRAWBERRY MN DR, Ridge & Huntingdon", 8.54 ,5,4,22
+7,7A,Mander Area,Discovery Center at East Fairmount Reservoir,East Fairmount Park,,Discovery Center,3369 RESERVOIR DR,19121,, 50.39 ,5,4,22
+7,7A,Mander Area,East Fairmount Park,East Fairmount Park,,East Fairmount Park,,19121,, 659.24 ,5,"4, 5","5, 9, 22, 39"
+7,7A,Mander Area,Edgley Fields,East Fairmount Park,,Edgely Fields,2100 RESERVOIR DR,19121,, 28.20 ,5,4,22
+7,7A,Mander Area,Ford Road North Playground,West Fairmount Park,,Ford Rd Playground,3905 FORD RD,19131,, 1.54 ,5,4,"16, 19"
+7,7A,Mander Area,Gustine Recreation Center,Gustine Recreation Center,"Gustine, Gustine Lake Rec Center",Gustine,4842 RIDGE AVE,19129,4868 RIDGE AVE, 12.12 ,4,4,39
+7,7A,Mander Area,Inn Yard Park,East Fairmount Park,,Inn Yard Park,4250 RIDGE AVE,19129,4208-52 RIDGE AVE, 1.45 ,5,4,39
+7,7A,Mander Area,Joseph E. Mander Playground,East Fairmount Park,"Mander, Mander Playground",Mander,2102 N 33RD ST,19132,"2140 N 33RD ST, 33rd & Diamond", 22.26 ,5,4,22
+7,7A,Mander Area,Strawberry Mansion Playground,Strawberry Mansion Playground,Ridge Ave Neighborhood Park,Strawberry Mansion Playground,3369 RIDGE AVE,19132,3369-3403 Ridge Ave, 0.38 ,6,4,22
+7,7A,Mander Area,Woodside Park,Woodside Park,"Wynnefield Heights Playground, Conshohocken Windemere; Conshohocken Windermere",Woodside Park,3918 CONSHOHOCKEN AVE,19131,"3910-18 CONSHOHOCKEN AVE, 3910 CONSHOHOCKEN AVE", 2.62 ,8,4,19
+7,7B,Miles Mack Area,33rd & Wallace Playground,33rd & Wallace Playground,,33rd & Wallace,3302 WALLACE ST,19104,"3300-26 WALLACE ST, Wallace & Mount Vernon", 0.95 ,8,3,16
+7,7B,Miles Mack Area,37th & Mt. Vernon Playground,37th & Mt. Vernon Playground,,37th & Mt Vernon,614 N 37TH ST,19104,"608-16 N 37TH ST, 600 N 37TH ST", 0.48 ,8,3,16
+7,7B,Miles Mack Area,Belmont School Playground,Belmont School Playground,,Belmont School,4075 ASPEN ST,19104,4030-60 BROWN ST, 0.88 ,8,3,16
+7,7B,Miles Mack Area,Carousel House Recreation Center,West Fairmount Park,Carousel House,Carousel House,1701 BELMONT AVE,19131,1701 BELMONT AVE, 5.24 ,5,4,16
+7,7B,Miles Mack Area,Clayborne & Lewis Playground,Clayborne & Lewis Playground,,Clayborne & Lewis,1101 N 38TH ST,19104,38th & Poplar, 0.59 ,8,3,16
+7,7B,Miles Mack Area,James Lee Wright Recreation Center,James Lee Wright Recreation Center,"Wright, Mantua Recreation Center",Wright,3340 HAVERFORD AVE,19104,"3320-50 HAVERFORD AVE, 34th & Haverford", 0.55 ,8,3,16
+7,7B,Miles Mack Area,Kelly Pool,West Fairmount Park,J.B. Kelly Pool,Kelly Pool,4200 LANSDOWNE DR,19131,42nd & Parkside, 1.33 ,5,4,16
+7,7B,Miles Mack Area,Mantua Community Garden,Mantua Community Garden,,Mantua Garden,520 N 34TH ST,19104,, 0.15 ,8,3,16
+7,7B,Miles Mack Area,Memorial Area,West Fairmount Park,,Memorial Area,4200 S CONCOURSE DR,19131,Avenue of the Republic, 54.77 ,5,4,16
+7,7B,Miles Mack Area,Miles Mack Playground,Miles Mack Playground,"Miles Mack, McAlpine, Mack, McAlpin",Miles Mack,736 N 36TH ST,19104,"732-66 N 36TH ST, 36th & Aspen", 2.53 ,8,3,16
+7,7B,Miles Mack Area,Norman (Butch) Ellis Playground,Norman (Butch) Ellis Playground,"39th and Olive Playground, Ellis Playground",Ellis Playground,714 N 39TH ST,19104,700-14 N 39TH ST, 1.48 ,8,3,16
+7,7B,Miles Mack Area,Ohio House Fields,West Fairmount Park,,Ohio House Fields,4700 STATES DR,19131,, 4.68 ,5,4,19
+7,7B,Miles Mack Area,Parkside Evans Recreation Center,West Fairmount Park,Parkside-Evans Playground,Parkside Evans,5301 PARKSIDE AVE,19131,5300 PARKSIDE AVE, 3.93 ,5,4,19
+7,7B,Miles Mack Area,Philadelphia Stars Negro League Memorial Park,Philadelphia Stars Negro League Memorial Park,,Phila Stars Negro League Memorial Park,1538 BELMONTE AVE,19104,, 0.25 ,8,4,19
+7,7C,Athletic Area,26th & Pennsylvania Playground,East Fairmount Park,2600 Pennsylvania Ave Playground,26th & Pennsylvania,2700 PENNSYLVANIA AVE,19130,2601 PENNSYLVANIA AVE, 0.07 ,5,5,9
+7,7C,Athletic Area,30th & Jefferson Playground,30th & Jefferson Playground,,30th & Jefferson,3007 JEFFERSON ST,19121,3001-15 JEFFERSON ST, 1.20 ,6,5,22
+7,7C,Athletic Area,Athletic Recreation Center,Athletic Recreation Center,"Athletic, 26th & Master",Athletic,2626 W JEFFERSON ST,19121,1401-55 N 27TH ST, 4.69 ,6,5,22
+7,7C,Athletic Area,Brewerytown Garden,Brewerytown Garden,Brewerytown Community Garden,Brewerytown Garden,1341 N 27TH ST,19121,"2634-44 MASTER ST, 1339 N 27TH ST, 1331 N 27TH St", 0.48 ,6,5,22
+7,7C,Athletic Area,Bulldog Park,Bulldog Park,Reliance Triangle,Bulldog Park,2501 PENNSYLVANIA AVE,19130,, 0.34 ,6,5,9
+7,7C,Athletic Area,Francisville Recreation Center,Francisville Recreation Center,"Francisville, Francisville Playground",Francisville,1822 WYLIE ST,19130,"1737-39 FRANCIS ST, Francis & Stanley", 3.68 ,6,5,9
+7,7C,Athletic Area,Ingersoll Park,Ingersoll Park,16th & Master Park,Ingersoll Park,1300 N 16TH ST,19121,16th & Master, 0.77 ,6,5,22
+7,7C,Athletic Area,Lloyd Hall,East Fairmount Park,"Lloyd Hall, Lloyd Hall Recreation Center",Lloyd Hall,800 KELLY DR,19130,"1 JOHN B KELLY DR, 790 WATER WORKS DR", 0.43 ,5,5,9
+7,7C,Athletic Area,Logan Square,Benjamin Franklin Parkway,,Logan Square,200 N 18TH ST,19103,20th & Parkway, 9.21 ,5,5,9
+7,7C,Athletic Area,Matthias Baldwin Park,Matthias Baldwin Park,Franklintown Park,Matthias Baldwin Park,429 N 19TH ST,19130,423-33 N 19TH ST, 2.15 ,5,5,9
+7,7C,Athletic Area,Paines Park,Schuylkill Banks,,Paines Park,400 MARTIN LUTHER KING DRIVE,19103,, 2.89 ,5,5,9
+7,7C,Athletic Area,Park Towne,Benjamin Franklin Parkway,,,2250 BENJAMIN FRANKLIN PKWY,19130,, 3.69 ,5,5,9
+7,7C,Athletic Area,River Field,Benjamin Franklin Parkway,,River Field,302 N 24TH ST,19103,, 6.86 ,5,5,9
+7,7C,Athletic Area,Roberto Clemente Playground,Roberto Clemente Playground,"Clemente, Clemente Playground",Clemente,1800 WALLACE ST,19130,"1800 WALLACE ST, 18th & Wallace", 2.54 ,6,5,9
+7,7C,Athletic Area,Shakespeare Park,Benjamin Franklin Parkway,,Shakespeare,1948 VINE ST,19103,200 N 18TH ST, 1.18 ,5,5,9
+7,7C,Athletic Area,Sister Cities Park,Benjamin Franklin Parkway,,Sister Cities Park,200 N 18TH ST,19103,, 1.73 ,5,5,9
+7,7C,Athletic Area,Spring Gardens,Spring Gardens,,Spring Gardens,1817 WALLACE ST,19130,, 1.96 ,6,5,9
+7,7C,Athletic Area,Stiles Street Play Lot,Stiles Street Play Lot,,Stiles St Play Lot,1608 W STILES ST,19121,, 0.02 ,6,5,22
+7,7C,Athletic Area,Vine Street Park,Vine Street Park,,Vine St Park,VINE STREET EXP,19107,, 11.87 ,5,"1, 5","6, 9"
+7,7C,Athletic Area,Von Colln Field,Benjamin Franklin Parkway,,Von Colln Field,2250 PENNSYLVANIA AVE,19130,"2200-2268 PENNSYLVANIA AVE, 23rd & Pennsylvania", 6.53 ,5,5,9
+7,7D,M Anderson Area,22nd & Catharine Park,22nd & Catharine Park,,22nd & Catharine Park,2200 CATHARINE ST,19146,, 0.05 ,7,2,17
+7,7D,M Anderson Area,Coxe Park,Coxe Park,,Coxe Park,2132 CHERRY ST,19103,"2132-34 CHERRY ST, Beechwood & Cherry", 0.11 ,5,5,9
+7,7D,M Anderson Area,Fitler Square,Fitler Square,,Fitler Square,2301 PINE ST,19103,"2301-23 PINE ST, 23rd & Pine", 0.72 ,5,2,9
+7,7D,M Anderson Area,James O'Connor Memorial Pool,James O'Connor Memorial Pool,O'Connor Pool,O'Connor Pool,577 S TANEY ST,19146,"2601-13 SOUTH ST, 26th & South", 0.37 ,7,2,17
+7,7D,M Anderson Area,Julian Abele Park,Julian Abele Park,,Julian Abele Park,923 S 22ND ST,19146,917 S 22ND ST, 0.29 ,7,2,17
+7,7D,M Anderson Area,Marian Anderson Recreation Center,Marian Anderson Recreation Center,,Marian Anderson,776 S 17TH ST,19146,"740 S 17TH ST, 740-44 S 17TH ST", 3.36 ,7,2,17
+7,7D,M Anderson Area,Rittenhouse Square,Rittenhouse Square,,Rittenhouse Square,1800 WALNUT ST,19103,18th & Walnut, 7.31 ,5,5,9
+7,7D,M Anderson Area,Schuylkill River Park,Schuylkill River Park,,Schuylkill River Park,400 S TANEY ST,19103,"400-16 S TANEY ST, Pine & Taney", 7.33 ,"5, 7",2,9
+7,7D,M Anderson Area,William H. (Billy) Markward Memorial Playground,Schuylkill River Park,"Markward, Markward Playground",Markward,400 S TANEY ST,19103,"400-16 S TANEY ST, Pine & Taney", 3.38 ,"5, 7",2,9
+8,8A,Shepard Area,Carroll Park,Carroll Park,,Carroll Park,5801 W GIRARD AVE,19131,58th & Girard, 5.64 ,8,4,19
+8,8A,Shepard Area,Charles A. Baker Playground,Charles A. Baker Playground,"Baker, Baker Playground",Baker,5433 LANSDOWNE AVE,19131,"5431-43 LANSDOWNE AVE, Conestoga & Lansdowne", 0.76 ,8,4,19
+8,8A,Shepard Area,Conestoga Playground,Conestoga Playground,Conestoga Community Playground,Conestoga,5300 MEDIA ST,19131,"5200-300 MEDIA ST, 5200 MEDIA ST, 1452 N 53RD ST", 2.46 ,8,3,19
+8,8A,Shepard Area,Ernest L. Tustin Recreation Center,Ernest L. Tustin Recreation Center,Tustin Playground,Tustin,1951 N 60TH ST,19151,"5901-29 W COLUMBIA AVE, 59th & Lancaster", 4.32 ,8,4,19
+8,8A,Shepard Area,"Haddington-Marshall L. Shepard, Sr. Rec Center","Haddington-Marshall L. Shepard, Sr. Rec Center",Shepard Recreation Center,Shepard,5700 HAVERFORD AVE,19131,"5700 HAVERFORD AVE, 57th & Haverford", 8.21 ,8,4,19
+8,8A,Shepard Area,John C. Anderson Cultural Center,John C. Anderson Cultural Center,John Anderson Playground,John Anderson,5323 OVERBROOK AVE,19131,"5235 OVERBROOK AVE, 5235 OVERBROOK AVE", 0.13 ,8,4,19
+8,8A,Shepard Area,Southern Grounds HQ,Southern Grounds HQ,,Southern Grounds HQ,5352 PARRISH ST,19139,5331-41 HAVERFORD AVE, 0.29 ,8,3,19
+8,8A,Shepard Area,Triangle Park,Triangle Park,,Triangle Park,5419 UPLAND WAY,19131,5425R-65 UPLAND WAY, 0.62 ,8,4,19
+8,8B,Cobbs Creek Area,61st and Cobbs Creek,Cobbs Creek Park,,61st and Cobbs Creek,61ST & COBBS CREEK,19143,, 6.69 ,8,3,18
+8,8B,Cobbs Creek Area,Albert W. Christy Recreation Center,Albert W. Christy Recreation Center,Sherwood Recreation Centre,Christy,728 S 55TH ST,19143,728 S 55TH ST, 3.15 ,8,3,18
+8,8B,Cobbs Creek Area,Ann P. Nichols Park,Ann P. Nichols Park,Nichols Park,Nichols Park,5430 RACE ST,19139,"5430-46 RACE ST, Race & Conestoga", 0.89 ,8,4,19
+8,8B,Cobbs Creek Area,Carroll Park Cobbs Creek,Cobbs Creek Park,,Carroll Park - Cobbs Creek,7800 CITY AVE,19151,, 32.15 ,8,N/A,N/A
+8,8B,Cobbs Creek Area,Charles A. Papa Playground,Morris Park,"Papa, Papa Playground",Papa,6839 LANSDOWNE AVE,19151,"6839 LANSDOWNE AVE, 68th St & Lansdowne Ave", 10.03 ,8,4,19
+8,8B,Cobbs Creek Area,Cobbs Creek Environmental Education Center,Cobbs Creek Park,Cobbs Creek EEC,Cobbs Creek Environmental Center,700 COBBS CREEK PKY,19143,700 COBBS CREEK PKWY, 2.22 ,8,3,18
+8,8B,Cobbs Creek Area,Cobbs Creek Recreation Center and Pool,Cobbs Creek Park,,Cobbs Creek Rec Center and Pool,250 S 63RD ST,19139,63rd & Spruce, 6.93 ,8,3,18
+8,8B,Cobbs Creek Area,Horton Street Play Lot,Horton Street Play Lot,,Horton St Play Lot,253 HORTON ST,19139,225-35 N HORTON ST, 0.12 ,8,4,19
+8,8B,Cobbs Creek Area,Howard Sayre Morris Recreation Center,Howard Sayre Morris Recreation Center,Sayre-Morris,Sayre-Morris,5825 SPRUCE ST,19139,"5835 SPRUCE, 59th & Spruce", 1.61 ,8,3,18
+8,8B,Cobbs Creek Area,Laura Sims Skate House,Cobbs Creek Park,"Laura Sims Rink, Cobbs Creek Ice Rink",Laura Sims,200 S 63RD ST,19139,"200 S 63RD ST, 200 COBBS CREEK PARKWAY", 4.20 ,8,3,18
+8,8B,Cobbs Creek Area,Morris Park,Morris Park,,Morris Park,6600 SHERWOOD RD,19151,68th St & Lansdowne Ave, 127.75 ,8,4,19
+8,8B,Cobbs Creek Area,Rose Playground,Cobbs Creek Park,"Rose, Samuel Rose Playground",Rose,7401 LANSDOWNE AVE,19151,"7500 LANSDOWNE AVE, 75th & Lansdowne", 7.36 ,8,4,19
+8,8B,Cobbs Creek Area,Rufus O. Williams Memorial Playground,Cobbs Creek Park,Cobbs Creek Playground,Rufus Williams Playground,700 COBBS CREEK PKY,19143,"63rd St and Catherine St, 63rd St and Christian St", 4.22 ,8,3,18
+8,8B,Cobbs Creek Area,Sherwood Park,Sherwood Park,,Sherwood Park,5601 BALTIMORE AVE,19143,57th & Baltimore, 1.65 ,8,3,18
+8,8B,Cobbs Creek Area,William T. Granahan Playground,Cobbs Creek Park,"Granahan, Granahan Playground",Granahan,6532 CALLOWHILL ST,19151,"338-50 N 65TH ST, 65th & Callowhill", 5.31 ,8,4,19
+8,8C,West Mill Creek Area,45th & Sansom Tot Lot,45th & Sansom Tot Lot,Chicken Park,45th & Sansom Tot Lot,4501 SANSOM ST,19139,122-24 S 45TH ST, 0.13 ,8,3,18
+8,8C,West Mill Creek Area,Ben Barkan Park,Ben Barkan Park,Barkan Park,Ben Barkan Park,4998 SPRUCE ST,19143,"4936-58 SPRUCE ST, 50th & Spruce", 0.78 ,8,3,18
+8,8C,West Mill Creek Area,Cedar Park,Cedar Park,,Cedar Park,4917 BALTIMORE AVE,19143,"4917-53 BALTIMORE AVE, 50th & Baltimore", 0.84 ,8,3,18
+8,8C,West Mill Creek Area,Garden Court,Garden Court,Garden City Tennis Courts Park,Garden Court,4710 SPRUCE ST,19143,"4700-10 SPRUCE ST, 47th & Spruce", 0.59 ,8,3,18
+8,8C,West Mill Creek Area,John A. Lee Recreation Center,John A. Lee Recreation Center,Lee Cultural Center,Lee Rec Center,4372 HAVERFORD AVE,19104,"4310 HAVERFORD AVE, 4328 HAVERFORD AVE, 44th & Haverford", 9.74 ,8,3,16
+8,8C,West Mill Creek Area,Lucien Blackwell Park,Lucien Blackwell Park,Lucien E. Blackwell Park; Mill Creek Park,Mill Creek Park (Lucien Blackwell),4615 FAIRMOUNT AVE,19139,, 2.06 ,8,3,16
+8,8C,West Mill Creek Area,Malcolm X Memorial Park,Malcolm X Memorial Park,Black Oak Park,Malcolm X Memorial Park,5100 PINE ST,19143,51st & Pine, 6.30 ,8,3,18
+8,8C,West Mill Creek Area,Mill Creek Playground and Recreation Center,Mill Creek Playground and Recreation Center,"Mill Creek, Mill Creek Playground",Mill Creek,4728 BROWN ST,19139,"743-81 N 48TH ST, 47th & Aspen", 2.63 ,8,3,16
+8,8C,West Mill Creek Area,Sister Clara Muhammad Square,Sister Clara Muhammad Square,Durham Square,Muhammad Square,1035 N 48TH ST,19131,"4700-30 LANCASTER AVE, 47th & Lancaster", 3.60 ,8,3,16
+8,8C,West Mill Creek Area,Spruce Play Lot,Spruce Play Lot,,Spruce Play Lot,4851 SPRUCE ST,19139,4801 Spruce Street, 3.97 ,8,3,18
+8,8C,West Mill Creek Area,West Mill Creek Playground,West Mill Creek Playground,West Mill Creek,West Mill Creek,5100 WESTMINSTER AVE,19139,51st & Reno, 5.24 ,8,3,16
+8,8D,Kingsessing Area,47th & Grays Ferry Park,47th & Grays Ferry Park,,47th & Grays Ferry Park,4700 PASCHALL AVE,19143,, 0.18 ,8,3,18
+8,8D,Kingsessing Area,48th & Woodland Playground,48th & Woodland Playground,"48th & Woodland, Comegys Playground",48th & Woodland,4740 WOODLAND AVE,19143,4740 WOODLAND AVE, 4.85 ,8,3,18
+8,8D,Kingsessing Area,Clarence H Clark Park,Clarence H Clark Park,Clark Park,Clark Park,4301 CHESTER AVE,19104,43rd & Woodland, 12.03 ,8,3,18
+8,8D,Kingsessing Area,Francis J. Myers Recreation Center,Francis J. Myers Recreation Center,FJ Myers,Myers,5800 CHESTER AVE,19143,"5800 CHESTER AVE, 58th & Kingsessing", 7.63 ,8,2,12
+8,8D,Kingsessing Area,"John J. McCreesh, Sr. Playground","John J. McCreesh, Sr. Playground","McCreesh, McCreesh Playground",McCreesh,6744 REGENT ST,19142,6744 REGENT ST, 5.30 ,8,2,12
+8,8D,Kingsessing Area,Kingsessing Recreation Center,Kingsessing Recreation Center,Kingsessing,Kingsessing,4901 KINGSESSING AVE,19143,"4901 KINGSESSING AVE, 51st & Chester", 9.15 ,8,3,12
+9,9A,Vare Area,29th & Passyunk Playground,29th & Passyunk Playground,,29th & Passyunk,2827 W PASSYUNK AVE,19145,Newkirk & Passyunk, 0.56 ,7,2,1
+9,9A,Vare Area,"Charles H. Chew, Sr. Playground","Charles H. Chew, Sr. Playground","Chew, Chew Playground",Chew,1800 WASHINGTON AVE,19146,1800 WASHINGTON AVE, 2.80 ,7,2,17
+9,9A,Vare Area,Commodore John Barry Playground,Commodore John Barry Playground,"Barry, Barry Playground",Barry,1800 JOHNSTON ST,19145,"1800 JOHNSTON ST, 18th & Bigler", 4.01 ,7,2,1
+9,9A,Vare Area,Donald P. Finnegan Recreation Center,Donald P. Finnegan Recreation Center,Oakford,Donald Finnegan,1231 S 30TH ST,19146,"1231 S 30TH ST, 30th & Oakford", 2.80 ,7,2,17
+9,9A,Vare Area,Girard Estates Park,Girard Estates Park,Girard Park,Girard Estates Park,2101 SHUNK ST,19145,22nd & Porter, 4.02 ,7,2,1
+9,9A,Vare Area,Gray's Ferry Crescent,Gray's Ferry Crescent,,Gray's Ferry Crescent,3696 WHARTON ST,19146,3501R GRAYS FERRY AVE, 13.06 ,7,2,17
+9,9A,Vare Area,Lanier Park,Lanier Park,Lanier Playground,Lanier,1600 S 29TH ST,19145,, 4.12 ,7,2,17
+9,9A,Vare Area,Ralph Brooks Park,Ralph Brooks Park,Ralph Brooks Tot Lot,Ralph Brooks Park,1601 S 20TH ST,19145,1601-13 S 20TH ST, 0.29 ,7,2,17
+9,9A,Vare Area,Smith Playground,Smith Playground,"Smith ,Wilson Park",Smith,2200 S 24TH ST,19145,"2100 S 24TH ST, 24th & Jackson", 7.59 ,7,2,1
+9,9A,Vare Area,Stinger Square Playground,Stinger Square Playground,,Stinger Square,1400 S 32ND ST,19146,33rd & Dickinson, 3.10 ,7,2,17
+9,9A,Vare Area,Thomas I. Guerin Recreation Center,Thomas I. Guerin Recreation Center,"Guerin, Guerin Recreation Center",Guerin,2201 S 16TH ST,19145,"2201 S 16TH ST, 16th & Jackson", 2.05 ,7,2,1
+9,9A,Vare Area,Vare Recreation Center,Vare Recreation Center,Vare,Vare,2600 MORRIS ST,19145,"2600 MORRIS ST, 26th & Morris", 4.11 ,7,2,17
+9,9A,Vare Area,Wharton Square Playground,Wharton Square Playground,Wharton Square,Wharton Square,1300 S 23RD ST,19146,"2300 WHARTON ST, 23rd & Wharton", 4.29 ,7,2,17
+9,9B,J Finnegan Area,63rd & Lindbergh Park,63rd & Lindbergh Park,Carboni Ball Field,63rd & Lindbergh Park,2800 S 63RD ST,19142,"2800 S 63RD ST, 63rd & Eastwick", 3.12 ,8,3,12
+9,9B,J Finnegan Area,75th & Chelwynde Park,75th & Chelwynde Park,,75th & Chelwynde Park,2604 ISLAND AVE,19153,, 0.81 ,8,2,12
+9,9B,J Finnegan Area,Buist Park,Buist Park,,Buist Park,2528 HOBSON ST,19142,68th & Buist, 1.11 ,8,2,12
+9,9B,J Finnegan Area,Clearview Park,Clearview Park,,Clearview Park,7600 BUIST AVE,19153,77th & Buist, 5.59 ,8,2,12
+9,9B,J Finnegan Area,Eastwick Park,Eastwick Park,,Eastwick Park,7401 LINDBERGH BLV,19153,74th & Lindbergh, 11.31 ,8,2,12
+9,9B,J Finnegan Area,Eastwick Regional Playground,Eastwick Regional Playground,Eastwick Regional,Eastwick Regional Playground,80TH ST & MARS PL,19153,80TH and MARS PL, 23.38 ,8,2,12
+9,9B,J Finnegan Area,Elmwood Park,Elmwood Park,,Elmwood Park,7101 DICKS AVE,19142,71st & Buist, 7.23 ,8,2,12
+9,9B,J Finnegan Area,George Connell Park,George Connell Park,,Connell Park,6401 ELMWOOD AVE,19142,64th & Elmwood, 5.32 ,8,2,12
+9,9B,J Finnegan Area,J. Francis Finnegan Playground,J. Francis Finnegan Playground,"Paschall Playground, J Finnegan",J. Finnegan Playground,6801 GROVERS AVE,19142,"6801 GROVERS AVE, 69th & Grovers", 17.70 ,8,2,12
+9,9B,J Finnegan Area,Pepper School Playground,Pepper School Playground,Pepper,Pepper School,2801 S 84TH ST,19153,8400 LYONS AVE, 10.15 ,8,2,12
+9,9B,J Finnegan Area,Russell DeRitis Playground,Russell DeRitis Playground,DeRitis Playground,DeRitis,5655 GRAYS AVE,19143,57th & Grays Ferry, 1.04 ,8,2,12
+9,9B,J Finnegan Area,William A. Cibotti Recreation Center,William A. Cibotti Recreation Center,"Cibotti, Cibotti Recreation Center",Cibotti,2500 S 77TH ST,19153,"7700 ELMWOOD AVE, 77th & Elmwood", 3.05 ,8,2,12
+9,9C,East Passyunk Area,A. Giuseppe DiSilvestro Playground,A. Giuseppe DiSilvestro Playground,"Disilvestro, DiSilvestro Playground",DiSilvestro,1700 S BROAD ST,19145,"1701 S 15TH ST, Broad & Morris", 1.99 ,7,2,17
+9,9C,East Passyunk Area,Columbus Square,Columbus Square,"Passyunk Square,Columbus/DiProspero",Columbus Square,1200 WHARTON ST,19147,1300 S 12TH ST, 4.11 ,7,1,3
+9,9C,East Passyunk Area,Dr. Nicola Capitolo Playground,Dr. Nicola Capitolo Playground,"Capitolo, Capitolo Playground",Capitolo,900 FEDERAL ST,19147,"900 FEDERAL ST, 10th & Federal", 4.09 ,7,1,3
+9,9C,East Passyunk Area,East Passyunk Community Recreation Center,East Passyunk Community Recreation Center,Tolentine Community Center,East Passyunk Community,1027 MIFFLIN ST,19148,"1025-33 MIFFLIN ST, 1025 MIFFLIN ST", 0.79 ,7,1,3
+9,9C,East Passyunk Area,Emily Community Garden,Emily Community Garden,"Emily, Growing Home Garden, Emily Garden",Emily Garden,742 EMILY ST,19148,732-42 EMILY ST, 0.11 ,7,1,3
+9,9C,East Passyunk Area,Gold Star Park,Gold Star Park,,Gold Star Park,613 WHARTON ST,19147,Wharton & Marshall, 0.88 ,7,1,3
+9,9C,East Passyunk Area,James Otis Ford Recreation Center,James Otis Ford Recreation Center,"Ford, Ford Recreation Center",Ford,633 SNYDER AVE,19148,"609-39 SNYDER AVE, 7th & Snyder", 0.80 ,7,1,3
+9,9C,East Passyunk Area,"Louis P. Paolone, Sr. Park","Louis P. Paolone, Sr. Park",Paolone Park,Paolone Park,732 SEARS ST,19147,"718-34 SEARS, 8th & Sears", 0.09 ,7,1,3
+9,9C,East Passyunk Area,Marconi Plaza,Marconi Plaza,,Marconi Plaza,2700 S BROAD ST,19148,Broad & Oregon, 18.85 ,7,2,"1, 3"
+10,10A,East Poplar Area,10th & Lemon Playground,10th & Lemon Playground,,10th & Lemon,1015 MOUNT VERNON ST,19123,1015-21 MOUNT VERNON ST, 0.22 ,6,5,6
+10,10A,East Poplar Area,11th & Cecil B. Moore Playground,11th & Cecil B. Moore Playground,11th & Columbia,11th & Cecil B Moore,1737 N 11TH ST,19122,1001-33 CECIL B MOORE AVE, 5.18 ,6,5,22
+10,10A,East Poplar Area,Benson Park,Benson Park,,Benson Park,1444 N 04TH ST,19122,1440R-44 N 04TH ST, 0.39 ,2,7,26
+10,10A,East Poplar Area,East Poplar Field,East Poplar Field,,East Poplar Field,901 N 08TH ST,19123,901-47 N 08TH ST, 3.08 ,6,5,26
+10,10A,East Poplar Area,East Poplar Playground,East Poplar Playground,,East Poplar,800 N 08TH ST,19123,"820 N 08TH ST, 9th & Parish", 4.84 ,6,5,6
+10,10A,East Poplar Area,Franklin Square,Franklin Square,,Franklin Square,200 N 06TH ST,19106,6th & Race, 7.16 ,5,1,6
+10,10A,East Poplar Area,Hancock Playground,Hancock Playground,"Hancock, St John's",Hancock,147 MASTER ST,19122,"147 MASTER ST, Jefferson & Hancock", 1.78 ,2,5,26
+10,10A,East Poplar Area,Lawrence Street Playground,Lawrence Street Playground,Community Park,Lawrence St Playground,856 N LAWRENCE ST,19123,854-56 N LAWRENCE ST, 0.14 ,2,5,6
+10,10A,East Poplar Area,Marie Dendy Recreation Center,Marie Dendy Recreation Center,"Dendy, Schwartz",Dendy,1591 N 10TH ST,19122,"1501-39 N 10TH ST, 10th & Oxford", 3.74 ,6,5,26
+10,10A,East Poplar Area,Narcissa S. Cruz Recreation Center,Narcissa S. Cruz Recreation Center,"Cruz, Cruz Recreation Center",Cruz,1405 N 05TH ST,19122,"1400-52 N 05TH ST, 1431 N 06TH ST, 6th & Master", 4.81 ,2,7,26
+10,10A,East Poplar Area,Northern Liberties Recreation Center,Northern Liberties Recreation Center,Northern Liberties,Northern Liberties,315 FAIRMOUNT AVE,19123,"313-27 FAIRMOUNT AVE, 321 FAIRMOUNT AVE", 0.65 ,2,5,6
+10,10A,East Poplar Area,Thomas Hart Park,Thomas Hart Park,Hart Park,Hart,1321 N 04TH ST,19122,1315-21 N 04TH ST, 0.22 ,2,5,26
+10,10A,East Poplar Area,Tip Top Playground,Tip Top Playground,,Tip Top,1013 N HOPE ST,19123,"1036-66 N FRONT ST, Front & Allen", 0.79 ,2,1,26
+10,10A,East Poplar Area,Towey Playground,Towey Playground,Towey,Towey,1866 N HOWARD ST,19122,"1832-50 N HOWARD ST, 1832 N HOWARD ST, 144 W BERKS; Masher & Berks", 1.45 ,6,7,26
+10,10A,East Poplar Area,Yorktown at Guilford Pl,Yorktown Commons,,Yorktown Commons,1400 GUILFORD PL,19122,, 0.13 ,6,5,22
+10,10B,Murphy Area,Beck Park,Beck Park,,Beck Park,839 S 02ND ST,19147,, 0.07 ,7,1,3
+10,10B,Murphy Area,Burke Playground,Burke Playground,,Burke,200 SNYDER AVE,19148,2nd & Jackson, 1.71 ,7,1,3
+10,10B,Murphy Area,Christ Church Park,Christ Church Park,,Christ Church,35 N 02ND ST,19106,201-17 MARKET ST, 0.13 ,5,1,6
+10,10B,Murphy Area,Cianfrani Park,Cianfrani Park,,Cianfrani Park,721 S 08TH ST,19147,8th & Fitzwater, 0.61 ,7,1,3
+10,10B,Murphy Area,Delancey Park,Delancey Park,Three Bears Park,Delancey Park,311 DELANCEY ST,19106,"311-19 DELANCEY ST, 3rd & Delancey", 0.35 ,5,1,6
+10,10B,Murphy Area,Foglietta Plaza,I-95 Park,,Foglietta Plaza,109 SPRUCE ST,19106,, 2.06 ,5,1,6
+10,10B,Murphy Area,Frank Palumbo Recreation Center,Frank Palumbo Recreation Center,"Palumbo, Palumbo Recreation Center",Palumbo Rec,700 S 09TH ST,19147,"700 S 09TH ST, 9th & Bainbridge", 3.22 ,7,1,3
+10,10B,Murphy Area,"Frank Palumbo, Sr. Park","Frank Palumbo, Sr. Park",Palumbo Park,Palumbo Park,723 CATHARINE ST,19147,7th & Catharine, 0.20 ,7,1,3
+10,10B,Murphy Area,Giuseppe Bardascino Park,Giuseppe Bardascino Park,Bardascino Park,Bardascino Park,1000 S 10TH ST,19147,10th & Carpenter, 0.23 ,7,1,3
+10,10B,Murphy Area,Hawthorne Cultural Center,Hawthorne Cultural Center,"Hawthorne, Hawthorne Recreation Center",Hawthorne Cultural Center,1200 CARPENTER ST,19147,1200 CARPENTER ST, 1.02 ,7,2,3
+10,10B,Murphy Area,Hawthorne Park,Hawthorne Park,,Hawthorne Park,750 S 12TH ST,19147,12th & Catharine, 0.87 ,7,2,3
+10,10B,Murphy Area,Howard & Reed Park,Howard & Reed Park,,Howard & Reed Park,105 REED ST,19147,, 0.08 ,7,1,3
+10,10B,Murphy Area,Jefferson Square,Jefferson Square,,Jefferson Square,300 WASHINGTON AVE,19147,4th & Washington, 3.13 ,7,1,3
+10,10B,Murphy Area,John Dickinson Square,John Dickinson Square,Dickinson Square,Dickinson Square,1600 E MOYAMENSING AVE,19148,4th & Tasker, 3.33 ,7,1,3
+10,10B,Murphy Area,Karen Donnelly Park,Karen Donnelly Park,Donnelly Park,Donnelly Park,230 DICKINSON ST,19147,230-34 DICKINSON ST, 0.23 ,7,1,3
+10,10B,Murphy Area,Lawrence E. Murphy Recreation Center,Lawrence E. Murphy Recreation Center,Greenwich Recreation Center,Murphy,300 SHUNK ST,19148,"300 SHUNK ST, 4th & Shunk", 4.95 ,7,1,3
+10,10B,Murphy Area,Louis I. Kahn Park,Louis I. Kahn Park,,Louis Kahn Park,328 S 11TH ST,19107,"328-38 S 11TH ST, 11th & Pine", 0.39 ,5,1,6
+10,10B,Murphy Area,Manton Street Park,Manton Street Park,,Manton St Park,405 MANTON ST,19147,405-11 MANTON ST, 0.06 ,7,1,3
+10,10B,Murphy Area,Mario Lanza Park,Mario Lanza Park,,Mario Lanza Park,214 CATHARINE ST,19147,, 0.51 ,7,1,3
+10,10B,Murphy Area,Mifflin Square,Mifflin Square,,Mifflin Square,500 WOLF ST,19148,6th & Wolf, 4.17 ,7,1,3
+10,10B,Murphy Area,Nelson M. Herron Playground and Recreation Center,Nelson M. Herron Playground and Recreation Center,"Herron, Herron Playground",Herron,1322 S 02ND ST,19147,"213 REED ST, American & Reed", 1.12 ,7,1,3
+10,10B,Murphy Area,Ridgway Park,Ridgway Park,Ridgway Pool,Ridgway Park,1301 CARPENTER ST,19147,901-23 S Broad St, 1.02 ,7,2,3
+10,10B,Murphy Area,Rizzo Ice Rink,Rizzo Ice Rink,Ralph Rizzo Rink,Rizzo Rink,1101 S FRONT ST,19147,1001 S FRONT ST, 1.28 ,7,1,3
+10,10B,Murphy Area,Sacks Playground,Sacks Playground,Sacks,Sacks,400 WASHINGTON AVE,19147,"400 WASHINGTON AVE, 4th & Washington", 3.74 ,7,1,3
+10,10B,Murphy Area,Sartain Garden,Sartain Garden,Sartain Street Community Garden,Sartain Garden,225 S SARTAIN ST,19107,1114-18 LOCUST ST, 0.08 ,5,1,6
+10,10B,Murphy Area,Seger Park Playground,Seger Park Playground,"Seger, Seger Recrecation Center",Seger Park,1020 LOMBARD ST,19147,1000-42 LOMBARD ST, 1.91 ,7,1,3
+10,10B,Murphy Area,Shot Tower Playground,Shot Tower Playground,Shot Tower,Shot Tower,129 CARPENTER ST,19147,101-31 CARPENTER ST, 1.44 ,7,1,3
+10,10B,Murphy Area,South 6th Street Garden,South 6th Street Garden,,S 6th St Garden,1035 S 06TH ST,19147,, 0.07 ,7,1,3
+10,10B,Murphy Area,South Street Community Garden,South Street Community Garden,"South St Community Garden, South St Garden",South St Garden,839 SOUTH ST,19147,831-39 SOUTH ST, 0.21 ,7,1,3
+10,10B,Murphy Area,Starr Garden Playground,Starr Garden Playground,Starr Garden,Starr Garden,606 LOMBARD ST,19147,"600-44 LOMBARD ST, 6th & Lombard", 2.17 ,7,1,3
+10,10B,Murphy Area,Titan Park,Titan Park,,Titan Park,116 TITAN ST,19147,108-10 Titan Street, 0.03 ,7,1,3
+10,10B,Murphy Area,Washington Square,Washington Square,,Washington Square,600 WALNUT ST,19106,6th & Walnut, 7.19 ,5,1,6
+10,10B,Murphy Area,Waverly Street Community Garden,Waverly Street Community Garden,,Waverly St Garden,1131 WAVERLY ST,19147,, 0.09 ,7,1,6
+10,10B,Murphy Area,Weccacoe Playground,Weccacoe Playground,Weccacoe,Weccacoe,425 QUEEN ST,19147,"405-25 QUEEN ST, 4th & Catharine", 0.90 ,7,1,3
+10,10B,Murphy Area,Weinberg Park,Weinberg Park,,Weinberg Park,2205 S 06TH ST,19148,"2201-09 S 06TH ST, 6th & Jackson", 0.42 ,7,1,3
