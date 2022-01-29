@@ -22,4 +22,8 @@ Download all available [datasets](data/open-data-philly/00-sources-and-metadata.
 
 [App Sketches](Process/Week1/appSketches/README.md)
 
-[Safepgrah & gravity model Reference Summary](Process/Week1/dataAndModelReference/ModelReference.md) 
+[Safegraph & gravity model Reference Summary](Process/Week1/dataAndModelReference/ModelReference.md) 
+
+#### Week2
+
+[Safegraph literature review](resources/related-research/research-summary.md)
