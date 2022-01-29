@@ -4,7 +4,7 @@ I searched Google Scholar for relevant research papers that used Safegraph data 
 
 I selected five of these papers and summarized the background, how they analyzed the data, and any relevant takeaways for our data analysis with Philadelphia Parks and Recreation.
 
-## Paper #1: Effects of the COVID-19 Pandemic on Park Use in U.S. (Jay et al)
+## [Paper #1: Effects of the COVID-19 Pandemic on Park Use in U.S. (Jay et al)](2021.04.23.21256007.full.pdf)
 
 Methods: Used monthly mobility data from Safegraph cross-referenxed with a database of park locations source from local agencies. Looked at 44 cities from Jan 2018 to Nov 2020 using interrupted time series regressions. Compared parks to other amenities (eg. gyms, libraries)
 
@@ -28,10 +28,10 @@ Key takeaways:
 
 > Because we could not observe directly the racial/ethnic identity of park users, we assigned these characteristics at the park level based on the demographics of the population living within a 0.5 mile walk.
 
-## Paper #2:
+## [Paper #2: Assess validity of SafeGraph data for visitor monitoring in Yellowstone (Liang et al)](Assessing%20the%20validity%20of%20SafeGraph%20data%20for%20visitor%20monitoring%20i.pdf)
 
-## Paper #3:
+## [Paper #3: Studying spatial and temporal visitation patterns of points of interest using SafeGraph data in Florida](Studying%20Spatial%20and%20Temporal%20Visitation%20Patterns%20of%20Points%20of%20In.pdf)
 
-## Paper #4:
+## [Paper #4: Urban park use during the COVID Ppandemic: Are socially vulnerable communities disproportionately impacted? (Larson et al)](frsc-03-710243.pdf)
 
-## Paper #5:
+## [Paper #5: Using mobile device data to track the effects of COVID-19 pandemic on spatiotemporal patterns of national park visitation (Kupfer et al)](sustainability-13-09366.pdf)
