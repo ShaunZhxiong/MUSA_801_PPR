@@ -63,6 +63,7 @@ library(data.table)
 #remotes::install_github("CityOfPhiladelphia/rphl")
 library(rphl)
 library(lubridate)
+library(furrr)
 
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
@@ -262,6 +263,8 @@ kable(head(patternAllMonth,3),align = 'c',caption = '<center>Table 6. patterns o
 **Relevant data of PPR finder**
 
 ```{r openDataPhilly_pprDistrict,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 1. Locations of pprDistrict'}
+philly <- st_read("https://opendata.arcgis.com/datasets/405ec3da942d4e20869d4e1449a2be48_0.geojson")
+
 pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
   st_transform(crs)
 
@@ -521,7 +524,22 @@ kable(head(program2021,3),align = 'c',caption = '<center>Table 8. Program inform
   scroll_box(width = "100%", height = "400px")
 ```
 
-## Data Wrangling
+"Service_Area_Sites.csv"
+
+```{r from Service_Area_Sites}
+
+propertyArea <- read.csv("data/FromPPR/Service_Area_Sites.csv")
+```
+
+"tblFacility_to_PPR_Properties.csv"
+
+```{r from tblFacility_to_PPR_Properties}
+facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
+```
+
+### Data Wrangling
+
+#### Program data
 
 ```{r wrangle program data}
 # define date 
@@ -569,14 +587,6 @@ propertyKid <- pprProperties %>%
 ```
 
 ```{r join property and program data}
-print(unique(program2021.clean$Facility))
-```
-
-```{r}
-print(unique(propertyParent$PUBLIC_NAME))
-```
-
-```{r}
 program2021.clean <- program2021.clean %>% 
   mutate(facilityForJoin = gsub("&","and",Facility))
 
@@ -602,39 +612,127 @@ keyLabel <- pprProperties %>%
   unique()%>%
   mutate(nouse=1)
 
-for (i in c(1:766)){
+"""for (i in c(1:766)){
   for (g in c(1:493)){
     if (grepl(keyLabel[g,1],join_false[[i,2]])){
       print("k")
       #join_false[i,2] = keyLabel[g,1]
     }
   }
-}
+}"""
 ```
 
-```{r}
-keyProgram <- unique(program2021.clean$facilityForJoin)
-keyProperty <- unique(pprProperties$PUBLIC_NAME)
+#### SafeGraph Data
 
-for (i in c(1:42)){
-  for (g in c(1:524)){
-    if (grepl(keyProgram[i],keyProperty[g])){
-      keyProgram[i] = keyProperty[g]
-    }
-  }
-}
+```{r join  safegraph data}
+# filter into philly
+safeGraph <- patternAllMonth %>% 
+  filter(city == "Philadelphia")
 
-a =0
-for (i in keyProgram){
-  for (g in keyProperty){
-    if (i==g){
-      a = a+1
-    }
-  }
-}
-a
+# join with POI and brand data
+safeGraph <- safeGraph %>% 
+  left_join(core_poi, by=c("placekey","parent_placekey","location_name","street_address","city","region","postal_code","safegraph_brand_ids","brands"),keep=FALSE) %>%
+  left_join(brand_info, by=c("safegraph_brand_ids"="safegraph_brand_id","brands"="brand_name","top_category","sub_category","naics_code"),keep=FALSE)
+
+# greate geometry from lat & lng
+safeGraph.geo <- 
+  safeGraph %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, agr = "constant", na.fail=FALSE) 
 ```
 
-\
+```{r wrangle safegraph data }
 
-![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAaCAYAAADFTB7LAAAAcElEQVR4Xu3OwQmAQAxE0bClWYCW5N06tM6V2YPg5CjoF/JhLoHAi6iqn9eOefUbqrYvHY0cQDLyAlKRNyARmYA0ZMLRkAlGQyaU72tkAtlim7r/vJqDUDjlKBROOQyFU2icQuMUGqfQuBEaV1XPOwEx96nYACK8+wAAAABJRU5ErkJggg== "Run Current Chunk")
+## how to unnest the temporal data
+plan(multiprocess, workers = 6)
+
+## Keep only particular class of business
+
+possible_businesses <-
+  safeGraph %>%
+  filter(top_category %in% c("Promoters of Performing Arts, Sports, and Similar Events"))
+
+nightmoves <- safeGraph %>% 
+  filter(placekey %in% as.list(possible_businesses$placekey))
+
+
+# How about parks?
+# THese could probably be "ground truthed" a bit by joining them to
+# published park layers
+parks <- safeGraph %>% 
+  filter(str_detect(location_name, "Parking", negate = TRUE)) %>%
+  filter(str_detect(location_name, "Fitness", negate = TRUE)) %>%
+  filter(str_detect(location_name, "Parkview", negate = TRUE)) %>%
+  filter(str_detect(sub_category, "Fitness", negate = TRUE)) %>%
+  filter( naics_code %in% c(712190, 713990))
+
+
+timeseries <- 
+  parkmoves %>% 
+  select(placekey, date_range_start, date_range_end, visits_by_day) %>%
+  mutate(date_range_start = as_date(date_range_start),
+         date_range_end = as_date(date_range_end)) %>%
+  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "\\[|\\]")) %>% 
+  mutate(visits_by_day = str_split(visits_by_day, pattern = ",")) %>%
+  mutate(visits_by_day = future_map(visits_by_day, function(x){
+    unlist(x) %>%
+      as_tibble() %>%
+      mutate(day = 1:n(),
+             visits = value)
+  })) %>%
+  unnest(cols = c(visits_by_day))
+
+## time is (88 seconds, so not fast)
+tictoc::tic()
+
+timeseries <- 
+  nightmoves %>% 
+  select(placekey, date_range_start, date_range_end, visits_by_day) %>%
+  mutate(date_range_start = as_date(date_range_start),
+         date_range_end = as_date(date_range_end)) %>%
+  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "\\[|\\]")) %>% 
+  mutate(visits_by_day = str_split(visits_by_day, pattern = ",")) %>%
+  mutate(visits_by_day = future_map(visits_by_day, function(x){
+    unlist(x) %>%
+      as_tibble() %>%
+      mutate(day = 1:n(),
+             visits = value)
+  })) %>%
+  unnest(cols = c(visits_by_day))
+
+tictoc::toc()
+
+## how to unnest the origin-destination data
+
+## note that we can speed these up by joining venue data and filtering it down
+tictoc::tic()
+
+odmatrix <- 
+  nightmoves %>% 
+  select(placekey, visitor_home_cbgs) %>%
+  mutate(visitor_home_cbgs = future_map(visitor_home_cbgs, function(x){
+    jsonlite::fromJSON(x) %>% 
+      as_tibble()
+  })) %>% 
+  unnest(visitor_home_cbgs) %>%
+  pivot_longer(!placekey, names_to = "cbg", values_to = "visits") %>%
+  drop_na(visits)
+
+tictoc::tic()
+
+# add park geometry
+odmatrix.geo <- odmatrix %>% 
+  as.data.frame() %>% 
+  left_join(
+    safeGraph.geo %>% 
+      dplyr::select(placekey, geometry) %>% 
+      distinct(),
+    by='placekey'
+  ) %>% 
+  st_as_sf()
+odmatrix.geo <- odmatrix.geo[philly,]
+
+```
+
+```{r traim  safeGraph into district 789}
+
+```
