@@ -27,7 +27,7 @@ Download all available [datasets](data/open-data-philly/00-sources-and-metadata.
 #### Week2
 PPR SafeGraph Data Wragnling (First Version)
 
-<a href="demo/kepler.gl.html" target="_blank">PPR SafeGraph Data Mapping (First Version)</a>
+[PPR SafeGraph Data Mapping (First Version)](demo/)
 
 [R Huff package Review](https://raw.githubusercontent.com/alexsingleton/Huff-Tools/master/huff-tools.r)
 
