@@ -634,44 +634,31 @@ safeGraph <- safeGraph %>%
   left_join(core_poi, by=c("placekey","parent_placekey","location_name","street_address","city","region","postal_code","safegraph_brand_ids","brands"),keep=FALSE) %>%
   left_join(brand_info, by=c("safegraph_brand_ids"="safegraph_brand_id","brands"="brand_name","top_category","sub_category","naics_code"),keep=FALSE)
 
-# greate geometry from lat & lng
+# create geometry from lat & lng
 safeGraph.geo <- 
   safeGraph %>%
   st_as_sf(coords = c("longitude", "latitude"), crs = 4326, agr = "constant", na.fail=FALSE) 
 ```
 
 ```{r wrangle safegraph data }
+library(furrr)
+numCores <- availableCores() - 6
+plan(multiprocess, workers = numCores)
 
-## how to unnest the temporal data
-plan(multiprocess, workers = 6)
-
-## Keep only particular class of business
-
-possible_businesses <-
-  safeGraph %>%
-  filter(top_category %in% c("Promoters of Performing Arts, Sports, and Similar Events"))
-
-nightmoves <- safeGraph %>% 
-  filter(placekey %in% as.list(possible_businesses$placekey))
-
-
-# How about parks?
-# THese could probably be "ground truthed" a bit by joining them to
-# published park layers
+## Keep only parks
 parks <- safeGraph %>% 
-  filter(str_detect(location_name, "Parking", negate = TRUE)) %>%
-  filter(str_detect(location_name, "Fitness", negate = TRUE)) %>%
-  filter(str_detect(location_name, "Parkview", negate = TRUE)) %>%
-  filter(str_detect(sub_category, "Fitness", negate = TRUE)) %>%
   filter( naics_code %in% c(712190, 713990))
 
+PPRmoves <- safeGraph %>% 
+  filter(placekey %in% as.list(parks$placekey))
 
+## timeseries
 timeseries <- 
-  parkmoves %>% 
+  PPRmoves %>% 
   select(placekey, date_range_start, date_range_end, visits_by_day) %>%
   mutate(date_range_start = as_date(date_range_start),
          date_range_end = as_date(date_range_end)) %>%
-  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "\\[|\\]")) %>% 
+  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "[\\[\\]]")) %>% 
   mutate(visits_by_day = str_split(visits_by_day, pattern = ",")) %>%
   mutate(visits_by_day = future_map(visits_by_day, function(x){
     unlist(x) %>%
@@ -679,48 +666,30 @@ timeseries <-
       mutate(day = 1:n(),
              visits = value)
   })) %>%
-  unnest(cols = c(visits_by_day))
+  unnest(cols = c(visits_by_day)) %>% 
+  dplyr::select(-value)
 
-## time is (88 seconds, so not fast)
-tictoc::tic()
 
-timeseries <- 
-  nightmoves %>% 
-  select(placekey, date_range_start, date_range_end, visits_by_day) %>%
-  mutate(date_range_start = as_date(date_range_start),
-         date_range_end = as_date(date_range_end)) %>%
-  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "\\[|\\]")) %>% 
-  mutate(visits_by_day = str_split(visits_by_day, pattern = ",")) %>%
-  mutate(visits_by_day = future_map(visits_by_day, function(x){
-    unlist(x) %>%
-      as_tibble() %>%
-      mutate(day = 1:n(),
-             visits = value)
-  })) %>%
-  unnest(cols = c(visits_by_day))
+##unnest the origin-destination data
 
-tictoc::toc()
-
-## how to unnest the origin-destination data
-
-## note that we can speed these up by joining venue data and filtering it down
-tictoc::tic()
-
-odmatrix <- 
-  nightmoves %>% 
+odMatrix <- 
+  PPRmoves %>% 
   select(placekey, visitor_home_cbgs) %>%
   mutate(visitor_home_cbgs = future_map(visitor_home_cbgs, function(x){
     jsonlite::fromJSON(x) %>% 
       as_tibble()
-  })) %>% 
-  unnest(visitor_home_cbgs) %>%
+  }))%>% 
+  unnest(visitor_home_cbgs)
+
+odMatrix <- odMatrix%>%
   pivot_longer(!placekey, names_to = "cbg", values_to = "visits") %>%
   drop_na(visits)
 
-tictoc::tic()
+#write.csv(odMatrix,"data/safegraph/odMatrix.csv")
+#odMatrix <- st_read("data/safegraph/odMatrix.csv")
 
 # add park geometry
-odmatrix.geo <- odmatrix %>% 
+odMatrix.geo <- odMatrix %>% 
   as.data.frame() %>% 
   left_join(
     safeGraph.geo %>% 
@@ -729,7 +698,6 @@ odmatrix.geo <- odmatrix %>%
     by='placekey'
   ) %>% 
   st_as_sf()
-odmatrix.geo <- odmatrix.geo[philly,]
 
 ```
 

@@ -8,8 +8,9 @@ library(kableExtra)
 library(mapview)
 
 ## read it in with vroom to save time
-moves <- vroom("C:/Users/mfich/Documents/Clients/MUSA_Teaching_and_Admin/SPRING_STUDIO_2021/Safegraph/demo/moves_monthly.csv")
-phila <- read_sf("C:/Users/mfich/Documents/Clients/MUSA_Teaching_and_Admin/SPRING_STUDIO_2021/Safegraph/demo/phila.geojson")
+moves <- vroom("data/OneDrive-2021-12-07/moves_monthly2020.csv")
+
+ <- read_sf("C:/Users/mfich/Documents/Clients/MUSA_Teaching_and_Admin/SPRING_STUDIO_2021/Safegraph/demo/phila.geojson")
 
 ## how to unnest the temporal data
 library(furrr)
