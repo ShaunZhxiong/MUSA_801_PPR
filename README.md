@@ -31,6 +31,6 @@ PPR SafeGraph Data Wragnling (First Version)
 
 [R Huff package Review](https://raw.githubusercontent.com/alexsingleton/Huff-Tools/master/huff-tools.r)
 
-[Huff Model literature review]
+[Huff Model literature review & Safegraph Metadata](resources\HuffModel&SafeGraphMetadata.md)
 
 [Safegraph literature review](resources/related-research/research-summary.md)
