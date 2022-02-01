@@ -1,0 +1,163 @@
+---
+title: "huff_test"
+author: "Shaun"
+date: "1/30/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(vroom)
+library(sf)
+library(kableExtra)
+library(mapview)
+```
+
+```{r}
+moves <- vroom("../../data/OneDrive-2021-12-07/moves_monthly2020.csv")
+phila <- read_sf("phila.geojson")
+```
+
+## how to unnest the temporal data
+### Setting up the Cores
+```{r}
+library(furrr)
+numCores <- availableCores() - 1
+plan(multiprocess, workers = numCores)
+```
+
+```{r}
+parks <- phila %>% 
+  filter( naics_code %in% c(712190, 713990))
+## Should we do further filtration? 
+
+parkmoves <- moves %>% 
+  filter(safegraph_place_id %in% as.list(parks$safegraph_place_id))
+```
+
+## unnest visits by day data
+```{r}
+#tictoc::tic()
+timeseries <- 
+  parkmoves %>% 
+  select(safegraph_place_id, date_range_start, date_range_end, visits_by_day) %>%
+  mutate(date_range_start = as_date(date_range_start),
+         date_range_end = as_date(date_range_end)) %>%
+  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "[\\[\\]]")) %>% 
+  mutate(visits_by_day = str_split(visits_by_day, pattern = ",")) %>%
+  mutate(visits_by_day = future_map(visits_by_day, function(x){
+    unlist(x) %>%
+      as_tibble() %>%
+      mutate(day = 1:n(),
+             visits = value)
+  })) %>%
+  unnest(cols = c(visits_by_day)) %>% 
+  dplyr::select(-value)
+#tictoc::toc()
+
+#timeseries$visits_by_day[1]
+#1:n() creates a range
+# tic() and toc() are used to record the time
+```
+
+## unnest the origin-destination data
+```{r}
+tictoc::tic()
+
+odMatrix <- 
+  parkmoves %>% 
+  select(safegraph_place_id, visitor_home_cbgs) %>%
+  mutate(visitor_home_cbgs = future_map(visitor_home_cbgs, function(x){
+    jsonlite::fromJSON(x) %>% 
+      as_tibble()
+  })) %>% 
+  unnest(visitor_home_cbgs) %>%
+  pivot_longer(!safegraph_place_id, names_to = "cbg", values_to = "visits") %>%
+  drop_na(visits)
+
+tictoc::tic()
+```
+
+## Fake Distance
+```{r}
+## Here join command use wrong columns and the way to calculate the distance should be change. 
+test <- odMatrix %>% 
+  mutate(row_number = row_number()) %>% 
+  group_by(cbg) %>% summarize(fake_distance = mean(row_number)) %>% 
+  ungroup() %>% 
+  left_join(odMatrix, .) %>% 
+  left_join(., parkmoves)
+```
+
+## Huff model Preparation
+```{r}
+library(rgeos)
+library(igraph)
+library(fastshp)
+#install.packages("fastshp",,"http://rforge.net/",type="source")
+source("https://raw.githubusercontent.com/alexsingleton/Huff-Tools/master/huff-tools.r")
+##The sources is the basic package for huff model
+## The source is very important!!!
+```
+
+## Run the huff model
+```{r}
+#!!if we tried to use temporal model, then the setting of the MODEL,PACKAGES should be changed
+#!!if we tried to use multiple predictors instead of just number of visitors, then the package should be changed
+huff_results <- huff_basic(test$location_name, test$raw_visit_counts, test$cbg, test$fake_distance)
+
+```
+
+## Some Plots
+```{r}
+ggplot()+
+  geom_point(data = parkmoves %>%
+            left_join(parks, by = c("safegraph_place_id")), 
+            aes(y = latitude, x = longitude, color = raw_visitor_counts,
+                fill = raw_visitor_counts, size = raw_visitor_counts),
+            alpha = 0.5)
+
+ggplot(parkmoves %>%
+         filter(location_name %in% c("Clark Park", "Strawberry Mansion Playground",
+                                     "Cherashore Playground", "Shot Tower Playground",
+                                     "Mander Playground", "Schuylkill River Park",
+                                     "Penn Treaty Park", "Jose Manuel Collazo Playground",
+                                     "Wissahickon Valley Park", "Weccacoe Playground")))+
+  geom_line(aes(x = date_range_start, y = raw_visit_counts))+
+  facet_wrap(~location_name, scales = "free")
+
+ggplot(parkmoves)+
+  geom_point(aes(x = date_range_start, y = raw_visit_counts))
+```
+## Can we spatial join the points to a parks shapefile?
+```{r}
+## Here parks should be changed to parks and recreation center
+parkspoly <- st_read("https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson") %>%
+  st_transform(4326)
+
+#ggplot()+geom_sf(data=parkspoly)
+parks_and_polygon <- st_join(parks %>% st_transform(crs = 4326), parkspoly)  
+
+
+ggplot()+
+  geom_sf(data = parkspoly, fill = "light green", alpha = 0.4)+
+  geom_point(data = parks_and_polygon %>%
+               mutate(joins_municipal = ifelse(is.na(PARENT_NAME) == TRUE, 
+                                               "No join", "Join")), 
+             aes(y = latitude, x = longitude, color = joins_municipal))
+
+ggplot()+
+  geom_sf(data = st_union(parkspoly), fill = "light green", alpha = 0.4)+
+  geom_point(data = parks_and_polygon %>%
+               filter(is.na(PARENT_NAME) == FALSE), 
+             aes(y = latitude, x = longitude), size = 0.5)
+
+#this can be used to test whether safegraph data is complete or not.
+mapView(parks, alpha = 0.6, size = 0.5) + mapView(parkspoly, col.regions = "green")
+```
+

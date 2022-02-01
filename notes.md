@@ -224,4 +224,18 @@ Email memo
 1. **Focused service ares**: This spring’s pilot is focused on the service areas in Districts 7,8,9.
 2. **Location data**: pprBuildingStructures - Buildings; pprProperty - Land
 3. **Programs**:  program2021 doesn't have exact date. All *AttendanceWeekDate* records use the Monday date of each week. Program schedule data is needed for this.
-4. 
+
+# Feb 1st
+
+2. in the sop whether we should predict the absolute number of visitors or the relative number with the temperal trend (suppose we should use OLS here)
+3. use other regression models (e.g. OLS)to understand the relationship between  factors and the number of visits
+
+4. whether we should include other surrounding features like temperature into OLS model
+
+5. we use the prediction of the number of the visitors in the 1 OLS model to run the huff model to calculate the market area
+
+
+
+One people can do the overall analysis of park activities in Philadelphia level and detailed analysis of district 678
+
+Another people can use ppr data to do the ols regression model etc
