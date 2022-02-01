@@ -587,39 +587,39 @@ propertyKid <- pprProperties %>%
 ```
 
 ```{r join property and program data}
-program2021.clean <- program2021.clean %>% 
-  mutate(facilityForJoin = gsub("&","and",Facility))
-
-keyProgram <- unique(program2021.clean$facilityForJoin)
-keyProperty <- unique(pprProperties$PUBLIC_NAME)
-
-for (i in c(1:3924)){
-  for (g in c(1:524)){
-    if (grepl(program2021.clean[i,19],keyProperty[g])){
-      program2021.clean[i,19] = keyProperty[g]
-    }
-  }
-}
-
-join <- left_join(program2021.clean, pprProperties, by = c("facilityForJoin"="PUBLIC_NAME"))
-
-join_false <- join %>% 
-  filter(is.na(join$PARENT_NAME))
-
-keyLabel <- pprProperties %>% 
-  dplyr::select(LABEL) %>% 
-  st_drop_geometry() %>% 
-  unique()%>%
-  mutate(nouse=1)
-
-"""for (i in c(1:766)){
-  for (g in c(1:493)){
-    if (grepl(keyLabel[g,1],join_false[[i,2]])){
-      print("k")
-      #join_false[i,2] = keyLabel[g,1]
-    }
-  }
-}"""
+# program2021.clean <- program2021.clean %>% 
+#   mutate(facilityForJoin = gsub("&","and",Facility))
+# 
+# keyProgram <- unique(program2021.clean$facilityForJoin)
+# keyProperty <- unique(pprProperties$PUBLIC_NAME)
+# 
+# for (i in c(1:3924)){
+#   for (g in c(1:524)){
+#     if (grepl(program2021.clean[i,19],keyProperty[g])){
+#       program2021.clean[i,19] = keyProperty[g]
+#     }
+#   }
+# }
+# 
+# join <- left_join(program2021.clean, pprProperties, by = c("facilityForJoin"="PUBLIC_NAME"))
+# 
+# join_false <- join %>% 
+#   filter(is.na(join$PARENT_NAME))
+# 
+# keyLabel <- pprProperties %>% 
+#   dplyr::select(LABEL) %>% 
+#   st_drop_geometry() %>% 
+#   unique()%>%
+#   mutate(nouse=1)
+# 
+# """for (i in c(1:766)){
+#   for (g in c(1:493)){
+#     if (grepl(keyLabel[g,1],join_false[[i,2]])){
+#       print("k")
+#       #join_false[i,2] = keyLabel[g,1]
+#     }
+#   }
+# }"""
 ```
 
 #### SafeGraph Data
@@ -672,21 +672,21 @@ timeseries <-
 
 ##unnest the origin-destination data
 
-odMatrix <- 
-  PPRmoves %>% 
-  select(placekey, visitor_home_cbgs) %>%
-  mutate(visitor_home_cbgs = future_map(visitor_home_cbgs, function(x){
-    jsonlite::fromJSON(x) %>% 
-      as_tibble()
-  }))%>% 
-  unnest(visitor_home_cbgs)
-
-odMatrix <- odMatrix%>%
-  pivot_longer(!placekey, names_to = "cbg", values_to = "visits") %>%
-  drop_na(visits)
+# odMatrix <- 
+#   PPRmoves %>% 
+#   select(placekey, visitor_home_cbgs) %>%
+#   mutate(visitor_home_cbgs = future_map(visitor_home_cbgs, function(x){
+#     jsonlite::fromJSON(x) %>% 
+#       as_tibble()
+#   }))%>% 
+#   unnest(visitor_home_cbgs)
+# 
+# odMatrix <- odMatrix%>%
+#   pivot_longer(!placekey, names_to = "cbg", values_to = "visits") %>%
+#   drop_na(visits)
 
 #write.csv(odMatrix,"data/safegraph/odMatrix.csv")
-#odMatrix <- st_read("data/safegraph/odMatrix.csv")
+odMatrix <- st_read("data/safegraph/odMatrix.csv")
 
 # add park geometry
 odMatrix.geo <- odMatrix %>% 
@@ -699,6 +699,20 @@ odMatrix.geo <- odMatrix %>%
   ) %>% 
   st_as_sf()
 
+```
+
+```{r}
+ggplot()+
+  geom_point(data = PPRmoves, 
+            aes(y = latitude, x = longitude, color = raw_visitor_counts,
+                fill = raw_visitor_counts, size = raw_visitor_counts),
+            alpha = 0.5)
+```
+
+```{r}
+# ggplot(PPRmoves)+
+#   geom_line(aes(x = date_range_start, y = raw_visit_counts))+
+#   facet_wrap(~location_name, scales = "free")
 ```
 
 ```{r traim  safeGraph into district 789}
