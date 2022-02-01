@@ -224,4 +224,10 @@ Email memo
 1. **Focused service ares**: This spring’s pilot is focused on the service areas in Districts 7,8,9.
 2. **Location data**: pprBuildingStructures - Buildings; pprProperty - Land
 3. **Programs**:  program2021 doesn't have exact date. All *AttendanceWeekDate* records use the Monday date of each week. Program schedule data is needed for this.
-4. 
+
+# Feb 1st
+
+1. park selection in safegraph data (whether we should use the measures say in [Safegraph literature review](resources/related-research/Safegraph Literature Review.md))
+
+2. in the sop whether we should predict the absolute number of visitors or the temperal trend said in the file mentioned above
+3. use other regression models to predict the factors related to the number of visits
