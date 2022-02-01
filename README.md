@@ -25,12 +25,10 @@ Download all available [datasets](data/open-data-philly/00-sources-and-metadata.
 [Safegraph & gravity model Reference Summary](Process/Week1/dataAndModelReference/ModelReference.md) 
 
 #### Week2
-PPR SafeGraph Data Wragnling (First Version)
-
-[PPR SafeGraph Data Mapping (First Version)](demo/)
+PPR SafeGraph Data Wragnling and [Mapping](demo/) (First Version)
 
 [R Huff package Review](https://raw.githubusercontent.com/alexsingleton/Huff-Tools/master/huff-tools.r)
 
 [Huff Model literature review & Safegraph Metadata](resources\HuffModel&SafeGraphMetadata.md)
 
-[Safegraph literature review](resources/related-research/research-summary.md)
+[Safegraph literature review](resources/related-research/Safegraph Literature Review.md)
