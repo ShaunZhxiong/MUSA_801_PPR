@@ -227,9 +227,9 @@ Email memo
 
 # Feb 1st
 
-1. park selection in safegraph data (whether we should use the measures say in [Safegraph literature review](resources/related-research/Safegraph Literature Review.md))
-
-2. in the sop whether we should predict the absolute number of visitors or the temperal trend said in the file mentioned above
+2. in the sop whether we should predict the absolute number of visitors or the relative number with the temperal trend (suppose we should use OLS here)
 3. use other regression models (e.g. OLS)to understand the relationship between  factors and the number of visits
 
-4. whether we should include other surrounding features like temperature into the huff model, in which way we should modify the huff model package
+4. whether we should include other surrounding features like temperature into OLS model
+
+5. we use the prediction of the number of the visitors in the 1 OLS model to run the huff model to calculate the market area
