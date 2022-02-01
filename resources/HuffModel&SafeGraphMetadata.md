@@ -1,5 +1,19 @@
 # Updates of Huff Model & SafeGraph Research
 
+## [Huff Model Updats](https://docs.safegraph.com/docs/core-places)
+
+**Huff Model**
+
+The original Huff Model (Huff, 1964) is designed to estimate the probability of customers at each origin patronizing a given store among all stores as their destination choices. Two factors into account: 1. Attractiveness 2. Distance. Attractiveness can be computed as a function of many attributes of a store, including the store size, number of parking spaces, customer reviews,
+etc. 
+
+**Socially Aware Huff Model**
+
+A socially aware Huff model include social factor and neighboring effect, based on the assumptions that: (1) People tend to choose more attractive travel destinations; (2) People tend to
+choose closer travel destinations; (3) People tend to choose travel destinations with more beneficial future choices. For example, a tourist at Origin O has two destination choices A and B, with equal distance to origin O. In this case, destination B should be preferred since it has more future choices in its neighborhood compared with destination A.
+
+
+## [SA-Huff Model Python Demo](resources\HuffModel_Research\Socially-aware-Huff-model)
 
 ## [SafeGraph Core Places Metadata (relevant to "core_poi")](https://docs.safegraph.com/docs/core-places)
 

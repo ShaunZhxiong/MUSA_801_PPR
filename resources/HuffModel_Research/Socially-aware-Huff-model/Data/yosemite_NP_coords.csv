@@ -1,0 +1,22 @@
+Cluster,Cluster label,Clusters from Data,Latitude,Longitude,Alias
+0,a,Mariposa Grove of Giant Sequoias,37.51709455,-119.6153452,Mariposa Grove
+1,b,Tioga Lake,37.92625128,-119.2472443,Tioga Lake
+2,c,Tuolumne Grove,37.76139982,-119.8027355,Tuolumne Grove
+3,d,Tuolumne Meadows,37.87696396,-119.3609173,Tuolumne Meadows
+4,e,Yosemite West,37.64875428,-119.7083198,Yosemite West
+5,f,Olmsted Point,37.81046637,-119.4852775,Olmsted Point
+6,g,Tenaya Lake,37.82946279,-119.4663899,Tenaya Lake
+7,h,Wildcat Falls,37.72293503,-119.7125921,Wildcat Falls
+8,i,Mirror Lake,37.74813205,-119.5501075,Mirror Lake
+9,j,Vernal Falls,37.72624245,-119.5432134,Vernal Falls
+10,k,El Capitan Meadow,37.7237945,-119.6334918,El Capitan Meadow
+11,l,Tunnel View,37.71564618,-119.6769573,Tunnel View
+12,m,Bridalveil Falls,37.71900454,-119.6492778,Bridalveil Falls
+13,n,Yosemite Valley View,37.71727241,-119.6636869,Valley View
+14,o,Glacier Point,37.72910245,-119.5737676,Glacier Point
+15,p,Curry Village,37.73927901,-119.5709498,Curry Village
+16,q,Four Mile Trailhead,37.73785522,-119.5984944,4 Mile Trail
+17,r,Ahwahnee Historic Building,37.74619548,-119.5741483,Ahwahnee
+18,s,Valley Visitor Center,37.74581719,-119.5843548,Visitor Center
+19,t,Lower Yosemite Fall,37.74987637,-119.5958051,Lower Yosemite Fall
+20,u,Sentinel Bridge,37.74480644,-119.591806,Sentinel Bridge
