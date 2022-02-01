@@ -624,7 +624,7 @@ propertyKid <- pprProperties %>%
 
 #### SafeGraph Data
 
-```{r join  safegraph data}
+```{r join safegraph data}
 # filter into philly
 safeGraph <- patternAllMonth %>% 
   filter(city == "Philadelphia")
@@ -637,17 +637,18 @@ safeGraph <- safeGraph %>%
 # create geometry from lat & lng
 safeGraph.geo <- 
   safeGraph %>%
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, agr = "constant", na.fail=FALSE) 
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, agr = "constant", na.fail=FALSE) %>% st_transform(crs = crs)
 ```
 
-```{r wrangle safegraph data }
+```{r wrangle safegraph data}
 library(furrr)
+
 numCores <- availableCores() - 6
 plan(multiprocess, workers = numCores)
 
-## Keep only parks
-parks <- safeGraph %>% 
-  filter( naics_code %in% c(712190, 713990))
+## Keep only parks (712190:Nature Parks and Other Similar Institutions; 713990:All Other Amusement and Recreation Industries; 713940: Fitness and Recreational Sports Centers)
+parks <- safeGraph.geo %>% 
+  filter(naics_code %in% c(712190, 713990, 713940))
 
 PPRmoves <- safeGraph %>% 
   filter(placekey %in% as.list(parks$placekey))
@@ -715,6 +716,50 @@ ggplot()+
 #   facet_wrap(~location_name, scales = "free")
 ```
 
-```{r traim  safeGraph into district 789}
+```{r Explore Category 1}
+# by st_join
+safeGraph.buffer <- safeGraph.geo %>% 
+  dplyr::select(placekey, location_name, geometry) %>% 
+  distinct() %>% 
+  st_buffer(100)
+
+
+safeGraph.join <- safeGraph.buffer %>% 
+  st_join(propertyParent, left = FALSE) %>% 
+            dplyr::select(placekey, location_name, geometry) %>% 
+            distinct()
+
+safeGraph.join %>% 
+  dplyr::select(placekey) %>% 
+  n_distinct() %>% 
+  print()
+
+parks %>% 
+  dplyr::select(placekey) %>% 
+  n_distinct()
+```
+
+```{r load data into database}
+library(RPostgres)
+
+# settings
+dbname = "MUS509"
+table.name = "census_block_groups"
+host = "localhost"
+port = "5433"
+username = "postgres"
+password = "llhh11042030"
+
+conn <- dbConnect(Postgres(), dbname = dbname, host = host, port = port, 
+                  user = username, password = password)
+
+
+# to lowercase and replace invalid character with "_"
+philly %>%
+  rename_all(tolower) %>%
+  rename_all({function (t) str_replace_all(t,"[^\\w]","_")})
+
+# writing to postgres
+st_write(obj = s, dsn = conn, Id(table = table.name))
 
 ```
