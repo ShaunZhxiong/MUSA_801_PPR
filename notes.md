@@ -233,3 +233,9 @@ Email memo
 4. whether we should include other surrounding features like temperature into OLS model
 
 5. we use the prediction of the number of the visitors in the 1 OLS model to run the huff model to calculate the market area
+
+
+
+One people can do the overall analysis of park activities in Philadelphia level and detailed analysis of district 678
+
+Another people can use ppr data to do the ols regression model etc
