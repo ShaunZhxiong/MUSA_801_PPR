@@ -528,7 +528,7 @@ kable(head(program2021,3),align = 'c',caption = '<center>Table 8. Program inform
 
 ```{r from Service_Area_Sites}
 
-propertyArea <- read.csv("data/FromPPR/Service_Area_Sites.csv")
+propertyArea <- read.csv("data/FromPPR/Service_Area_Sites.csv") 
 ```
 
 "tblFacility_to_PPR_Properties.csv"
@@ -538,6 +538,43 @@ facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 ```
 
 ### Data Wrangling
+
+#### Property data
+
+```{r join property data}
+# replace "and" with "&"
+pprProperties <- pprProperties %>% 
+  mutate(OFFICIAL_NAME = gsub("and", "&", pprProperties$OFFICIAL_NAME),
+         PUBLIC_NAME = gsub("and", "&", pprProperties$PUBLIC_NAME))
+
+
+# join method 1
+property.join1 <- left_join(propertyArea, 
+                          pprProperties %>% dplyr::select(ADDRESS_911, geometry), 
+                          by=c("X911.Address"="ADDRESS_911"), left=FALSE) %>% 
+  filter(!st_is_empty(geometry))
+
+# join method 2
+property.join2 <- left_join(propertyArea, 
+                          pprProperties %>% dplyr::select(OFFICIAL_NAME, geometry), 
+                          by=c("PPR.Site.Name"="OFFICIAL_NAME"), left=FALSE) %>% 
+  filter(!st_is_empty(geometry))
+
+# join method 3
+property.join3 <- left_join(propertyArea, 
+                          pprProperties %>% dplyr::select(PUBLIC_NAME, geometry), 
+                          by=c("PPR.Site.Name"="PUBLIC_NAME"), left=FALSE) %>% 
+  filter(!st_is_empty(geometry))
+
+# combine 3 methods together
+property <- rbind(property.join1,property.join2) %>% 
+  rbind(property.join3,.) %>% 
+  distinct()
+
+x <- left_join(propertyArea, property, by="PPR.Site.Name") %>% 
+  filter(st_is_empty(geometry))
+
+```
 
 #### Program data
 
@@ -587,39 +624,8 @@ propertyKid <- pprProperties %>%
 ```
 
 ```{r join property and program data}
-# program2021.clean <- program2021.clean %>% 
-#   mutate(facilityForJoin = gsub("&","and",Facility))
-# 
-# keyProgram <- unique(program2021.clean$facilityForJoin)
-# keyProperty <- unique(pprProperties$PUBLIC_NAME)
-# 
-# for (i in c(1:3924)){
-#   for (g in c(1:524)){
-#     if (grepl(program2021.clean[i,19],keyProperty[g])){
-#       program2021.clean[i,19] = keyProperty[g]
-#     }
-#   }
-# }
-# 
-# join <- left_join(program2021.clean, pprProperties, by = c("facilityForJoin"="PUBLIC_NAME"))
-# 
-# join_false <- join %>% 
-#   filter(is.na(join$PARENT_NAME))
-# 
-# keyLabel <- pprProperties %>% 
-#   dplyr::select(LABEL) %>% 
-#   st_drop_geometry() %>% 
-#   unique()%>%
-#   mutate(nouse=1)
-# 
-# """for (i in c(1:766)){
-#   for (g in c(1:493)){
-#     if (grepl(keyLabel[g,1],join_false[[i,2]])){
-#       print("k")
-#       #join_false[i,2] = keyLabel[g,1]
-#     }
-#   }
-# }"""
+program2021.join <- left_join(program2021.clean, facilityID, by =c("FacilityID")) %>% 
+  left_join(., pprProperties, by =c("PPR_Properties_ObjectID"="OBJECTID"))
 ```
 
 #### SafeGraph Data
@@ -650,7 +656,7 @@ plan(multiprocess, workers = numCores)
 parks <- safeGraph.geo %>% 
   filter(naics_code %in% c(712190, 713990, 713940))
 
-PPRmoves <- safeGraph %>% 
+PPRmoves <- safeGraph.geo %>% 
   filter(placekey %in% as.list(parks$placekey))
 
 ## timeseries
@@ -721,22 +727,38 @@ ggplot()+
 safeGraph.buffer <- safeGraph.geo %>% 
   dplyr::select(placekey, location_name, geometry) %>% 
   distinct() %>% 
-  st_buffer(100)
-
+  st_buffer(10)
 
 safeGraph.join <- safeGraph.buffer %>% 
   st_join(propertyParent, left = FALSE) %>% 
             dplyr::select(placekey, location_name, geometry) %>% 
             distinct()
 
-safeGraph.join %>% 
+# count poisition number
+m <- safeGraph.join %>% 
   dplyr::select(placekey) %>% 
-  n_distinct() %>% 
-  print()
+  n_distinct() 
+print(paste0("Position number with spatial join method is  ",m))
 
-parks %>% 
+n <- parks %>% 
   dplyr::select(placekey) %>% 
   n_distinct()
+print(paste0("Position number with filtering categories is  ",n))
+
+left_join(parks, propertyParent, by=c(""))
+```
+
+```{r}
+safeGraph.join2 <-  propertyArea %>% 
+  st_join(parks %>% dplyr::select(placekey, geometry) %>% distinct(), left=FALSE) %>% 
+            dplyr::select(PUBLIC_NAME) %>% 
+            distinct()
+
+safeGraph.join2 %>% n_distinct()
+
+key <- pprProperties %>% 
+  dplyr::select(ALIAS_ADDRESS, geometry) %>% 
+  na.omit()
 ```
 
 ```{r load data into database}
