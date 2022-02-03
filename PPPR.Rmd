@@ -52,6 +52,29 @@ th{
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r loadSecrets}
+
+## NOTE: You will need to create secrets.json, using the template
+## to enter private credentials for interacting with the database
+
+get_secrets <- function() {
+  path <- "secrets/secrets.json"
+  if (!file.exists(path)) {
+    stop("Can't find secret file: '", path, "'")
+  }
+  
+  jsonlite::read_json(path)
+}
+secrets <- get_secrets()
+
+# database settings
+dbname = secrets$db_name
+host = secrets$db_host
+port = secrets$db_port
+username =  secrets$db_username
+password = secrets$db_password
+```
+
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 library(vroom)
 library(sf)
@@ -138,12 +161,12 @@ palette1_assist <- '#F9B294'
 #### Folder: OneDrive-2021-12-07
 
 ```{r moves2018, warning=FALSE, message=FALSE}
-moves2018 <- vroom("data/OneDrive-2021-12-07/moves_2018.csv")
+moves2018 <- vroom("data/safegraph/OneDrive-2021-12-07/moves_2018.csv")
 colnames(moves2018)
 ```
 
 ```{r moves2020, message=FALSE, warning=FALSE}
-moves_monthly2020 <- vroom("data/OneDrive-2021-12-07/moves_monthly2020.csv")
+moves_monthly2020 <- vroom("data/safegraph/OneDrive-2021-12-07/moves_monthly2020.csv")
 colnames(moves_monthly2020)
 ```
 
@@ -764,24 +787,25 @@ key <- pprProperties %>%
 ```{r load data into database}
 library(RPostgres)
 
-# settings
-dbname = "MUS509"
-table.name = "census_block_groups"
-host = "localhost"
-port = "5433"
-username = "postgres"
-password = "llhh11042030"
-
 conn <- dbConnect(Postgres(), dbname = dbname, host = host, port = port, 
                   user = username, password = password)
 
 
 # to lowercase and replace invalid character with "_"
-philly %>%
+s <- philly %>%
   rename_all(tolower) %>%
   rename_all({function (t) str_replace_all(t,"[^\\w]","_")})
 
+st_write(obj = s, dsn = conn, Id(table = "philly"))
 # writing to postgres
-st_write(obj = s, dsn = conn, Id(table = table.name))
+# dbListTables(conn)
+```
 
+
+```{r load pprTrails data into database}
+# print(pprTrails)
+```
+
+
+```{r load data into database}
 ```
