@@ -592,7 +592,8 @@ property.join3 <- left_join(propertyArea,
 # combine 3 methods together
 property <- rbind(property.join1,property.join2) %>% 
   rbind(property.join3,.) %>% 
-  distinct()
+  distinct() %>% 
+  st_sf()
 
 x <- left_join(propertyArea, property, by="PPR.Site.Name") %>% 
   filter(st_is_empty(geometry))
@@ -669,65 +670,96 @@ safeGraph.geo <-
   st_as_sf(coords = c("longitude", "latitude"), crs = 4326, agr = "constant", na.fail=FALSE) %>% st_transform(crs = crs)
 ```
 
-```{r wrangle safegraph data}
+```{r filter safegraph data}
+## set future running stratege
 library(furrr)
+# change workers number by yourself
+plan(multiprocess, workers = 8)
 
-numCores <- availableCores() - 6
-plan(multiprocess, workers = numCores)
 
-## Keep only parks (712190:Nature Parks and Other Similar Institutions; 713990:All Other Amusement and Recreation Industries; 713940: Fitness and Recreational Sports Centers)
+# keep congeneric bussiness
+congenericMoves <-
+  safeGraph.geo %>%
+  filter(top_category %in% c("Promoters of Performing Arts, Sports, and Similar Events",
+                             "Other Amusement and Recreation Industries",
+                             "Museums, Historical Sites, and Similar Institutions") | str_detect(location_name, "Park") | str_detect(location_name, "Playground") | str_detect(location_name, "Recreation Center")) %>%
+  filter(str_detect(location_name, "Parking", negate = TRUE))
+
+
+# Keep only ppr sites
+#712190:Nature Parks and Other Similar Institutions; 
+#713990:All Other Amusement and Recreation Industries; 
+#713940: Fitness and Recreational Sports Centers； 
+#711310：Promoters of Performing Arts, Sports, and Similar Events
 parks <- safeGraph.geo %>% 
-  filter(naics_code %in% c(712190, 713990, 713940))
+  dplyr::select(placekey, naics_code, location_name) %>% 
+  distinct() %>% 
+  filter(naics_code %in% c(712190, 713990, 713940, 711310) | str_detect(location_name, "Park") | str_detect(location_name, "Playground") | str_detect(location_name, "Recreation Center")) %>%
+  filter(str_detect(location_name, "Parking", negate = TRUE))
 
 PPRmoves <- safeGraph.geo %>% 
   filter(placekey %in% as.list(parks$placekey))
 
-## timeseries
-timeseries <- 
+# spatial join with ppr sites - to be continued
+
+# we need ask instructors which data to model, but for now just take PPRmoves
+
+```
+
+```{r Explore efficiency of filtering}
+# join filtered safeGraph place with ppr property
+property_safe_join <- st_join(property, parks %>% dplyr::select(placekey, geometry), left=FALSE)
+
+# count
+print(paste0("The number of PPR properties is ", n_distinct(property$PPR.Site.Name)))
+
+print(paste0("The number joined properties is ", n_distinct(property_safe_join$PPR.Site.Name)))
+
+# the filtering quality is okay at this point, more data will be added
+```
+
+```{r unnest safegraph data}
+
+# unnest visit Count data
+visitCount <- 
   PPRmoves %>% 
   select(placekey, date_range_start, date_range_end, visits_by_day) %>%
   mutate(date_range_start = as_date(date_range_start),
-         date_range_end = as_date(date_range_end)) %>%
-  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "[\\[\\]]")) %>% 
+         date_range_end = as_date(date_range_end),
+         month =  month(date_range_start)) %>%
+  dplyr::select(-date_range_start, -date_range_end) %>% 
+  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "\\[|\\]")) %>% 
   mutate(visits_by_day = str_split(visits_by_day, pattern = ",")) %>%
   mutate(visits_by_day = future_map(visits_by_day, function(x){
     unlist(x) %>%
       as_tibble() %>%
-      mutate(day = 1:n(),
-             visits = value)
+      rowid_to_column(var = "day") %>% 
+      mutate(visits = value) %>% 
+      dplyr::select(-value)
   })) %>%
-  unnest(cols = c(visits_by_day)) %>% 
-  dplyr::select(-value)
+  unnest(cols = c("visits_by_day"))
 
 
-##unnest the origin-destination data
+# unnest the origin-destination data
 
-# odMatrix <- 
+# originCount <- 
 #   PPRmoves %>% 
-#   select(placekey, visitor_home_cbgs) %>%
+#   select(placekey, visitor_home_cbgs, date_range_start) %>%
+#   mutate(date_range_start = as_date(date_range_start),
+#          month =  month(date_range_start)) %>% 
+#   dplyr::select(-date_range_start) %>% 
 #   mutate(visitor_home_cbgs = future_map(visitor_home_cbgs, function(x){
 #     jsonlite::fromJSON(x) %>% 
 #       as_tibble()
-#   }))%>% 
-#   unnest(visitor_home_cbgs)
+#   })) %>% 
+#   unnest(visitor_home_cbgs) 
 # 
-# odMatrix <- odMatrix%>%
-#   pivot_longer(!placekey, names_to = "cbg", values_to = "visits") %>%
-#   drop_na(visits)
+# originCount <- originCount %>% 
+#   dplyr::select(placekey, month, starts_with("4")) %>% 
+#   pivot_longer(cols = starts_with("4"), names_to = "origin", values_to = "visits", values_drop_na = TRUE)
 
-#write.csv(odMatrix,"data/safegraph/odMatrix.csv")
-odMatrix <- st_read("data/safegraph/odMatrix.csv")
-
-# add park geometry
-odMatrix.geo <- odMatrix %>% 
-  as.data.frame() %>% 
-  left_join(
-    safeGraph.geo %>% 
-      dplyr::select(placekey, geometry) %>% 
-      distinct(),
-    by='placekey'
-  ) %>% 
-  st_as_sf()
+#st_write(originCount,"data/output/originCount.GeoJSON")
+originCount <- st_read("data/output/originCount.GeoJSON")
 
 ```
 
@@ -745,44 +777,7 @@ ggplot()+
 #   facet_wrap(~location_name, scales = "free")
 ```
 
-```{r Explore Category 1}
-# by st_join
-safeGraph.buffer <- safeGraph.geo %>% 
-  dplyr::select(placekey, location_name, geometry) %>% 
-  distinct() %>% 
-  st_buffer(10)
-
-safeGraph.join <- safeGraph.buffer %>% 
-  st_join(propertyParent, left = FALSE) %>% 
-            dplyr::select(placekey, location_name, geometry) %>% 
-            distinct()
-
-# count poisition number
-m <- safeGraph.join %>% 
-  dplyr::select(placekey) %>% 
-  n_distinct() 
-print(paste0("Position number with spatial join method is  ",m))
-
-n <- parks %>% 
-  dplyr::select(placekey) %>% 
-  n_distinct()
-print(paste0("Position number with filtering categories is  ",n))
-
-left_join(parks, propertyParent, by=c(""))
-```
-
-```{r}
-safeGraph.join2 <-  propertyArea %>% 
-  st_join(parks %>% dplyr::select(placekey, geometry) %>% distinct(), left=FALSE) %>% 
-            dplyr::select(PUBLIC_NAME) %>% 
-            distinct()
-
-safeGraph.join2 %>% n_distinct()
-
-key <- pprProperties %>% 
-  dplyr::select(ALIAS_ADDRESS, geometry) %>% 
-  na.omit()
-```
+### Loading Data into Database
 
 ```{r load data into database}
 library(RPostgres)
@@ -801,11 +796,9 @@ st_write(obj = s, dsn = conn, Id(table = "philly"))
 # dbListTables(conn)
 ```
 
-
 ```{r load pprTrails data into database}
 # print(pprTrails)
 ```
-
 
 ```{r load data into database}
 ```
