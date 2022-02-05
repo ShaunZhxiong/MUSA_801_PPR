@@ -52,29 +52,6 @@ th{
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r loadSecrets}
-
-## NOTE: You will need to create secrets.json, using the template
-## to enter private credentials for interacting with the database
-
-get_secrets <- function() {
-  path <- "secrets/secrets.json"
-  if (!file.exists(path)) {
-    stop("Can't find secret file: '", path, "'")
-  }
-  
-  jsonlite::read_json(path)
-}
-secrets <- get_secrets()
-
-# database settings
-dbname = secrets$db_name
-host = secrets$db_host
-port = secrets$db_port
-username =  secrets$db_username
-password = secrets$db_password
-```
-
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 library(vroom)
 library(sf)
@@ -87,6 +64,7 @@ library(data.table)
 library(rphl)
 library(lubridate)
 library(furrr)
+library(tidycensus)
 
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
@@ -154,6 +132,31 @@ palette4 <- c("#f9b294","#f2727f","#c06c86","#6d5c7e")
 palette2 <- c("#f9b294","#f2727f")
 palette1_main <- "#F2727F"
 palette1_assist <- '#F9B294'
+```
+
+
+```{r loadSecrets}
+
+## NOTE: You will need to create secrets.json, using the template
+## to enter private credentials for interacting with the database
+
+get_secrets <- function() {
+  path <- "secrets/secrets.json"
+  if (!file.exists(path)) {
+    stop("Can't find secret file: '", path, "'")
+  }
+  
+  jsonlite::read_json(path)
+}
+secrets <- get_secrets()
+
+# database settings
+dbname = secrets$db_name
+host = secrets$db_host
+port = secrets$db_port
+username =  secrets$db_username
+password = secrets$db_password
+census_api_key(secrets$census_api_key, install=TRUE, overwrite=TRUE)
 ```
 
 ### Data Loading
@@ -771,6 +774,74 @@ ggplot()+
             alpha = 0.5)
 ```
 
+### EXPLORATORY -- CENSUS DATA
+
+## 1. Get each of the Philadelphia PPR zones
+```{r census-exploration-1}
+
+ggplot() + 
+  geom_sf(data=ll(st_union(pprDistrict)),color="black",size=2,fill = "transparent",inherit.aes = FALSE)+
+  geom_sf(data=ll(pprDistrict),color=palette1_main,size=2,fill = "transparent",inherit.aes = FALSE)+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+## 2. Get the list of PHL census tracts that intersect with each zone
+```{r getCensusTracts}
+
+acs_vars <- c("B25026_001E","B02001_002E","B15001_050E",
+                         "B15001_009E","B19013_001E","B25058_001E",
+                         "B06012_002E", "B01001_048E", "B01001_049E",
+                         "B01001_024E", "B01001_025E", "B07013_002E")
+
+tracts19 <-
+    get_acs(geography = "tract", 
+            variables = acs_vars, 
+            year=2019,
+            state='PA', 
+            county='Philadelphia',
+            geometry=T, 
+            output="wide") %>%
+        st_transform(crs) %>%
+        dplyr::rename(TotalPop = B25026_001E,
+               White = B02001_002E,
+               MedianHouseholdIncome = B19013_001E,
+               MedianRent = B25058_001E,
+               Poverty = B06012_002E,
+               HousingUnits = B07013_002E) %>%
+        dplyr::select(-NAME, -starts_with("B")) %>%
+        mutate(pctNonWhite = ifelse(TotalPop < White, 0, ifelse(TotalPop > 0, 1 -(White / TotalPop),0)),
+               pctPoverty = ifelse(TotalPop > 0, Poverty / TotalPop, 0))
+
+## joined
+tracts19_pprArea <- tracts19 %>%
+                    st_join(pprDistrict, join=st_intersects)
+
+tracts19_grouped_summary <- tracts19_pprArea %>%
+      dplyr::select(TotalPop, MedianHouseholdIncome, MedianRent, HousingUnits, pctNonWhite, pctPoverty, DISTRICTID, geometry) %>%
+      dplyr::group_by(DISTRICTID) %>%
+      summarize(TotalPop_sum= sum(TotalPop),
+                MedianHouseholdIncome_mean = mean(MedianHouseholdIncome, na.rm=TRUE),
+                MedianRent_mean = mean(MedianRent, na.rm=TRUE),
+                HousingUnits_sum = sum(HousingUnits, na.rm=TRUE),
+                pctNonWhite_mean = mean(pctNonWhite),
+                pctPoverty_mean = mean(pctPoverty)
+      )
+
+```
+## 3. Get the average income for the census tracts within a zone
+
+## 4. Create map that shows average income for each zone =  highlight zones 7-9
+
+## 4. Repeat with other census variables
+
+
+
+
+
+
+
 ```{r}
 # ggplot(PPRmoves)+
 #   geom_line(aes(x = date_range_start, y = raw_visit_counts))+
@@ -787,11 +858,11 @@ conn <- dbConnect(Postgres(), dbname = dbname, host = host, port = port,
 
 
 # to lowercase and replace invalid character with "_"
-s <- philly %>%
+s <- tracts19_grouped_summary %>%
   rename_all(tolower) %>%
   rename_all({function (t) str_replace_all(t,"[^\\w]","_")})
 
-st_write(obj = s, dsn = conn, Id(table = "philly"))
+st_write(obj = s, dsn = conn, Id(table = "census_summary"))
 # writing to postgres
 # dbListTables(conn)
 ```
