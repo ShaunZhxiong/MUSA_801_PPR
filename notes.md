@@ -229,13 +229,12 @@ Email memo
 
 2. in the sop whether we should predict the absolute number of visitors or the relative number with the temperal trend (suppose we should use OLS here)
 3. use other regression models (e.g. OLS)to understand the relationship between  factors and the number of visits
-
 4. whether we should include other surrounding features like temperature into OLS model
-
 5. we use the prediction of the number of the visitors in the 1 OLS model to run the huff model to calculate the market area
 
+Answer: EDA will be the main content of this project, to help ppr better understand their current situations. And market area will be calculated using 2021's data. As for the prediction, that might be difficult to do the prediction. The prediction is not necessary. Another difficulty of this project is to create huff model package in R.
 
+# Feb 6th
 
-One people can do the overall analysis of park activities in Philadelphia level and detailed analysis of district 678
-
-Another people can use ppr data to do the ols regression model etc
+1. What can we do use the OpenDataPhilly data? (Trails, Picnic sites, Swimming pools etc)
+2. Does district 9 include navy yard or not

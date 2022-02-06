@@ -32,3 +32,6 @@ PPR SafeGraph Data Wragnling and [Mapping](demo/) (First Version)
 [Huff Model literature review & Safegraph Metadata](resources\HuffModel&SafeGraphMetadata.md)
 
 [Safegraph literature review](resources/related-research/Safegraph Literature Review.md)
+
+#### Week3
+
