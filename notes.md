@@ -238,3 +238,4 @@ Answer: EDA will be the main content of this project, to help ppr better underst
 
 1. What can we do use the OpenDataPhilly data? (Trails, Picnic sites, Swimming pools etc)
 2. Does district 9 include navy yard or not
+3. https://docs.safegraph.com/docs/monthly-patterns
