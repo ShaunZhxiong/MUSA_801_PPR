@@ -1,0 +1,507 @@
+---
+title: "PPPR-Program"
+author: "PPPR Team"
+date: "2/4/2022"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    code_folding: hide
+    theme: paper
+  pdf_document: default
+---
+
+```{=html}
+<style>
+p.caption {
+  font-size: 0.8em;
+  text-align: center;
+  font-weight: normal;
+}
+    caption {
+      color: grey;
+      font-size: 0.8em;
+    }
+@font-face{
+  font-family: Helvetica; 
+  src:url('Helvetica.ttf');
+}
+body{
+  font-size: 11pt;
+  font-family: Helvetica;
+}
+h1,h2,h3,h4,h5,h6{
+  font-family: Helvetica;
+  color: red;
+}
+td{
+  font-size: 9pt;
+  font-family: Helvetica;
+}
+th{
+  font-size: 0.8em;
+  font-family: Helvetica;
+  color: black;
+}
+</style>
+```
+
+------------------------------------------------------------------------
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(error = TRUE, echo = TRUE)
+```
+
+```{r loadSecrets}
+
+## NOTE: You will need to create secrets.json, using the template
+## to enter private credentials for interacting with the database
+
+get_secrets <- function() {
+  path <- "secrets/secrets.json"
+  if (!file.exists(path)) {
+    stop("Can't find secret file: '", path, "'")
+  }
+  
+  jsonlite::read_json(path)
+}
+secrets <- get_secrets()
+
+# database settings
+dbname = secrets$db_name
+host = secrets$db_host
+port = secrets$db_port
+username =  secrets$db_username
+password = secrets$db_password
+```
+
+### Set Up
+
+```{r library, message=FALSE, warning=FALSE, results='hide'}
+library(vroom)
+library(sf)
+library(ggplot2)
+library(ggmap)
+library(kableExtra)
+library(tidyverse)
+library(data.table)
+#remotes::install_github("CityOfPhiladelphia/rphl")
+library(rphl)
+library(lubridate)
+library(furrr)
+library(rgdal)
+
+ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
+
+root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
+source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
+
+#windowsFonts(font = windowsFont('Helvetica'))
+
+crs = 'EPSG:2272'
+
+plotTheme <- function(base_size = 9, title_size = 10){
+  theme(
+    text = element_text( color = "black"),
+    plot.title = element_text(size = title_size, colour = "black", hjust = 0.5), 
+    plot.subtitle = element_text( face = 'italic',
+                                 size = base_size, colour = "black", hjust = 0.5),
+    plot.caption = element_text( hjust=0),
+    axis.ticks = element_blank(),
+    panel.background = element_blank(),
+    panel.grid.major = element_line("grey80", size = 0.01),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(colour = "black", fill=NA, size=.5),
+    strip.background = element_blank(),
+    strip.text = element_text( size=9),
+    axis.title = element_text( size=9),
+    axis.text = element_text( size=7),
+    axis.text.y = element_text( size=7),
+    plot.background = element_blank(),
+    legend.background = element_blank(),
+    legend.title = element_text( colour = "black", face = "italic", size = 9),
+    legend.text = element_text( colour = "black", face = "italic", size = 7),
+    strip.text.x = element_text( size = 9),
+    legend.key.size = unit(.5, 'line')
+  )
+}
+
+mapTheme <- function(base_size = 9, title_size = 10){
+  theme(
+    text = element_text( color = "black"),
+    plot.title = element_text(size = title_size, colour = "black", hjust = 0.5), 
+    plot.subtitle = element_text( face = 'italic',
+                                 size = base_size, colour = "black", hjust = 0.5),
+    plot.caption = element_text( hjust=0),
+    axis.ticks = element_blank(),
+    panel.background = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    strip.background = element_blank(),
+    strip.text = element_text(size=base_size),
+    axis.title = element_text( size=9),
+    axis.text = element_blank(),
+    axis.text.y = element_blank(),
+    plot.background = element_blank(),
+    legend.background = element_blank(),
+    legend.title = element_text( colour = "black", face = "italic", size = 9),
+    legend.text = element_text( colour = "black", face = "italic", size = 7),
+    strip.text.x = element_text(size=base_size),
+    legend.key.size = unit(.5, 'line')
+  )
+}
+
+palette5 <- c("#f9b294","#f2727f","#c06c86","#6d5c7e","#315d7f")
+palette4 <- c("#f9b294","#f2727f","#c06c86","#6d5c7e")
+palette2 <- c("#f9b294","#f2727f")
+palette1_main <- "#F2727F"
+palette1_assist <- '#F9B294'
+```
+
+#### Folder: OpenDataPhilly
+
+**Relevant data of PPR finder**
+```{r openDataPhilly_pprDistrict,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.width=8, fig.height=6}
+
+philly <- st_read("https://opendata.arcgis.com/datasets/405ec3da942d4e20869d4e1449a2be48_0.geojson")
+
+pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
+  st_transform(crs)
+
+base_map <- get_map(location = unname(st_bbox(ll(st_buffer(st_union(pprDistrict),11000)))),maptype = "terrian")
+
+#ggmap(base_map) + 
+  #geom_sf(data=ll(st_union(pprDistrict)),color="black",size=2,fill = "transparent",inherit.aes = FALSE)+
+  #geom_sf(data=ll(pprDistrict),color=palette1_main,size=2,fill = "transparent",inherit.aes = FALSE)+
+  #labs(title = "", 
+     #  subtitle = "",
+     #  x="",y="")+
+  #mapTheme()
+
+# ppr District Map with ID
+
+ggplot(pprDistrict) + 
+  geom_sf(aes(inherit.aes = FALSE), show.legend = FALSE) + 
+  geom_sf_label(aes(label = DISTRICTID), label.padding = unit(1, "mm"))+
+    labs(title = "0.1 PPR Districts Map", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+
+pprProperties <- st_read('https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson')%>%
+  st_transform(crs)
+
+ggplot() + 
+  geom_sf(data=pprProperties,color=palette1_main,fill = palette1_main)+
+  geom_sf(data=st_union(pprDistrict),color="black",size=2,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=1,linetype ="dashed",fill = "transparent")+
+  labs(title = "0.2 PPR Properties Map", 
+       subtitle = "",
+       x="",y="")+
+  mapTheme()
+```
+
+#### Folder: FromPPR (skip)
+
+#### PPR_Service_Areas_2021
+
+"data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp"
+
+#### PPR-recreation-permits-2021
+
+"data/FromPPR/PPR-recreation-permits-2021.csv"
+
+```{r fromPPR-recreation-permits-2021, warning=FALSE, message=FALSE}
+perimit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
+kable(head(perimit2021,3),align = 'c',caption = '<center>Table 7. Program information of PPR Recreation data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+```
+
+#### PPR-programs-attended-2021-with-schedules
+
+"PPR-programs-attended-2021-with-schedules.csv"
+
+```{r fromPPR-programs-attended-2021, warning=FALSE, message=FALSE}
+program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
+
+kable(head(program2021,3),align = 'c',caption = '<center>Table 8. Program information of PPR Programs data <center/>')%>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>% 
+  scroll_box(width = "100%", height = "400px")
+```
+
+#### Service_Area_Sites
+
+"Service_Area_Sites.csv"
+
+```{r from Service_Area_Sites}
+propertyArea <- read.csv("data/FromPPR/Service_Area_Sites.csv")
+```
+
+#### tblFacility_to_PPR_Properties
+
+"tblFacility_to_PPR_Properties.csv"
+
+```{r from tblFacility_to_PPR_Properties}
+
+facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
+```
+
+### Data Wrangling
+
+#### Property data
+
+```{r join property data}
+# replace "and" with "&"
+pprProperties <- pprProperties %>% 
+  mutate(OFFICIAL_NAME = gsub("and", "&", pprProperties$OFFICIAL_NAME),
+         PUBLIC_NAME = gsub("and", "&", pprProperties$PUBLIC_NAME))
+
+
+# join method 1
+property.join1 <- left_join(propertyArea, 
+                          pprProperties %>% dplyr::select(ADDRESS_911, geometry), 
+                          by=c("X911.Address"="ADDRESS_911"), left=FALSE) %>% 
+  filter(!st_is_empty(geometry))
+
+# join method 2
+property.join2 <- left_join(propertyArea, 
+                          pprProperties %>% dplyr::select(OFFICIAL_NAME, geometry), 
+                          by=c("PPR.Site.Name"="OFFICIAL_NAME"), left=FALSE) %>% 
+  filter(!st_is_empty(geometry))
+
+# join method 3
+property.join3 <- left_join(propertyArea, 
+                          pprProperties %>% dplyr::select(PUBLIC_NAME, geometry), 
+                          by=c("PPR.Site.Name"="PUBLIC_NAME"), left=FALSE) %>% 
+  filter(!st_is_empty(geometry))
+
+# combine 3 methods together
+property <- rbind(property.join1,property.join2) %>% 
+  rbind(property.join3,.) %>% 
+  distinct()
+
+x <- left_join(propertyArea, property, by="PPR.Site.Name") %>% 
+  filter(st_is_empty(geometry))
+
+```
+
+#### Program data
+
+```{r wrangle program data}
+# define date 
+program2021.clean <- program2021 %>% 
+  mutate(AttendanceWeekDate = mdy(AttendanceWeekDate),
+         DateFrom = mdy(DateFrom),
+         DateTo = mdy(DateTo))
+
+# create a df only containing records without program scheduel info
+program2021.NA <- program2021.clean[is.na(program2021.clean$ProgramScheduleID),]
+
+# filter by attendance date
+program2021.clean <- program2021.clean %>% 
+  filter(AttendanceWeekDate > DateFrom & AttendanceWeekDate < DateTo)
+
+# original data is recorded by week, here we change it into being recorded by occurrence
+program2021.clean <- separate(program2021.clean, Days,into= c("1","2","3","4","5","6","7"))
+
+program2021.clean <- program2021.clean %>% 
+  gather(colNames, weekday, 15:21) %>% 
+  select(-colNames) %>% 
+  na.omit(cols='weekday')
+
+# create exact attendance date
+program2021.clean <- program2021.clean %>% 
+  mutate(AttendenceRealDate = case_when(
+    weekday == "Monday" ~ AttendanceWeekDate,
+    weekday == "Tuesday" ~ AttendanceWeekDate+1,
+    weekday == "Wednesday" ~ AttendanceWeekDate+2,
+    weekday == "Thursday" ~ AttendanceWeekDate+3,
+    weekday == "Friday" ~ AttendanceWeekDate+4,
+    weekday == "Saturday" ~ AttendanceWeekDate+5,
+    weekday == "Sunday" ~ AttendanceWeekDate+6,
+  ))
+
+propertyParent <- pprProperties %>% 
+  filter(NESTED=="N")
+
+propertyKid <- pprProperties %>% 
+  filter(NESTED=="Y")
+
+
+```
+
+#### Join program data
+
+```{r join property and program data}
+program2021.join <- left_join(program2021.clean, facilityID, by =c("FacilityID")) %>% 
+  left_join(., pprProperties, by =c("PPR_Properties_ObjectID"="OBJECTID"))
+```
+
+### 2022/02/05 Existing Program Analysis
+
+#### 1.1 Distribution of Facilities and Programs in Service Area 7
+
+```{r, data wrangling, message = FALSE, warning = FALSE, results='hide'，fig.width=8, fig.height=6}
+
+# Wrangle "program2021.join", and extract month attendance
+
+Facility_2021 <- program2021.join %>%
+  select(Facility,ActivityType,
+         AttendanceWeekDate,
+         RegisteredIndividualsCount,
+         PPR_DISTRICT) %>%
+  
+  mutate(month = case_when(month(AttendanceWeekDate)==1 ~ "01_Jan",
+                           month(AttendanceWeekDate)==2 ~ "02_Feb",
+                           month(AttendanceWeekDate)==3 ~ "03_Mar",
+                           month(AttendanceWeekDate)==4 ~ "04_Apr",
+                           month(AttendanceWeekDate)==5 ~ "05_May",
+                           month(AttendanceWeekDate)==6 ~ "06_Jun",
+                           month(AttendanceWeekDate)==7 ~ "07_Jul",
+                           month(AttendanceWeekDate)==8 ~ "08_Aug",
+                           month(AttendanceWeekDate)==9 ~ "09_Sep",
+                           month(AttendanceWeekDate)==10 ~ "10_Oct",
+                           month(AttendanceWeekDate)==11 ~ "11_Nov",
+                           month(AttendanceWeekDate)==12 ~ "12_Dec"))
+
+# Remove duplicate variables 
+
+Facility_2021 <- distinct(Facility_2021,.keep_all = FALSE)
+
+# Facility in DISTRICT 7
+
+Facility_7 <- Facility_2021 %>%
+  filter(PPR_DISTRICT == 7)
+
+MonthVisit_7 <- aggregate(Facility_7$RegisteredIndividualsCount, by=list(month=Facility_7$month,Facility=Facility_7$Facility, ActivityType=Facility_7$ActivityType ), sum)%>%
+  mutate(VisitorCount = x)%>%
+  select(-x)
+
+#Facility & Activity Distribution in Service Area 7
+
+ggplot(Facility_7, aes(x= Facility, fill = ActivityType)) + 
+    geom_bar(position="stack")+
+    labs(y = "Occurence", fill="Facility", title = "1.1 Facility & Activity Distribution in Service Area 7")+ 
+    facet_grid(~PPR_DISTRICT)
+```
+
+1.2 Visitor Counts by Month & Activity in Service Area 7
+
+```{r, data visulization in 7, message = FALSE, warning = FALSE, results='hide'，fig.width=8, fig.height=6}
+
+# Visitor Counts by Month & Activity in Service Area 7
+
+ggplot(MonthVisit_7, aes(x = month, y = VisitorCount, group = ActivityType, colour = ActivityType)) +
+  geom_line() + geom_point() +
+  labs(title = "1.2 Visitor Counts by Month in Service Area 7",
+       x = "Month",
+       y = "Visitor Counts")
+
+```
+
+2.1  Facility & Activity Distribution in Service Area 8
+
+```{r,data wrangling in 8, message = FALSE, warning = FALSE, results='hide'，fig.width=8, fig.height=6}
+
+# Facility in DISTRICT 8
+
+Facility_8 <- Facility_2021 %>%
+  filter(PPR_DISTRICT == 8)
+
+MonthVisit_8 <- aggregate(Facility_8$RegisteredIndividualsCount, by = list(month = Facility_8$month,Facility = Facility_8$Facility, ActivityType = Facility_8$ActivityType ), sum)%>%
+  mutate(VisitorCount = x)%>%
+  select(-x)
+
+#Facility & Activity Distribution in Service Area 7
+
+ggplot(Facility_8, aes(x= Facility, fill = ActivityType)) + 
+    geom_bar(position="stack")+
+    labs(y = "Occurence", fill="Facility", title = "2.1 Facility & Activity Distribution in Service Area 8")+ 
+    facet_grid(~PPR_DISTRICT) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+2.2 Visitor Counts by Month in Service Area 8
+
+```{r, data visulization in 8, message = FALSE, warning = FALSE, results='hide'，fig.width=8, fig.height=6}
+
+# Visitor Counts by Month & Activity in Service Area 8
+
+ggplot(MonthVisit_8, aes(x = month, y = VisitorCount, group = ActivityType, colour = ActivityType)) +
+  geom_line() + geom_point() +
+  labs(title = "2.2 Visitor Counts by Month in Service Area 8",
+       x = "Month",
+       y = "Visitor Counts")
+
+```
+
+3.1 Distribution of Facilities and Programs in Service Area 9
+
+```{r,data wrangling in 9, message = FALSE, warning = FALSE, results='hide'，fig.width=8, fig.height=6}
+
+# Facility in DISTRICT 9
+
+Facility_9 <- Facility_2021 %>%
+  filter(PPR_DISTRICT == 9)
+
+MonthVisit_9 <- aggregate(Facility_9$RegisteredIndividualsCount, by = list(month = Facility_9$month,Facility = Facility_9$Facility, ActivityType = Facility_9$ActivityType), sum)%>%
+  mutate(VisitorCount = x)%>%
+  select(-x)
+
+#Facility & Activity Distribution in Service Area 7
+
+ggplot(Facility_9, aes(x= Facility, fill = ActivityType)) + 
+    geom_bar(position="stack")+
+    labs(y = "Occurence", fill="Facility", title = "3.1 Facility & Activity Distribution in Service Area 9")+ 
+    facet_grid(~PPR_DISTRICT) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+3.2 Visitor Counts by Month in Service Area 9
+
+```{r, data visulization in 9, message = FALSE, warning = FALSE, results='hide'，fig.width=8, fig.height=6}
+
+# Visitor Counts by Month & Activity in Service Area 9
+
+ggplot(MonthVisit_9, aes(x = month, y = VisitorCount, group = ActivityType, colour = ActivityType)) +
+  geom_line() + geom_point() +
+  labs(title = "3.2 Visitor Counts by Month in Service Area 9",
+       x = "Month",
+       y = "Visitor Counts")
+
+```
+
+4.1 Distribution of Facilities and Programs in Other Service Areas (1-6 & 10)
+
+```{r,data wrangling in other service Areas, message = FALSE, warning = FALSE, results='hide'，fig.width=12, fig.height=8}
+
+# Facility in Other DISTRICTS
+
+
+Facility_other <- mutate_at(Facility_2021, c('PPR_DISTRICT'), ~replace(., is.na(.), 0))
+
+
+Facility_other <- Facility_other %>%
+  filter(PPR_DISTRICT == 0)
+
+MonthVisit_other <- aggregate(Facility_other$RegisteredIndividualsCount, by = list(month = Facility_other$month,Facility = Facility_other$Facility, ActivityType = Facility_other$ActivityType), sum)%>%
+  mutate(VisitorCount = x)%>%
+  select(-x)
+
+#Facility & Activity Distribution in Service Area 7
+
+ggplot(Facility_other, aes(x= Facility, fill = ActivityType)) + 
+    geom_bar(position="stack")+
+    labs(y = "Occurence", fill="Facility", title = "4.1 Facility & Activity Distribution in Other Service Areas")+ 
+    facet_grid(~PPR_DISTRICT) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
