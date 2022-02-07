@@ -751,44 +751,43 @@ print(paste0("The number joined properties is ", n_distinct(property_safe_join$P
 ```
 
 ```{r unnest safegraph data}
-
-# unnest visit Count data
-visitCount <- 
-  PPRmoves %>% 
-  select(placekey, date_range_start, date_range_end, visits_by_day) %>%
-  mutate(date_range_start = as_date(date_range_start),
-         date_range_end = as_date(date_range_end),
-         month =  month(date_range_start)) %>%
-  dplyr::select(-date_range_start, -date_range_end) %>% 
-  mutate(visits_by_day = str_remove_all(visits_by_day, pattern = "\\[|\\]")) %>% 
-  mutate(visits_by_day = str_split(visits_by_day, pattern = ",")) %>%
-  mutate(visits_by_day = future_map(visits_by_day, function(x){
-    unlist(x) %>%
-      as_tibble() %>%
-      rowid_to_column(var = "day") %>% 
-      mutate(visits = value) %>% 
-      dplyr::select(-value)
-  })) %>%
-  unnest(cols = c("visits_by_day"))
-
 #This following code to unnest the pupularity_by_hout data is different from the above code. Because the pprMoves is read into the R, which directly delete the '['']'
 
-# unnest popularity_by_hour data
-# visitHour <-
+# unnest visit Count data
+# visitCount <-
 #   PPRmoves %>%
-#   select(placekey, popularity_by_hour, date_range_start) %>%
+#   select(placekey, date_range_start, date_range_end, visits_by_day) %>%
 #   mutate(date_range_start = as_date(date_range_start),
-#          month =  month(date_range_start)) %>%
-#   dplyr::select(-date_range_start) %>%
-#   mutate(popularity_by_hour = future_map(popularity_by_hour, function(x){
-#     unlist(x) %>% 
+#          date_range_end = as_date(date_range_end)) %>%
+#   dplyr::select(-date_range_end) %>%
+#   mutate(visits_by_day = future_map(visits_by_day, function(x){
+#     unlist(x) %>%
 #       as_tibble() %>%
-#       rowid_to_column(var = "hour") %>% 
-#       rename(visit = value) 
-#   }))%>%
-#   unnest(popularity_by_hour)
+#       rowid_to_column(var = "day") %>%
+#       mutate(visits = value) %>%
+#       dplyr::select(-value)
+#   })) %>%
+#   unnest(cols = c("visits_by_day"))
+# 
+# st_write(visitCount,"data/output/visitCount.GeoJSON")
+visitCount <- st_read("data/output/visitCount.GeoJSON")
+
+# unnest popularity_by_hour data
+visitHour <-
+  PPRmoves %>%
+  select(placekey, popularity_by_hour, date_range_start) %>%
+  mutate(date_range_start = as_date(date_range_start),
+         month =  month(date_range_start)) %>%
+  dplyr::select(-date_range_start) %>%
+  mutate(popularity_by_hour = future_map(popularity_by_hour, function(x){
+    unlist(x) %>%
+      as_tibble() %>%
+      rowid_to_column(var = "hour") %>%
+      rename(visit = value)
+  }))%>%
+  unnest(popularity_by_hour)
 #  
-# st_write(visitWeekday,"data/output/visitHour.GeoJSON")
+#st_write(visitHour,"data/output/visitHour.GeoJSON")
 visitHour <- st_read("data/output/visitHour.GeoJSON")
 
 
@@ -894,12 +893,23 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON")
 visitWeekday <- st_read("data/output/visitWeekday.GeoJSON")
 ```
 
-```{r}
-ggplot()+
-  geom_point(data = PPRmoves, 
-            aes(y = latitude, x = longitude, color = raw_visitor_counts,
-                fill = raw_visitor_counts, size = raw_visitor_counts),
-            alpha = 0.5)
+```{r left join the place information to the unnested data}
+visitCount <- visitCount %>%
+    rename(visitDay = date_range_start) %>% 
+    mutate(visitDay = day+visitDay-1) %>% 
+    mutate(month = month(visitDay))
+
+# Problem: should the na geometry be dropped?
+# join the location name of 'parks' into the unnested data
+# visitCount2 <- visitCount %>% 
+#   left_join(parks %>% st_drop_geometry() ,by=c('placekey' = 'placekey'))
+# 
+# test <- parks %>% 
+#   mutate(count=1) %>% 
+#   group_by(placekey) %>% 
+#   mutate(location_name = location_name,count=sum(count)) %>% 
+#   filter(count == 2)
+
 ```
 
 ### EXPLORATORY -- CENSUS DATA
@@ -1001,3 +1011,127 @@ st_write(obj = s, dsn = conn, Id(table = "census_summary"))
 
 ```{r load data into database}
 ```
+
+
+### EXPLORATORY -- SafeGrpah DATA
+
+```{r visit Count}
+sumVisit <- visitCount %>%
+  dplyr::select(-visitDay,-day,-month) %>% 
+  group_by(placekey) %>%
+  summarise(visits=sum(visits))
+
+ggplot(sumVisit)+
+  geom_sf(data=pprServiceArea,color='black',size=0.25,fill= "transparent")+
+  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.5,fill= "transparent")+
+  geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
+  mapTheme()
+```
+The above is the aggragated visits map of PPR sities. The data is from safegraph.
+
+```{r origine Count, eval=FALSE, include=FALSE}
+
+# the codes below are wrong, should add census geometry data into the dataframe 
+sumVisit <- originCount %>%
+  filter(!st_is_empty(.)) %>% 
+  dplyr::select(-placekey,-month) %>% 
+  group_by(origin) %>%
+  summarise(visits=sum(visits))
+
+sumVisit2 <- sumVisit %>% filter(!st_is_empty(.))
+
+ggplot(sumVisit)+
+  geom_sf(data=pprServiceArea,color='black',size=0.25,fill= "transparent")+
+  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.5,fill= "transparent")+
+  geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
+  mapTheme()
+```
+
+```{r temperal pattern by month}
+sumVisit <- visitCount %>% 
+  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  dplyr::select(-visitDay,-day) %>% 
+  group_by(month) %>%
+  summarise(visits=sum(visits)) %>% 
+  st_drop_geometry()
+
+sumVisit%>%
+  ggplot(aes(month,visits)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Month", y="Aggregated Visits",
+       title ='Zeihler Playground') +
+  plotTheme(10,20)
+
+```
+
+```{r temperal pattern by day}
+visitCount %>% 
+  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  st_drop_geometry()%>%
+  na.omit()%>%
+  ggplot(aes(visitDay,visits)) + 
+  geom_line(color=palette1_main,size=1)+
+  labs(title = 'Zeihler Playground',x="Visit Date",y="Safegraph Visit")+
+  plotTheme(10,20)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+
+```
+
+```{r temperal pattern by hour}
+sumVisit <- visitHour %>% 
+  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  dplyr::select(-month) %>% 
+  group_by(hour) %>%
+  summarise(visits=sum(visit)) %>% 
+  st_drop_geometry()
+
+sumVisit%>%
+  ggplot(aes(hour,visits)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="hour", y="Aggregated Visits",
+       title ='Zeihler Playground') +
+  plotTheme(10,20)
+```
+
+```{r temperal pattern by weekday}
+sumVisit <- visitWeekday %>% 
+  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  dplyr::select(-month) %>% 
+  group_by(visitWeekday) %>%
+  summarise(visits=sum(visits)) %>% 
+  st_drop_geometry() 
+
+sumVisit$visitWeekday <- factor(sumVisit$visitWeekday, levels= c("Monday", 
+    "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday"))
+
+sumVisit[order(sumVisit$visitWeekday), ]
+
+sumVisit%>%
+  ggplot(aes(visitWeekday,visits)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Weekday", y="Aggregated Visits",
+       title ='Zeihler Playground') +
+  plotTheme(10,20)
+```
+
+
+```{r dwell time}
+sumVisit <- dwellTime %>% 
+  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  dplyr::select(-month) %>% 
+  group_by(dwellTimes) %>%
+  summarise(visitors=sum(visitors)) %>% 
+  st_drop_geometry() 
+
+sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5",">240","11-20","121-240","21-60","5-10","61-120" ))
+
+sumVisit[order(sumVisit$dwellTimes), ]
+
+sumVisit%>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='Zeihler Playground') +
+  plotTheme(10,20)
+```
+
