@@ -29,7 +29,7 @@ PPR SafeGraph Data Wragnling and [Mapping](demo/) (First Version)
 
 [R Huff package Review](https://raw.githubusercontent.com/alexsingleton/Huff-Tools/master/huff-tools.r)
 
-[Huff Model literature review & Safegraph Metadata](resources\HuffModel&SafeGraphMetadata.md)
+[Huff Model literature review & Safegraph Metadata](Process/Week1/dataAndModelReference/Huff Model Reference.docx)
 
 [Safegraph literature review](resources/related-research/Safegraph Literature Review.md)
 
@@ -37,6 +37,8 @@ PPR SafeGraph Data Wragnling and [Mapping](demo/) (First Version)
 
 [Current Facility & Programming Analysis](Process\Week3\PPPR-Program.html) 
 
-Unnest Safegraph Data & Visualization
+[Unnest Safegraph Data & Visualization](PPPR.html)
 
-Census Data Analysis based on PPR Service Areas
+[Census Data Analysis based on PPR Service Areas](https://ppr-dashboard-xfw9y.ondigitalocean.app/)
+
+[Questions](notes.md)

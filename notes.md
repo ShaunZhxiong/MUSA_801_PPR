@@ -239,3 +239,13 @@ Answer: EDA will be the main content of this project, to help ppr better underst
 1. What can we do use the OpenDataPhilly data? (Trails, Picnic sites, Swimming pools etc)
 2. Does district 9 include navy yard or not
 3. https://docs.safegraph.com/docs/monthly-patterns
+
+4. how to reasonably construct the attractiveness metrics for every property? service area?
+
+   (should include data of OpenDataPhilly, # of programs)(should not include visitor number)
+
+   https://pro.arcgis.com/zh-cn/pro-app/2.7/tool-reference/business-analyst/understanding-huff-model.htm#:~:text=A%20site%20has,a%20consumer%20survey.
+
+5. how to reasonably construct the surrounding effect in the **Socially Aware Huff Model**? Weighted?
+6. Huff model validation: compare the safegraph origin data with huff model market area. 
+
