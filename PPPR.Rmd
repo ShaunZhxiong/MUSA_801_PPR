@@ -958,9 +958,10 @@ blocks19_pprArea <- blocks19 %>%
                     st_join(pprDistrict, join=st_intersects)
 
 blocks19_summary <- blocks19_pprArea %>%
-      dplyr::select(TotalPop, MedianHouseholdIncome, MedianRent, HousingUnits, pctNonWhite, pctPoverty, DISTRICTID, geometry)
+      dplyr::select(GEOID, TotalPop, MedianHouseholdIncome, MedianRent, HousingUnits, pctNonWhite, pctPoverty, DISTRICTID, Shape__Area, Shape__Length, geometry)
 
-blocks19_grouped_summary <- blocks19_summary %>%
+blocks19_grouped_summary <- blocks19_pprArea %>%
+        dplyr::select(TotalPop, MedianHouseholdIncome, MedianRent, HousingUnits, pctNonWhite, pctPoverty, DISTRICTID, geometry) %>%
       dplyr::group_by(DISTRICTID) %>%
       summarize(TotalPop_sum= sum(TotalPop),
                 MedianHouseholdIncome_mean = mean(MedianHouseholdIncome, na.rm=TRUE),
@@ -994,7 +995,6 @@ conn <- dbConnect(Postgres(), dbname = dbname, host = host, port = port,
                   user = username, password = password)
 
 df_to_db(conn, blocks19_summary, "census_block_groups")
-}
 # writing to postgres
 # dbListTables(conn)
 ```
