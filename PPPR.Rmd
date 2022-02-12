@@ -933,8 +933,9 @@ acs_vars <- c("B25026_001E","B02001_002E","B15001_050E",
                          "B06012_002E", "B01001_048E", "B01001_049E",
                          "B01001_024E", "B01001_025E", "B07013_002E")
 
-tracts19 <-
-    get_acs(geography = "tract", 
+
+blocks19 <-
+    get_acs(geography = "block group", 
             variables = acs_vars, 
             year=2019,
             state='PA', 
@@ -953,11 +954,13 @@ tracts19 <-
                pctPoverty = ifelse(TotalPop > 0, Poverty / TotalPop, 0))
 
 ## joined
-tracts19_pprArea <- tracts19 %>%
+blocks19_pprArea <- blocks19 %>%
                     st_join(pprDistrict, join=st_intersects)
 
-tracts19_grouped_summary <- tracts19_pprArea %>%
-      dplyr::select(TotalPop, MedianHouseholdIncome, MedianRent, HousingUnits, pctNonWhite, pctPoverty, DISTRICTID, geometry) %>%
+blocks19_summary <- blocks19_pprArea %>%
+      dplyr::select(TotalPop, MedianHouseholdIncome, MedianRent, HousingUnits, pctNonWhite, pctPoverty, DISTRICTID, geometry)
+
+blocks19_grouped_summary <- blocks19_summary %>%
       dplyr::group_by(DISTRICTID) %>%
       summarize(TotalPop_sum= sum(TotalPop),
                 MedianHouseholdIncome_mean = mean(MedianHouseholdIncome, na.rm=TRUE),
@@ -968,16 +971,6 @@ tracts19_grouped_summary <- tracts19_pprArea %>%
       )
 
 ```
-## 3. Get the average income for the census tracts within a zone
-
-## 4. Create map that shows average income for each zone =  highlight zones 7-9
-
-## 4. Repeat with other census variables
-
-
-
-
-
 
 
 ```{r}
@@ -991,16 +984,17 @@ tracts19_grouped_summary <- tracts19_pprArea %>%
 ```{r load data into database}
 library(RPostgres)
 
+df_to_db <- function(conn, df, table_name) {
+  s <- df %>%
+    rename_all(tolower) %>%
+    rename_all({function (t) str_replace_all(t,"[^\\w]","_")})
+  st_write(obj = s, dsn = conn, Id(table = table_name))
+}
 conn <- dbConnect(Postgres(), dbname = dbname, host = host, port = port, 
                   user = username, password = password)
 
-
-# to lowercase and replace invalid character with "_"
-s <- tracts19_grouped_summary %>%
-  rename_all(tolower) %>%
-  rename_all({function (t) str_replace_all(t,"[^\\w]","_")})
-
-st_write(obj = s, dsn = conn, Id(table = "census_summary"))
+df_to_db(conn, blocks19_summary, "census_block_groups")
+}
 # writing to postgres
 # dbListTables(conn)
 ```
