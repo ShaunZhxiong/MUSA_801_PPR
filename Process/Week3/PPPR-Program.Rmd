@@ -214,6 +214,9 @@ ggplot() +
 "data/FromPPR/PPR-recreation-permits-2021.csv"
 
 ```{r fromPPR-recreation-permits-2021, warning=FALSE, message=FALSE}
+
+setwd("C:\\PENN\\2022\\MUSA_801_Practicum\\MUSA_801_PPR")
+
 perimit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
 kable(head(perimit2021,3),align = 'c',caption = '<center>Table 7. Program information of PPR Recreation data <center/>')%>%
   kable_classic(full_width = F)%>%
@@ -342,7 +345,7 @@ program2021.join <- left_join(program2021.clean, facilityID, by =c("FacilityID")
   left_join(., pprProperties, by =c("PPR_Properties_ObjectID"="OBJECTID"))
 ```
 
-### 2022/02/05 Existing Program Analysis
+### Existing Program Analysis
 
 #### 1.1 Distribution of Facilities and Programs in Service Area 7
 
