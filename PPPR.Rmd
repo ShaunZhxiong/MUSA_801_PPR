@@ -32,7 +32,6 @@ body{
 }
 h1,h2,h3,h4,h5,h6{
   font-family: Helvetica;
-  color: red;
 }
 td{
   font-size: 9pt;
@@ -63,7 +62,9 @@ library(rphl)
 library(lubridate)
 library(furrr)
 library(tidycensus)
-
+library(rgdal)
+library(furrr)
+library(mapview)
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
@@ -133,7 +134,7 @@ palette1_assist <- '#F9B294'
 ```
 
 
-```{r loadSecrets}
+```{r loadSecrets, message=FALSE, warning=FALSE, results='hide'}
 
 ## NOTE: You will need to create secrets.json, using the template
 ## to enter private credentials for interacting with the database
@@ -146,58 +147,44 @@ get_secrets <- function() {
   
   jsonlite::read_json(path)
 }
-secrets <- get_secrets()
+#secrets <- get_secrets()
 
 # database settings
-dbname = secrets$db_name
-host = secrets$db_host
-port = secrets$db_port
-username =  secrets$db_username
-password = secrets$db_password
-census_api_key(secrets$census_api_key, install=TRUE, overwrite=TRUE)
+# dbname = secrets$db_name
+# host = secrets$db_host
+# port = secrets$db_port
+# username =  secrets$db_username
+# password = secrets$db_password
+# census_api_key(secrets$census_api_key, install=TRUE, overwrite=TRUE)
 ```
 
 ### Data Loading
 
-#### Folder: OneDrive-2021-12-07
+#### Folder: SafeGraph
 
-```{r moves2018, warning=FALSE, message=FALSE}
-# moves2018 <- vroom("data/OneDrive-2021-12-07/moves_2018.csv")
-# colnames(moves2018)
-```
-
-```{r moves2020, message=FALSE, warning=FALSE}
-# moves_monthly2020 <- vroom("data/OneDrive-2021-12-07/moves_monthly2020.csv")
-# colnames(moves_monthly2020)
-```
-
-The above two data are from 2018 and 2020. Based on the SOP, we only used the data of 2021. **Therefore, these two files should not be used.**
-
-#### Folder: safegraph
-
-```{r brand_info, message=FALSE, warning=FALSE}
+```{r brand_info, message=FALSE, warning=FALSE, include=FALSE}
 brand_info <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv")
 #colnames(brand_info)
 
-kable(head(brand_info,3),align = 'c',caption = '<center>Table 1. brand_info of SafeGraph data <center/>')%>%
-  kable_classic(full_width = F)%>%
-  kable_styling(position = "center")%>% 
-  scroll_box(width = "100%", height = "400px")
+# kable(head(brand_info,3),align = 'c',caption = '<center>Table 1. brand_info of SafeGraph data <center/>')%>%
+#   kable_classic(full_width = F)%>%
+#   kable_styling(position = "center")%>% 
+#   scroll_box(width = "100%", height = "400px")
 ```
 
-```{r core_poi, message=FALSE, warning=FALSE}
+```{r core_poi, message=FALSE, warning=FALSE, include=FALSE}
 core_poi <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv")
 #colnames(core_poi)
 
-kable(head(core_poi,3),align = 'c',caption = '<center>Table 2. core_poi of SafeGraph data <center/>')%>%
-  kable_classic(full_width = F)%>%
-  kable_styling(position = "center")%>% 
-  scroll_box(width = "100%", height = "400px")
+# kable(head(core_poi,3),align = 'c',caption = '<center>Table 2. core_poi of SafeGraph data <center/>')%>%
+#   kable_classic(full_width = F)%>%
+#   kable_styling(position = "center")%>% 
+#   scroll_box(width = "100%", height = "400px")
 ```
 
 **These two datasets ('brand_info' and 'core_poi' from safegraph) are dictionary data.**
 
-```{r wholeRawSG, message=FALSE, warning=FALSE}
+```{r wholeRawSG, message=FALSE, warning=FALSE,eval=FALSE}
 #HPS = home_panel_summary
 #NS = normalization_stats
 #VPS = visit_panel_summary
@@ -216,10 +203,10 @@ for (i in monthList){
   #print(paste("Current input home_panel_summary dataframe is in ",i," month",sep = ""))
 }
 
-kable(head(hpsAllMonth,3),align = 'c',caption = '<center>Table 3. home pannel summary of 2021 whole year in SafeGraph data <center/>')%>%
-  kable_classic(full_width = F)%>%
-  kable_styling(position = "center")%>% 
-  scroll_box(width = "100%", height = "400px")
+# kable(head(hpsAllMonth,3),align = 'c',caption = '<center>Table 3. home pannel summary of 2021 whole year in SafeGraph data <center/>')%>%
+#   kable_classic(full_width = F)%>%
+#   kable_styling(position = "center")%>% 
+#   scroll_box(width = "100%", height = "400px")
 
 # normalization_Stats
 nsAllMonth = data.frame()
@@ -233,10 +220,10 @@ for (i in monthList){
   #print(paste("Current input normalization_stats dataframe is in ",i," month",sep = ""))
 }
 
-kable(head(nsAllMonth,3),align = 'c',caption = '<center>Table 4. normalization stats of 2021 whole year in SafeGraph data <center/>')%>%
-  kable_classic(full_width = F)%>%
-  kable_styling(position = "center")%>% 
-  scroll_box(width = "100%", height = "400px")
+# kable(head(nsAllMonth,3),align = 'c',caption = '<center>Table 4. normalization stats of 2021 whole year in SafeGraph data <center/>')%>%
+#   kable_classic(full_width = F)%>%
+#   kable_styling(position = "center")%>% 
+#   scroll_box(width = "100%", height = "400px")
 
 # visit_panel_summary
 vpsAllMonth = data.frame()
@@ -250,10 +237,10 @@ for (i in monthList){
   #print(paste("Current input visit_panel_summary dataframe is in ",i," month",sep = ""))
 }
 
-kable(head(vpsAllMonth,3),align = 'c',caption = '<center>Table 5. visit panel summary of 2021 whole year in SafeGraph data <center/>')%>%
-  kable_classic(full_width = F)%>%
-  kable_styling(position = "center")%>% 
-  scroll_box(width = "100%", height = "400px")
+# kable(head(vpsAllMonth,3),align = 'c',caption = '<center>Table 5. visit panel summary of 2021 whole year in SafeGraph data <center/>')%>%
+#   kable_classic(full_width = F)%>%
+#   kable_styling(position = "center")%>% 
+#   scroll_box(width = "100%", height = "400px")
 
 # Pattern
 patternAllMonth = data.frame()
@@ -268,10 +255,19 @@ for (i in monthList){
   #print(paste("Current input patterns dataframe is in ",i," month",sep = ""))
 }
 
-kable(head(patternAllMonth,3),align = 'c',caption = '<center>Table 6. patterns of 2021 whole year in SafeGraph data <center/>')%>%
-  kable_classic(full_width = F)%>%
-  kable_styling(position = "center")%>% 
-  scroll_box(width = "100%", height = "400px")
+# kable(head(patternAllMonth,3),align = 'c',caption = '<center>Table 6. patterns of 2021 whole year in SafeGraph data <center/>')%>%
+#   kable_classic(full_width = F)%>%
+#   kable_styling(position = "center")%>% 
+#   scroll_box(width = "100%", height = "400px")
+```
+
+```{r readBackupData warning=FALSE,message=FALSE,include=FALSE}
+# st_write(hpsAllMonth,"data/output/hpsAllMonth.csv")
+# st_write(vpsAllMonth,"data/output/vpsAllMonth.csv")
+# st_write(patternAllMonth,"data/output/patternAllMonth.csv")
+# hpsAllMonth <- st_read("data/output/hpsAllMonth.csv")
+# vpsAllMonth <- st_read("data/output/vpsAllMonth.csv")
+patternAllMonth <- st_read("data/output/patternAllMonth.csv")
 ```
 
 **This is the whole safegraph raw data**, it has four datasets. One is the aggregated pattern data for 2021 whole year. That is the primary one for this project. And the other two datasets give information about the number of active devices.
@@ -300,7 +296,7 @@ ggmap(base_map) +
   mapTheme()
 ```
 
-The whole Philadelphia is divided into 10 PPR districts, and the project mainly focus on the District 7、8、9 as pilot project which are highlighted in the map using the color red.
+The whole Philadelphia is divided into 10 PPR districts, and the project mainly focus on the District 7、8、9 as pilot project which are highlighted in the map using the color red. Note: The 9 district does not include the Smith Area.
 
 ```{r openDataPhilly_pprProperty,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 2. Locations of pprProperties'}
 pprProperties <- st_read('https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson')%>%
@@ -330,7 +326,7 @@ pprTrails <- st_read('https://opendata.arcgis.com/datasets/48323d574068405bbf533
 #   mapTheme()
 ```
 
-```{r openDataPhilly_Out of school time programs, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 4. Out of school time programs'}
+```{r openDataPhilly_Out of school time programs, eval=FALSE, fig.align='center', fig.cap=, fig.height=5, message=FALSE, warning=FALSE, include=FALSE, out.width='75%', results='hide'}
 pprOutPrograms <- st_read('https://opendata.arcgis.com/datasets/1f5d8108e06d457783538d4b7808c246_0.geojson')%>%
   st_transform(crs)
 
@@ -344,7 +340,7 @@ pprOutPrograms <- st_read('https://opendata.arcgis.com/datasets/1f5d8108e06d4577
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprPicnicSites, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 5. Locations of pprPicnicSites'}
+```{r openDataPhilly_pprPicnicSites,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 5. Locations of pprPicnicSites'}
 pprPicnicSites <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_picnic_sites&filename=ppr_picnic_sites&format=geojson&skipfields=cartodb_id')%>%
   st_transform(crs)
 
@@ -358,7 +354,7 @@ pprPicnicSites <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprAdultExercise, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 6. Locations of pprAdultExercise'}
+```{r openDataPhilly_pprAdultExercise,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 6. Locations of pprAdultExercise'}
 pprAdExercise <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_adult_exercise_equipment&filename=ppr_adult_exercise_equipment&format=geojson&skipfields=cartodb_id')%>%
   st_transform(crs)
 
@@ -372,7 +368,7 @@ pprAdExercise <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_a
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprSwimmingPool, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 7. Locations of pprSwimmingPool'}
+```{r openDataPhilly_pprSwimmingPool,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 7. Locations of pprSwimmingPool'}
 pprSwimmingPool <- st_read('https://opendata.arcgis.com/datasets/c6f6176968f04d3f88adbc4c362af55d_0.geojson')%>%
   st_transform(crs)
 
@@ -386,7 +382,7 @@ pprSwimmingPool <- st_read('https://opendata.arcgis.com/datasets/c6f6176968f04d3
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprTennisCourt, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 8. Locations of pprTennisCourt'}
+```{r openDataPhilly_pprTennisCourt,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 8. Locations of pprTennisCourt'}
 pprTennisCourt <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_tennis_courts&filename=ppr_tennis_courts&format=geojson&skipfields=cartodb_id')%>%
   st_transform(crs)
 
@@ -400,7 +396,7 @@ pprTennisCourt <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprSpraygrounds, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 9. Locations of pprSpraygrounds'}
+```{r openDataPhilly_pprSpraygrounds,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 9. Locations of pprSpraygrounds'}
 pprSpraygrounds <- st_read('https://opendata.arcgis.com/datasets/a148cc904d374b22bd456e44a044d554_0.geojson')%>%
   st_transform(crs)
 
@@ -414,7 +410,7 @@ pprSpraygrounds <- st_read('https://opendata.arcgis.com/datasets/a148cc904d374b2
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprHydrationStations, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 10. Locations of pprHydrationStations'}
+```{r openDataPhilly_pprHydrationStations,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 10. Locations of pprHydrationStations'}
 pprHydrationStations <- st_read('https://opendata.arcgis.com/datasets/cc35dc98180249fb9a6f2f5f06657df1_0.geojson')%>%
   st_transform(crs)
 
@@ -428,7 +424,7 @@ pprHydrationStations <- st_read('https://opendata.arcgis.com/datasets/cc35dc9818
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprPlaygrounds, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 11. Locations of pprPlaygrounds'}
+```{r openDataPhilly_pprPlaygrounds,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 11. Locations of pprPlaygrounds'}
 pprPlaygrounds <- st_read('https://opendata.arcgis.com/datasets/899c807e205244278b3f39421be8489c_0.geojson')%>%
   st_transform(crs)
 
@@ -442,7 +438,7 @@ pprPlaygrounds <- st_read('https://opendata.arcgis.com/datasets/899c807e20524427
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprBoatLaunches, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 12. Locations of pprBoatLaunches'}
+```{r openDataPhilly_pprBoatLaunches,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 12. Locations of pprBoatLaunches'}
 pprBoatLaunches <- st_read('https://opendata.arcgis.com/api/v3/datasets/ba32e1ac9c5341e1916274c2df3fbe22_0/downloads/data?format=geojson&spatialRefId=4326')%>%
   st_transform(crs)
 
@@ -456,7 +452,7 @@ pprBoatLaunches <- st_read('https://opendata.arcgis.com/api/v3/datasets/ba32e1ac
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprBuildingStructures, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 13. Locations of pprBuildingStructures'}
+```{r openDataPhilly_pprBuildingStructures,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 13. Locations of pprBuildingStructures'}
 pprBuildingStructures <- st_read('https://opendata.arcgis.com/datasets/97e90a049a35453ba0c51f974b3c77b4_0.geojson')%>%
   st_transform(crs)
 
@@ -470,7 +466,7 @@ pprBuildingStructures <- st_read('https://opendata.arcgis.com/datasets/97e90a049
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprTreeCanopy, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 14. Locations of pprTreeCanopy'}
+```{r openDataPhilly_pprTreeCanopy,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 14. Locations of pprTreeCanopy'}
 query <- paste("SELECT objectid, avg_height, shape_area",
                "FROM ppr_tree_canopy_outlines_2015",
                "ORDER BY objectid ASC")
@@ -493,7 +489,7 @@ pprTreeCanopy <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_t
 #   mapTheme()
 ```
 
-```{r openDataPhilly_pprPermittableSpace, eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 15. Locations of pprPermittableSpace'}
+```{r openDataPhilly_pprPermittableSpace,include=FALSE,  eval=FALSE,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure 15. Locations of pprPermittableSpace'}
 pprPermittableSpace <- st_read('https://opendata.arcgis.com/datasets/811b67c999bd4e839abb68b16c16f623_0.geojson')%>%
   st_transform(crs)
 
@@ -507,14 +503,13 @@ pprPermittableSpace <- st_read('https://opendata.arcgis.com/datasets/811b67c999b
 #   mapTheme()
 ```
 
-And there are other datasets from the PPR finder unused right now. They are datasets about the number and quality of facilities of PPR.
+And there are other datasets from the PPR finder unused right now. They are datasets about the types, number and quality of facilities of PPR.
 
 #### Folder: FromPPR
 
 These are datasets directly from PPR officers. These datasets are highly related to our project.
 
 ```{r fromPPR_ServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width ='75%',fig.align = 'center',fig.cap = 'Figure 15. Locations of pprServiceArea'}
-library(rgdal)
 pprServiceArea <- read_sf(dsn="data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp")%>%
   st_transform(crs = crs)
 
@@ -530,7 +525,7 @@ ggplot() +
   mapTheme()
 ```
 
-The above map is about service areas. Each district unit is divided into several service area units for the sake of administration. The pink lines in the map are the services areas in District 7,8,9. These service areas are the target of this project. About the navy yard, whether it should be included into district 9?
+The above map is about service areas. Each district unit is divided into several service area units for the sake of administration. The pink lines in the map are the services areas in District 7,8,9. These service areas are the target of this project.
 
 ```{r fromPPR-recreation-permits-2021, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 perimit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
@@ -545,68 +540,79 @@ program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv
 kable(head(program2021,3),align = 'c',caption = '<center>Table 8. Program information of PPR Programs data <center/>')%>%
   kable_classic(full_width = F)%>%
   kable_styling(position = "center")%>% 
-  scroll_box(width = "100%", height = "400px")
+  scroll_box(width = "100%", height = "460px")
 ```
 
 The above dataset gives information about PPR programs in 2021, including information like the duration of the program, the attendence of the program etc. But some wrangling are needed for further uses. And the wrangling is taken in the next section.
 
-```{r from Service_Area_Sites}
+```{r from Service_Area_Sites, eval=FALSE, include=FALSE}
 
 propertyArea <- read.csv("data/FromPPR/Service_Area_Sites.csv") 
+#The above dataset has information about each property inside the service area. This dataset is useless because it doesn't have geometry data.
 ```
-
-The above dataset has information about each property inside the service area. This dataset can be joined to **pprServiceArea** using the service area id.
 
 ```{r from tblFacility_to_PPR_Properties}
 facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 ```
 
-The above dataset is offered as dictionary data to provide links between facility id and PPR property object id. ({003695FA-5CC6-4572-9916-799609577319} - 209)
+The above dataset is offered as dictionary data to provide links between facility id and PPR property object id. ({003695FA-5CC6-4572-9916-799609577319} - 209). Right now the dataset only contains 7,8,9 districts. The others will be offered at the end of the Feburary.
 
 ### Data Wrangling
 
 #### Property data
 
 ```{r join property data}
-# replace "and" with "&"
-pprProperties <- pprProperties %>% 
-  mutate(OFFICIAL_NAME = gsub("and", "&", pprProperties$OFFICIAL_NAME),
-         PUBLIC_NAME = gsub("and", "&", pprProperties$PUBLIC_NAME))
+# # replace "and" with "&"
+# pprProperties <- pprProperties %>% 
+#   mutate(OFFICIAL_NAME = gsub("and", "&", pprProperties$OFFICIAL_NAME),
+#          PUBLIC_NAME = gsub("and", "&", pprProperties$PUBLIC_NAME))
+# 
+# 
+# # join method 1
+# property.join1 <- left_join(propertyArea, 
+#                           pprProperties %>% dplyr::select(ADDRESS_911, geometry), 
+#                           by=c("X911.Address"="ADDRESS_911"), left=FALSE) %>% 
+#   filter(!st_is_empty(geometry))
+# 
+# # join method 2
+# property.join2 <- left_join(propertyArea, 
+#                           pprProperties %>% dplyr::select(OFFICIAL_NAME, geometry), 
+#                           by=c("PPR.Site.Name"="OFFICIAL_NAME"), left=FALSE) %>% 
+#   filter(!st_is_empty(geometry))
+# 
+# # join method 3
+# property.join3 <- left_join(propertyArea, 
+#                           pprProperties %>% dplyr::select(PUBLIC_NAME, geometry), 
+#                           by=c("PPR.Site.Name"="PUBLIC_NAME"), left=FALSE) %>% 
+#   filter(!st_is_empty(geometry))
+# 
+# # combine 3 methods together
+# property <- rbind(property.join1,property.join2) %>% 
+#   rbind(property.join3,.) %>% 
+#   distinct() %>% 
+#   st_sf()
+# 
+# x <- left_join(propertyArea, property, by="PPR.Site.Name") %>% 
+#   filter(st_is_empty(geometry))
 
 
-# join method 1
-property.join1 <- left_join(propertyArea, 
-                          pprProperties %>% dplyr::select(ADDRESS_911, geometry), 
-                          by=c("X911.Address"="ADDRESS_911"), left=FALSE) %>% 
-  filter(!st_is_empty(geometry))
+# According to the email, we should directly use pprProperties to spatial join the service area to get the service area information. Therefore, the above code should be delete.
 
-# join method 2
-property.join2 <- left_join(propertyArea, 
-                          pprProperties %>% dplyr::select(OFFICIAL_NAME, geometry), 
-                          by=c("PPR.Site.Name"="OFFICIAL_NAME"), left=FALSE) %>% 
-  filter(!st_is_empty(geometry))
 
-# join method 3
-property.join3 <- left_join(propertyArea, 
-                          pprProperties %>% dplyr::select(PUBLIC_NAME, geometry), 
-                          by=c("PPR.Site.Name"="PUBLIC_NAME"), left=FALSE) %>% 
-  filter(!st_is_empty(geometry))
-
-# combine 3 methods together
-property <- rbind(property.join1,property.join2) %>% 
-  rbind(property.join3,.) %>% 
-  distinct() %>% 
-  st_sf()
-
-x <- left_join(propertyArea, property, by="PPR.Site.Name") %>% 
-  filter(st_is_empty(geometry))
+property <- st_join(st_centroid(pprProperties),pprServiceArea,left=TRUE) %>% 
+  st_drop_geometry() %>% 
+  left_join(pprProperties %>% dplyr::select(OBJECTID,geometry),by='OBJECTID') %>% 
+  st_sf() %>% 
+  st_transform(crs = 4326) %>% 
+  dplyr::select(-Shape__Length,-Shape__Area,-Shape_Leng,-Shape_Area) %>% 
+  rename('ServiceAreaID' = 'INFO')
 
 ```
 
 ```{r properties in the service area,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of properties in District 7,8,9'}
 # map the location of properties in district 7,8,9
 ggplot() + 
-  geom_sf(data=property %>% filter(Service.Area.PPR.District %in% c(7,8,9)),color=palette1_main,fill = palette1_main)+
+  geom_sf(data=property %>% filter(PPR_DIST %in% c(7,8,9)),color=palette1_main,fill = palette1_main)+
   geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==7)),color="black",size=2,fill = "transparent")+
   geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==8)),color="black",size=2,fill = "transparent")+
   geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==9)),color="black",size=2,fill = "transparent")+
@@ -621,7 +627,7 @@ Through above wrangling, we obtain the newest data about property and link them 
 
 #### Program data
 
-```{r wrangle program data}
+```{r wrangle program data, eval=FALSE, message=FALSE, warning=FALSE}
 # define date 
 program2021.clean <- program2021 %>% 
   mutate(AttendanceWeekDate = mdy(AttendanceWeekDate),
@@ -656,52 +662,60 @@ program2021.clean <- program2021.clean %>%
   ))
 ```
 
-Through above wrangling, we obtain the real attendance date for each event. (p.s. a program may have more than one events which links with different program schedualed ids)
+```{r readBackup Program2021.clean, message=FALSE,warning=FALSE,include=FALSE}
+#st_write(program2021.clean,"data/output/program2021.clean.csv")
+# st_write(program2021.join.na,"data/output/program2021.join.na.csv")
+# st_write(program2021.join,"data/output/program2021.join.csv")
 
-```{r wrangle ppr land data}
-propertyParent <- pprProperties %>% 
-  filter(NESTED=="N")
-
-propertyKid <- pprProperties %>% 
-  filter(NESTED=="Y")
-
-
+program2021.clean <- st_read("data/output/program2021.clean.csv")
+program2021.join.na <- st_read("data/output/program2021.join.na.csv")
+program2021.join <- st_read("data/output/program2021.join.csv")
 ```
 
-```{r join property and program data}
-program2021.join <- left_join(program2021.clean, facilityID, by =c("FacilityID")) %>% 
-  left_join(., pprProperties, by =c("PPR_Properties_ObjectID"="OBJECTID"))
+Through above wrangling, we obtain the real attendance date for each event. (p.s. a program may have more than one events which links with different program schedualed ids)
+
+```{r join property and program data, eval=FALSE}
+program2021.join <- left_join(program2021.clean, facilityID, by =c("FacilityID" = "FacilityID")) %>% 
+  left_join(., property, by =c("PPR_Properties_ObjectID"="OBJECTID"))
 
 # get the failed joining items
 program2021.join.na <- program2021.join[is.na(program2021.join$PPR_Properties_ObjectID),]
 
 # filter the failed joining items
-program2021.join <- program2021.join %>% na.omit(PPR_Properties_ObjectID)
+program2021.join <- program2021.join %>% drop_na(PPR_Properties_ObjectID)
 ```
 
-Through above wrangling, we link program data to their based properties.
+Through above wrangling, we link program data to their based properties,their belonged Service Area.
 
 #### SafeGraph Data
 
-```{r join safegraph data}
+```{r join safegraph data,warning=FALSE,message=FALSE,eval}
 # filter into philly
 safeGraph <- patternAllMonth %>% 
   filter(city == "Philadelphia")
 
 # join with POI and brand data
-safeGraph <- safeGraph %>% 
-  left_join(core_poi, by=c("placekey","parent_placekey","location_name","street_address","city","region","postal_code","safegraph_brand_ids","brands"),keep=FALSE) %>%
-  left_join(brand_info, by=c("safegraph_brand_ids"="safegraph_brand_id","brands"="brand_name","top_category","sub_category","naics_code"),keep=FALSE)
+safeGraph <- safeGraph %>%
+  left_join(core_poi %>% dplyr::select(placekey,location_name,top_category,sub_category,naics_code,latitude,longitude),
+            by=c("placekey"="placekey","location_name" = "location_name"),keep=FALSE)
+# safeGraph <- safeGraph %>%
+#   left_join(core_poi, by=c("placekey","parent_placekey","location_name","street_address","city","region","postal_code","safegraph_brand_ids","brands"),keep=FALSE) %>%
+#   left_join(brand_info, by=c("safegraph_brand_ids"="safegraph_brand_id","brands"="brand_name","top_category","sub_category","naics_code"),keep=FALSE)
 
 # create geometry from lat & lng
 safeGraph.geo <- 
   safeGraph %>%
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, agr = "constant", na.fail=FALSE) %>% st_transform(crs = crs)
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, agr = "constant", na.fail=FALSE)
 ```
 
-```{r filter safegraph data}
-## set future running stratege
-library(furrr)
+```{r readBackupSafeGraph, include=FALSE,warning=FALSE,message=FALSE}
+#st_write(safeGraph.geo,"data/output/safeGraph.geo.GeoJSON")
+safeGraph.geo <- st_read("data/output/safeGraph.geo.GeoJSON",crs = 4326)
+#st_write(PPRmoves,"data/output/PPRmoves.GeoJSON")
+PPRmoves <- st_read("data/output/PPRmoves.GeoJSON",crs=4326)
+```
+
+```{r filter safegraph data, message=FALSE, warning=FALSE,eval=FALSE}
 # change workers number by yourself
 plan(multiprocess, workers = 10)
 
@@ -724,33 +738,57 @@ parks <- safeGraph.geo %>%
   dplyr::select(placekey, naics_code, location_name) %>% 
   distinct() %>% 
   filter(naics_code %in% c(712190, 713990, 713940, 711310) | str_detect(location_name, "Park") | str_detect(location_name, "Playground") | str_detect(location_name, "Recreation Center")) %>%
-  filter(str_detect(location_name, "Parking", negate = TRUE))
+  filter(str_detect(location_name, "Parking", negate = TRUE)) %>% 
+  st_transform(crs = 4326)
 
 PPRmoves <- safeGraph.geo %>% 
   filter(placekey %in% as.list(parks$placekey))
 
-#st_write(PPRmoves,"data/output/PPRmoves.GeoJSON")
-PPRmoves <- st_read("data/output/PPRmoves.GeoJSON")
-
-# spatial join with ppr sites - to be continued
-
-# we need ask instructors which data to model, but for now just take PPRmoves
-
-```
-
-```{r Explore efficiency of filtering}
 # join filtered safeGraph place with ppr property
-property_safe_join <- st_join(property, parks %>% dplyr::select(placekey, geometry), left=FALSE)
+
+propertyWithPlaceKey <- st_join(property %>% st_buffer(10),parks %>% dplyr::select(placekey, geometry),left=FALSE) %>%
+  st_drop_geometry() %>% 
+  left_join(property %>% dplyr::select(OBJECTID),by=('OBJECTID'='OBJECTID')) %>% 
+  st_sf() %>% 
+  st_transform(crs=4326) %>% 
+  drop_na(placekey)
 
 # count
-print(paste0("The number of PPR properties is ", n_distinct(property$PPR.Site.Name)))
+print(paste0("The number of PPR properties is ", n_distinct(property$PUBLIC_NAME),"The number joined properties is ", n_distinct(propertyWithPlaceKey$PUBLIC_NAME)))
 
-print(paste0("The number joined properties is ", n_distinct(property_safe_join$PPR.Site.Name)))
 
-# the filtering quality is okay at this point, more data will be added
 ```
 
-```{r unnest safegraph data}
+```{r display the join outcome, warning=FALSE,message=FALSE,include=FALSE}
+# the filtering quality is okay at this point, more data will be added
+mapview(property)+mapview(st_centroid(propertyWithPlaceKey),col.regions = "green")
+```
+In the above map, the polygon is the properties of PPR, the green dots are the successfully join properties with placekey
+
+```{r update program2021.joinWith with placekey,eval=FALSE}
+program2021.joinWithPlaceKey <- 
+  st_join(program2021.join %>%
+            st_sf() %>% 
+            st_transform(crs=4326) %>%
+            st_buffer(10),
+          parks %>% dplyr::select(placekey, geometry),left=FALSE) %>%
+  st_drop_geometry() %>%  
+  merge.data.frame(program2021.join %>%
+                     dplyr::select(geometry),
+                   by='row.names')%>%
+  dplyr::select(-Row.names) %>% 
+  st_sf() %>% 
+  st_transform(crs=4326)
+
+mapview(property)+mapview(program2021.joinWithPlaceKey,col.regions = "red")
+```
+
+```{r readBackupprogram2021.joinWithPlaceKey,warning=FALSE,message=FALSE}
+#st_write(program2021.joinWithPlaceKey,"data/output/program2021.joinWithPlaceKey.GeoJSON")
+program2021.joinWithPlaceKey <- st_read("data/output/program2021.joinWithPlaceKey.GeoJSON",crs=4326)
+```
+
+```{r unnest safegraph data,warning=FALSE,message=FALSE}
 #This following code to unnest the pupularity_by_hout data is different from the above code. Because the pprMoves is read into the R, which directly delete the '['']'
 
 # unnest visit Count data
@@ -770,25 +808,25 @@ print(paste0("The number joined properties is ", n_distinct(property_safe_join$P
 #   unnest(cols = c("visits_by_day"))
 # 
 # st_write(visitCount,"data/output/visitCount.GeoJSON")
-visitCount <- st_read("data/output/visitCount.GeoJSON")
+visitCount <- st_read("data/output/visitCount.GeoJSON",crs=4326)
 
 # unnest popularity_by_hour data
-visitHour <-
-  PPRmoves %>%
-  select(placekey, popularity_by_hour, date_range_start) %>%
-  mutate(date_range_start = as_date(date_range_start),
-         month =  month(date_range_start)) %>%
-  dplyr::select(-date_range_start) %>%
-  mutate(popularity_by_hour = future_map(popularity_by_hour, function(x){
-    unlist(x) %>%
-      as_tibble() %>%
-      rowid_to_column(var = "hour") %>%
-      rename(visit = value)
-  }))%>%
-  unnest(popularity_by_hour)
-#  
-#st_write(visitHour,"data/output/visitHour.GeoJSON")
-visitHour <- st_read("data/output/visitHour.GeoJSON")
+# visitHour <-
+#   PPRmoves %>%
+#   select(placekey, popularity_by_hour, date_range_start) %>%
+#   mutate(date_range_start = as_date(date_range_start),
+#          month =  month(date_range_start)) %>%
+#   dplyr::select(-date_range_start) %>%
+#   mutate(popularity_by_hour = future_map(popularity_by_hour, function(x){
+#     unlist(x) %>%
+#       as_tibble() %>%
+#       rowid_to_column(var = "hour") %>%
+#       rename(visit = value)
+#   }))%>%
+#   unnest(popularity_by_hour)
+# 
+# st_write(visitHour,"data/output/visitHour.GeoJSON")
+visitHour <- st_read("data/output/visitHour.GeoJSON",crs=4326)
 
 
 # unnest the origin-destination data
@@ -801,21 +839,18 @@ visitHour <- st_read("data/output/visitHour.GeoJSON")
 #   dplyr::select(-date_range_start) %>%
 #   mutate(visitor_home_cbgs = future_map(visitor_home_cbgs, function(x){
 #     jsonlite::fromJSON(x) %>%
-#       as_tibble()
+#       as_tibble() %>% 
+#       dplyr::select(starts_with("4")) %>%
+#       gather()
 #   })) %>%
-#   unnest(visitor_home_cbgs)
+#   unnest(visitor_home_cbgs) %>% 
+#   rename(origin =key ,visitors= value)
 # 
-# originCount <- originCount %>%
-#   dplyr::select(placekey, month, starts_with("4")) %>%
-#   pivot_longer(cols = starts_with("4"), names_to = "origin", values_to = "visits", values_drop_na = TRUE)
-
-#st_write(originCount,"data/output/originCount.GeoJSON")
-originCount <- st_read("data/output/originCount.GeoJSON")
+# st_write(originCount,"data/output/originCount.GeoJSON")
+originCount <- st_read("data/output/originCount.GeoJSON",crs=4326)
 
 
-# The following codes is different from the above. Because I try to gather the data inside the tibble instead of the old way. This new way can greatly increase the efficiency.
-
-# unnest the departure - destination data
+#unnest the departure - destination data
 # departCount <-
 #   PPRmoves %>%
 #   select(placekey, visitor_daytime_cbgs, date_range_start) %>%
@@ -824,15 +859,15 @@ originCount <- st_read("data/output/originCount.GeoJSON")
 #   dplyr::select(-date_range_start) %>%
 #   mutate(visitor_daytime_cbgs = future_map(visitor_daytime_cbgs, function(x){
 #     jsonlite::fromJSON(x) %>%
-#       as_tibble() %>% 
-#       dplyr::select(starts_with("4")) %>% 
+#       as_tibble() %>%
+#       dplyr::select(starts_with("4")) %>%
 #       gather()
 #   }))%>%
-#   unnest(visitor_daytime_cbgs) %>% 
+#   unnest(visitor_daytime_cbgs) %>%
 #   rename(departure =key ,visitors= value)
-
-#st_write(departCount,"data/output/departCount.GeoJSON")
-departCount <- st_read("data/output/departCount.GeoJSON")
+# 
+# st_write(departCount,"data/output/departCount.GeoJSON")
+departCount <- st_read("data/output/departCount.GeoJSON",crs=4326)
 
 # unnest the bucketed_dwell_times data
 # dwellTime <-
@@ -848,9 +883,9 @@ departCount <- st_read("data/output/departCount.GeoJSON")
 #   }))%>%
 #   unnest(bucketed_dwell_times) %>%
 #   rename(dwellTimes =key ,visitors= value)
-
-#st_write(dwellTime,"data/output/dwellTime.GeoJSON")
-dwellTime <- st_read("data/output/dwellTime.GeoJSON")
+# 
+# st_write(dwellTime,"data/output/dwellTime.GeoJSON")
+dwellTime <- st_read("data/output/dwellTime.GeoJSON",crs=4326)
 
 
 # unnest the related_same_day_brand
@@ -869,9 +904,9 @@ dwellTime <- st_read("data/output/dwellTime.GeoJSON")
 # relatedBrand <- relatedBrand %>%
 #   unnest(related_same_day_brand) %>%
 #   rename(relatedBrand =key ,visitors= value)
-
-#st_write(relatedBrand,"data/output/relatedBrand.GeoJSON")
-relatedBrand <- st_read("data/output/relatedBrand.GeoJSON")
+# 
+# st_write(relatedBrand,"data/output/relatedBrand.GeoJSON")
+relatedBrand <- st_read("data/output/relatedBrand.GeoJSON",crs=4326)
 
 
 # unnest the popularity_by_day data
@@ -890,7 +925,7 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON")
 #   rename(visitWeekday =key ,visits= value)
 # 
 # st_write(visitWeekday,"data/output/visitWeekday.GeoJSON")
-visitWeekday <- st_read("data/output/visitWeekday.GeoJSON")
+visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=4326)
 ```
 
 ```{r left join the place information to the unnested data}
@@ -914,7 +949,7 @@ visitCount <- visitCount %>%
 
 ### EXPLORATORY -- CENSUS DATA
 
-## 1. Get each of the Philadelphia PPR zones
+#### 1. Get each of the Philadelphia PPR zones
 ```{r census-exploration-1}
 
 ggplot() + 
@@ -925,7 +960,7 @@ ggplot() +
        x="",y="")+
   mapTheme()
 ```
-## 2. Get the list of PHL census tracts that intersect with each zone
+#### 2. Get the list of PHL census tracts that intersect with each zone
 ```{r getCensusTracts}
 
 acs_vars <- c("B25026_001E","B02001_002E","B15001_050E",
@@ -980,7 +1015,7 @@ blocks19_grouped_summary <- blocks19_pprArea %>%
 #   facet_wrap(~location_name, scales = "free")
 ```
 
-### Loading Data into Database
+#### Loading Data into Database
 
 ```{r load data into database}
 library(RPostgres)
@@ -1021,23 +1056,56 @@ ggplot(sumVisit)+
   geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
   mapTheme()
 ```
+
 The above is the aggragated visits map of PPR sities. The data is from safegraph.
 
-```{r origine Count, eval=FALSE, include=FALSE}
+```{r origine Count, include=FALSE}
 
-# the codes below are wrong, should add census geometry data into the dataframe 
-sumVisit <- originCount %>%
-  filter(!st_is_empty(.)) %>% 
-  dplyr::select(-placekey,-month) %>% 
-  group_by(origin) %>%
-  summarise(visits=sum(visits))
+census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
+CensusData <- 
+  get_acs(geography = "block group", 
+          variables = c("B01003_001E"), 
+          year=2019, state="PA", county="Philadelphia", geometry=T, output="wide") %>%
+  st_transform(crs=4326) %>% 
+  dplyr::select(-NAME,-starts_with('B')) %>% 
+  st_centroid() %>% 
+  as.data.frame() %>% 
+  rename("originGeometry" = "geometry")
 
-sumVisit2 <- sumVisit %>% filter(!st_is_empty(.))
+attempt <- originCount %>% 
+  st_drop_geometry() %>% 
+  group_by(origin,placekey) %>%
+  summarise(visitors=sum(visitors))
 
-ggplot(sumVisit)+
-  geom_sf(data=pprServiceArea,color='black',size=0.25,fill= "transparent")+
-  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.5,fill= "transparent")+
-  geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
+placekeyGeometry <- 
+  originCount %>% 
+  dplyr::select(placekey) %>% 
+  group_by(placekey) %>% summarise()
+
+attempt2 <- 
+  attempt %>% 
+  left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
+  rename("parkGeometry" = "geometry")
+
+attempt2 <- attempt2 %>% filter(startsWith(origin,"42101"))%>%left_join(CensusData,by=c("origin" = "GEOID"))
+
+attempt3 <- attempt2 %>% mutate(park.y=as.numeric(future_map(parkGeometry,function(x){return(x[2])})),
+                                park.x=as.numeric(future_map(parkGeometry,function(x){return(x[1])})),
+                                origin.y=as.numeric(future_map(originGeometry,function(x){return(x[2])})),
+                                origin.x=as.numeric(future_map(originGeometry,function(x){return(x[1])})))
+
+ggplot(data = head(attempt3,n=300)) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326))+
+  geom_curve(aes(x = origin.x, 
+                 y = origin.y, 
+                 xend = park.x, 
+                 yend = park.y,
+                 size = visitors),
+             curvature = -0.2, 
+             color = palette1_main,
+             alpha = 0.5,
+             arrow = arrow(length = unit(0.01, "npc")))+
+  scale_colour_distiller(palette="Reds", name="Frequency", guide = "colorbar") +
   mapTheme()
 ```
 
