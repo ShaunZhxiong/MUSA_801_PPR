@@ -251,18 +251,28 @@ Answer: EDA will be the main content of this project, to help ppr better underst
 
 # Feb 13rd
 
-1. PPR will give 'facilityID' at the end of the Feburary
+Wait for PPR
 
-2. The district 9 doesn't include the smith area
+- [ ] PPR will give 'facilityID' at the end of the Feburary
 
-3. property exceptions
+- [x] The district 9 doesn't include the smith area
+- [ ] property exceptions
 
-4. Safegraph community progress:
+- [x] Use pprProperty and ServiceArea to spatial join to get the service area information attached to the property
 
-   join the community and explora
 
-5. how to reasonably construct the surrounding effect in the **Socially Aware Huff Model**? Weighted?
 
-6. Huff model validation: compare the safegraph origin data with huff model market area.
+Questions
 
-7. 用pprproperty 和 service area spatial join 来得到我们想要的信息， 就不用Service_Area_Sites了
+1. how to reasonably construct the surrounding effect in the **Socially Aware Huff Model**? Weighted?
+2. Huff model validation: compare the safegraph origin data with huff model market area.
+
+
+
+Will do
+
+1. Combine hui's work into the whole markdown
+2. Tidy up next class presentation
+3. Service Area Level Analysis
+4. Decide how to properly modify and use safegraph data into our model
+4. Model Building

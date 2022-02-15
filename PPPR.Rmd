@@ -44,7 +44,6 @@ th{
 }
 </style>
 ```
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -65,6 +64,8 @@ library(tidycensus)
 library(rgdal)
 library(furrr)
 library(mapview)
+library(mclust)
+library(cluster)
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
@@ -132,7 +133,6 @@ palette2 <- c("#f9b294","#f2727f")
 palette1_main <- "#F2727F"
 palette1_assist <- '#F9B294'
 ```
-
 
 ```{r loadSecrets, message=FALSE, warning=FALSE, results='hide'}
 
@@ -261,7 +261,7 @@ for (i in monthList){
 #   scroll_box(width = "100%", height = "400px")
 ```
 
-```{r readBackupData warning=FALSE,message=FALSE,include=FALSE}
+```{r readBackupData, warning=FALSE,message=FALSE,include=FALSE}
 # st_write(hpsAllMonth,"data/output/hpsAllMonth.csv")
 # st_write(vpsAllMonth,"data/output/vpsAllMonth.csv")
 # st_write(patternAllMonth,"data/output/patternAllMonth.csv")
@@ -561,7 +561,7 @@ The above dataset is offered as dictionary data to provide links between facilit
 
 #### Property data
 
-```{r join property data}
+```{r join property data,message=FALSE,warning=FALSE}
 # # replace "and" with "&"
 # pprProperties <- pprProperties %>% 
 #   mutate(OFFICIAL_NAME = gsub("and", "&", pprProperties$OFFICIAL_NAME),
@@ -689,7 +689,7 @@ Through above wrangling, we link program data to their based properties,their be
 
 #### SafeGraph Data
 
-```{r join safegraph data,warning=FALSE,message=FALSE,eval}
+```{r join safegraph data,warning=FALSE,message=FALSE,eval=FALSE}
 # filter into philly
 safeGraph <- patternAllMonth %>% 
   filter(city == "Philadelphia")
@@ -711,11 +711,10 @@ safeGraph.geo <-
 ```{r readBackupSafeGraph, include=FALSE,warning=FALSE,message=FALSE}
 #st_write(safeGraph.geo,"data/output/safeGraph.geo.GeoJSON")
 safeGraph.geo <- st_read("data/output/safeGraph.geo.GeoJSON",crs = 4326)
-#st_write(PPRmoves,"data/output/PPRmoves.GeoJSON")
-PPRmoves <- st_read("data/output/PPRmoves.GeoJSON",crs=4326)
+
 ```
 
-```{r filter safegraph data, message=FALSE, warning=FALSE,eval=FALSE}
+```{r filter safegraph data, eval=FALSE, message=FALSE, warning=FALSE}
 # change workers number by yourself
 plan(multiprocess, workers = 10)
 
@@ -759,10 +758,39 @@ print(paste0("The number of PPR properties is ", n_distinct(property$PUBLIC_NAME
 
 ```
 
+```{r readBackup PPRmoves, include=FALSE,warning=FALSE,message=FALSE}
+st_write(PPRmoves,"data/output/PPRmoves.GeoJSON")
+PPRmoves <- st_read("data/output/PPRmoves.GeoJSON",crs=4326)
+
+```
+
 ```{r display the join outcome, warning=FALSE,message=FALSE,include=FALSE}
 # the filtering quality is okay at this point, more data will be added
+parks <- safeGraph.geo %>% 
+  dplyr::select(placekey, naics_code, location_name) %>% 
+  distinct() %>% 
+  filter(naics_code %in% c(712190, 713990, 713940, 711310) | str_detect(location_name, "Park") | str_detect(location_name, "Playground") | str_detect(location_name, "Recreation Center")) %>%
+  filter(str_detect(location_name, "Parking", negate = TRUE)) %>% 
+  st_transform(crs = 4326)
+
+PPRmoves <- safeGraph.geo %>% 
+  filter(placekey %in% as.list(parks$placekey))
+
+# join filtered safeGraph place with ppr property
+
+propertyWithPlaceKey <- st_join(property %>% st_buffer(10),parks %>% dplyr::select(placekey, geometry),left=FALSE) %>%
+  st_drop_geometry() %>% 
+  left_join(property %>% dplyr::select(OBJECTID),by=('OBJECTID'='OBJECTID')) %>% 
+  st_sf() %>% 
+  st_transform(crs=4326) %>% 
+  drop_na(placekey)
+
+# count
+print(paste0("The number of PPR properties is ", n_distinct(property$PUBLIC_NAME),"The number joined properties is ", n_distinct(propertyWithPlaceKey$PUBLIC_NAME)))
+
 mapview(property)+mapview(st_centroid(propertyWithPlaceKey),col.regions = "green")
 ```
+
 In the above map, the polygon is the properties of PPR, the green dots are the successfully join properties with placekey
 
 ```{r update program2021.joinWith with placekey,eval=FALSE}
@@ -783,12 +811,12 @@ program2021.joinWithPlaceKey <-
 mapview(property)+mapview(program2021.joinWithPlaceKey,col.regions = "red")
 ```
 
-```{r readBackupprogram2021.joinWithPlaceKey,warning=FALSE,message=FALSE}
+```{r readBackupprogram2021.joinWithPlaceKey,warning=FALSE,message=FALSE,include=FALSE}
 #st_write(program2021.joinWithPlaceKey,"data/output/program2021.joinWithPlaceKey.GeoJSON")
 program2021.joinWithPlaceKey <- st_read("data/output/program2021.joinWithPlaceKey.GeoJSON",crs=4326)
 ```
 
-```{r unnest safegraph data,warning=FALSE,message=FALSE}
+```{r unnest safegraph data, message=FALSE, warning=FALSE,include=FALSE}
 #This following code to unnest the pupularity_by_hout data is different from the above code. Because the pprMoves is read into the R, which directly delete the '['']'
 
 # unnest visit Count data
@@ -806,7 +834,10 @@ program2021.joinWithPlaceKey <- st_read("data/output/program2021.joinWithPlaceKe
 #       dplyr::select(-value)
 #   })) %>%
 #   unnest(cols = c("visits_by_day"))
-# 
+# visitCount <- visitCount %>%
+#     rename(visitDay = date_range_start) %>% 
+#     mutate(visitDay = day+visitDay-1) %>% 
+#     mutate(month = month(visitDay))
 # st_write(visitCount,"data/output/visitCount.GeoJSON")
 visitCount <- st_read("data/output/visitCount.GeoJSON",crs=4326)
 
@@ -928,29 +959,13 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON",crs=4326)
 visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=4326)
 ```
 
-```{r left join the place information to the unnested data}
-visitCount <- visitCount %>%
-    rename(visitDay = date_range_start) %>% 
-    mutate(visitDay = day+visitDay-1) %>% 
-    mutate(month = month(visitDay))
-
-# Problem: should the na geometry be dropped?
-# join the location name of 'parks' into the unnested data
-# visitCount2 <- visitCount %>% 
-#   left_join(parks %>% st_drop_geometry() ,by=c('placekey' = 'placekey'))
-# 
-# test <- parks %>% 
-#   mutate(count=1) %>% 
-#   group_by(placekey) %>% 
-#   mutate(location_name = location_name,count=sum(count)) %>% 
-#   filter(count == 2)
-
-```
-
-### EXPLORATORY -- CENSUS DATA
+### ≠EXPLORATORY -- CENSUS DATA
 
 #### 1. Get each of the Philadelphia PPR zones
-```{r census-exploration-1}
+
+
+
+```{r census-exploration-1, warning=FALSE, message=FALSE}
 
 ggplot() + 
   geom_sf(data=ll(st_union(pprDistrict)),color="black",size=2,fill = "transparent",inherit.aes = FALSE)+
@@ -960,8 +975,11 @@ ggplot() +
        x="",y="")+
   mapTheme()
 ```
+
 #### 2. Get the list of PHL census tracts that intersect with each zone
-```{r getCensusTracts}
+
+
+```{r getCensusTracts, warning=FALSE, message=FALSE,include=FALSE}
 
 acs_vars <- c("B25026_001E","B02001_002E","B15001_050E",
                          "B15001_009E","B19013_001E","B25058_001E",
@@ -1035,7 +1053,6 @@ blocks19_grouped_summary <- blocks19_pprArea %>%
 
 ```
 
-
 ```{r}
 # ggplot(PPRmoves)+
 #   geom_line(aes(x = date_range_start, y = raw_visit_counts))+
@@ -1044,7 +1061,7 @@ blocks19_grouped_summary <- blocks19_pprArea %>%
 
 #### Loading Data into Database
 
-```{r load data into database}
+```{r load data into database, eval=FALSE, include=FALSE}
 library(RPostgres)
 
 df_to_db <- function(conn, df, table_name) {
@@ -1065,33 +1082,118 @@ df_to_db(conn, program2021.clean, "ppr_programs")
 # dbListTables(conn)
 ```
 
-```{r load pprTrails data into database}
+```{r load pprTrails data into database, eval=FALSE, include=FALSE}
 # print(pprTrails)
 ```
 
-```{r load data into database}
+```{r load data into database, eval=FALSE, include=FALSE}
 ```
-
 
 ### EXPLORATORY -- SafeGrpah DATA
 
-```{r visit Count}
+```{r visit Count,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of total visits'}
 sumVisit <- visitCount %>%
   dplyr::select(-visitDay,-day,-month) %>% 
   group_by(placekey) %>%
   summarise(visits=sum(visits))
 
 ggplot(sumVisit)+
-  geom_sf(data=pprServiceArea,color='black',size=0.25,fill= "transparent")+
-  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.5,fill= "transparent")+
-  geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
-  mapTheme()
+  geom_sf(data=pprServiceArea,
+          color='black',
+          size=0.25,
+          fill= "transparent")+
+  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),
+          color='black',
+          size=0.5,
+          fill= "transparent")+
+  geom_sf(aes(size = visits),
+          color = palette1_main,
+          fill = palette1_main,
+          alpha = 0.3) +
+  scale_size_continuous(range = c(1, 3),
+                        name = "Visits")+
+  mapTheme()+
+  theme(legend.position = "bottom",
+        legend.key.width = unit(1.5, 'cm'),
+        legend.key.height  = unit(1.2, 'cm'))
 ```
 
 The above is the aggragated visits map of PPR sities. The data is from safegraph.
 
-```{r origine Count, include=FALSE}
+```{r most popular place in 789 district}
+visitCount789 <- 
+  st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
+  filter(PPR_DIST %in% c(7,8,9))
 
+visitCount789 <- visitCount789 %>% 
+  dplyr::select(placekey,visits) %>% 
+  st_drop_geometry() %>% 
+  group_by(placekey) %>% 
+  mutate(totalVisits = sum(visits)) %>% 
+  dplyr::select(-visits) %>% 
+  distinct()
+```
+
+#### The facility with largest visit counts
+
+From above, we can know Christy Recreation Center([zzz-222\@63s-dvq-5fz](mailto:zzz-222@63s-dvq-5fz){.email}) has the most frequent visits among district 7,8,9. The total visits is 420776
+
+```{r Christy Recreation Center img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
+```
+
+```{r Christy Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Christy Recreation Center2.jpeg")
+```
+
+```{r Christy Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+sumVisit <- dwellTime %>% 
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  dplyr::select(-month) %>% 
+  group_by(dwellTimes) %>%
+  summarise(visitors=sum(visitors)) %>% 
+  st_drop_geometry() 
+
+sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
+
+sumVisit%>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
+  plotTheme(10,20)
+```
+
+```{r Christy Recreation Center temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+visitCount %>% 
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  st_drop_geometry()%>%
+  na.omit()%>%
+  ggplot(aes(visitDay,visits)) + 
+  geom_line(color=palette1_main,size=1)+
+  labs(title = 'Christy Recreation Center (zzz-222@63s-dvq-5fz)',x="Visit Date",y="Safegraph Visit")+
+  plotTheme(10,20)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+
+```
+
+```{r Christy Recreation Center temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
+sumVisit <- visitHour %>% 
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  dplyr::select(-month) %>% 
+  group_by(hour) %>%
+  summarise(visits=sum(visit)) %>% 
+  st_drop_geometry()
+
+sumVisit%>%
+  ggplot(aes(hour,visits)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="hour", y="Aggregated Visits",
+       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
+  plotTheme(10,20)
+```
+
+```{r origine Count plot preparation, include=FALSE}
 census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
 CensusData <- 
   get_acs(geography = "block group", 
@@ -1103,44 +1205,206 @@ CensusData <-
   as.data.frame() %>% 
   rename("originGeometry" = "geometry")
 
-attempt <- originCount %>% 
-  st_drop_geometry() %>% 
-  group_by(origin,placekey) %>%
-  summarise(visitors=sum(visitors))
-
 placekeyGeometry <- 
   originCount %>% 
   dplyr::select(placekey) %>% 
   group_by(placekey) %>% summarise()
 
-attempt2 <- 
-  attempt %>% 
+
+orgCountPlot <- originCount %>% 
+  st_drop_geometry() %>% 
+  group_by(origin,placekey) %>%
+  summarise(visitors=sum(visitors))%>% 
   left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
-  rename("parkGeometry" = "geometry")
+  rename("parkGeometry" = "geometry")%>%
+  filter(startsWith(origin,"42101"))%>%
+  left_join(CensusData,by=c("origin" = "GEOID"))%>%
+  mutate(park.y=as.numeric(map(parkGeometry,function(x){return(x[2])})),
+         park.x=as.numeric(map(parkGeometry,function(x){return(x[1])})),
+         origin.y=as.numeric(map(originGeometry,function(x){return(x[2])})),
+         origin.x=as.numeric(map(originGeometry,function(x){return(x[1])})))
 
-attempt2 <- attempt2 %>% filter(startsWith(origin,"42101"))%>%left_join(CensusData,by=c("origin" = "GEOID"))
+orgCountPlot2 <- orgCountPlot%>%
+  filter(visitors>200)
 
-attempt3 <- attempt2 %>% mutate(park.y=as.numeric(future_map(parkGeometry,function(x){return(x[2])})),
-                                park.x=as.numeric(future_map(parkGeometry,function(x){return(x[1])})),
-                                origin.y=as.numeric(future_map(originGeometry,function(x){return(x[2])})),
-                                origin.x=as.numeric(future_map(originGeometry,function(x){return(x[1])})))
+orgCountPlotHF <- orgCountPlot%>%
+  filter(visitors>2000)
+```
 
-ggplot(data = head(attempt3,n=300)) + 
-  geom_sf(data = pprServiceArea %>% st_transform(crs=4326))+
+```{r origine Count plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins'}
+ggplot(data = orgCountPlot2) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
   geom_curve(aes(x = origin.x, 
                  y = origin.y, 
                  xend = park.x, 
                  yend = park.y,
-                 size = visitors),
+                 color = q5(visitors)),
+             size = 0.5,
              curvature = -0.2, 
-             color = palette1_main,
-             alpha = 0.5,
+             alpha = 0.4,
              arrow = arrow(length = unit(0.01, "npc")))+
-  scale_colour_distiller(palette="Reds", name="Frequency", guide = "colorbar") +
-  mapTheme()
+  scale_color_manual(values = palette5,
+                     labels = qBr(orgCountPlot2,"visitors"),
+                     name = "Visitors (Quintile Breaks)") +
+  labs(x="",y="")+
+  mapTheme()+
+  theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
+        legend.key.width = unit(0.5, 'cm'),
+        legend.key.height  = unit(0.2, 'cm'))
 ```
 
-```{r temperal pattern by month}
+```{r fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins - High Frequency'}
+ggplot(data = orgCountPlotHF) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=2)+
+  geom_curve(aes(x = origin.x, 
+                 y = origin.y, 
+                 xend = park.x, 
+                 yend = park.y),
+             size = 2.5,
+             color = palette1_main,
+             curvature = -0.2, 
+             alpha = 0.4,
+             arrow = arrow(length = unit(0.01, "npc")))+
+  labs(x="",y="")+
+  mapTheme()+
+  theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
+        legend.key.width = unit(1.5, 'cm'),
+        legend.key.height  = unit(1.2, 'cm'))
+```
+
+```{r Departure Count plot preparation, include=FALSE}
+depaCountPlot <- departCount %>% 
+  st_drop_geometry() %>% 
+  group_by(departure,placekey) %>%
+  summarise(visitors=sum(visitors))%>% 
+  left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
+  rename("parkGeometry" = "geometry")%>%
+  filter(startsWith(departure,"42101"))%>%
+  left_join(CensusData,by=c("departure" = "GEOID"))%>%
+  mutate(park.y=as.numeric(map(parkGeometry,function(x){return(x[2])})),
+         park.x=as.numeric(map(parkGeometry,function(x){return(x[1])})),
+         departure.y=as.numeric(map(originGeometry,function(x){return(x[2])})),
+         departure.x=as.numeric(map(originGeometry,function(x){return(x[1])})))
+
+depaCountPlot2 <- depaCountPlot%>%
+  filter(visitors>200)
+
+depaCountPlotHF <- depaCountPlot%>%
+  filter(visitors>2000)
+```
+
+```{r fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and departure points'}
+ggplot(data = depaCountPlot2) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_curve(aes(x = departure.x, 
+                 y = departure.y, 
+                 xend = park.x, 
+                 yend = park.y,
+                 color = q5(visitors)),
+             size = 0.5,
+             curvature = -0.2, 
+             alpha = 0.4,
+             arrow = arrow(length = unit(0.01, "npc")))+
+  scale_color_manual(values = palette5,
+                     labels = qBr(depaCountPlot2,"visitors"),
+                     name = "Visitors (Quintile Breaks)") +
+  labs(x="",y="")+
+  mapTheme()+
+  theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
+        legend.key.width = unit(0.5, 'cm'),
+        legend.key.height  = unit(0.2, 'cm'))
+```
+
+```{r fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and departure - High Frequency'}
+ggplot(data = depaCountPlotHF) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_curve(aes(x = departure.x, 
+                 y = departure.y, 
+                 xend = park.x, 
+                 yend = park.y),
+             size = 0.5,
+             color = palette1_main,
+             curvature = -0.2, 
+             alpha = 0.4,
+             arrow = arrow(length = unit(0.01, "npc")))+
+  labs(x="",y="")+
+  mapTheme()+
+  theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
+        legend.key.width = unit(0.5, 'cm'),
+        legend.key.height  = unit(0.2, 'cm'))
+```
+
+```{r dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+dwellTimeForPlot <- dwellTime %>% 
+  mutate(dwellTimes = recode(dwellTimes,
+                             "<5" = 2.5,
+                             "5-10" = 7.5,
+                             "11-20" = 15,
+                             "21-60" = 40,
+                             "61-120" = 90,
+                             "121-240" = 180,
+                             ">240" = 0)) %>%
+  mutate(sepTotalDwellTime = (visitors*dwellTimes)) %>% 
+  group_by(placekey) %>% 
+  mutate(totalVisitors=sum(visitors) )%>%
+  filter(totalVisitors>50) %>% 
+  mutate(avgDwellTime=sum(sepTotalDwellTime)/totalVisitors) %>% 
+  dplyr::select(placekey,avgDwellTime) %>% 
+  distinct()
+
+ggplot(dwellTimeForPlot)+
+  geom_sf(data=pprServiceArea,
+          color='black',
+          size=0.25,
+          fill= "transparent")+
+  geom_sf(data=pprDistrict,
+          color='black',
+          size=0.75,
+          fill='transparent')+
+  geom_sf(aes(size = avgDwellTime,
+              color = avgDwellTime),
+          alpha = 0.5) +
+  scale_size_continuous(range = c(1, 3),
+                        name = "avgDwellTime")+
+  scale_color_continuous(low = '#FFDEDB',high ='#FF2903',
+                     name = "avgDwellTime") +
+  mapTheme()+
+  theme(legend.position = "bottom",
+        legend.key.width = unit(0.5, 'cm'),
+        legend.key.height  = unit(0.2, 'cm'))
+```
+
+From the above plot we can see the largest dwelling time is at Girard Park ([zzz-222\@628-pgb-k75](mailto:zzz-222@628-pgb-k75){.email}) with avgerage dwelling time is 94.9. Interestingly, there is not program by PPR in this park in 2021. There is a activity organized by citizens themselves. The activity is yoga, from April to September, every 1pm to 2pm on Sunday.
+
+#### The facility with largest average dwell time
+
+```{r Girard Park img, echo=FALSE,fig.height = 1,out.width = '30%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Girard Park.png")
+```
+
+```{r Girard Park dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+sumVisit <- dwellTime %>% 
+  filter(placekey=='zzz-222@628-pgb-k75') %>% 
+  dplyr::select(-month) %>% 
+  group_by(dwellTimes) %>%
+  summarise(visitors=sum(visitors)) %>% 
+  st_drop_geometry() 
+
+sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
+
+sumVisit%>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='Girard Park (zzz-222@628-pgb-k75)') +
+  plotTheme(10,20)
+```
+
+```{r temperal pattern by month, eval=FALSE, include=FALSE}
 sumVisit <- visitCount %>% 
   filter(placekey=='zzz-222@628-pj6-ndv') %>% 
   dplyr::select(-visitDay,-day) %>% 
@@ -1157,22 +1421,22 @@ sumVisit%>%
 
 ```
 
-```{r temperal pattern by day}
+```{r Girard Park temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 visitCount %>% 
-  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  filter(placekey=='zzz-222@628-pgb-k75') %>% 
   st_drop_geometry()%>%
   na.omit()%>%
   ggplot(aes(visitDay,visits)) + 
   geom_line(color=palette1_main,size=1)+
-  labs(title = 'Zeihler Playground',x="Visit Date",y="Safegraph Visit")+
+  labs(title = 'Girard Park',x="Visit Date",y="Safegraph Visit")+
   plotTheme(10,20)+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ```
 
-```{r temperal pattern by hour}
+```{r Girard Park temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
 sumVisit <- visitHour %>% 
-  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  filter(placekey=='zzz-222@628-pgb-k75') %>% 
   dplyr::select(-month) %>% 
   group_by(hour) %>%
   summarise(visits=sum(visit)) %>% 
@@ -1182,11 +1446,11 @@ sumVisit%>%
   ggplot(aes(hour,visits)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="hour", y="Aggregated Visits",
-       title ='Zeihler Playground') +
+       title ='Girard Park (zzz-222@628-pgb-k75)') +
   plotTheme(10,20)
 ```
 
-```{r temperal pattern by weekday}
+```{r temperal pattern by weekday, eval=FALSE, include=FALSE}
 sumVisit <- visitWeekday %>% 
   filter(placekey=='zzz-222@628-pj6-ndv') %>% 
   dplyr::select(-month) %>% 
@@ -1207,24 +1471,249 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
+#### Cluster analysis for locations
 
-```{r dwell time}
+##### Data confidence clusters
+
+```{r integrate safegraph characteristic data}
+# calculate midnight visit
+visitHourNight <- visitHour %>% 
+  filter(hour >= 1 | hour <=5) %>% 
+  group_by(placekey) %>% 
+  summarize(nightVisit = sum(visit))
+
+
+# visitHour, originCount, departCount, dwellTime, visitWeekday
+visitIntegrated <- full_join(visitHourNight %>% 
+                               st_drop_geometry(), 
+                             dwellTime %>% 
+                               group_by(placekey, dwellTimes) %>% 
+                               summarize(visitors = sum(visitors)),
+                             by=c('placekey'))
+
+# wide format
+visitIntegrated <- visitIntegrated %>% 
+  spread(key = dwellTimes, value = visitors)
+```
+
+```{r cluster by data confidence}
+# normalize
+visitIntegrated.scale <- scale(visitIntegrated %>% dplyr::select(-placekey, -geometry))
+
+# cluster number
+wss <- (nrow(visitIntegrated.scale)-1)*sum(apply(visitIntegrated.scale,2,var)) 
+
+for (i in 2:15) wss[i] <- sum(kmeans(visitIntegrated.scale, 
+   centers=i)$withinss) 
+
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares") 
+
+# K-Means cluster
+fit1 <- kmeans(visitIntegrated.scale, 3) 
+summary(fit1)
+# integrate 
+visitIntegrated <- visitIntegrated %>% 
+  mutate(cluster = fit1$cluster)
+# mean by cluster
+fit1_mean <- aggregate(visitIntegrated%>% dplyr::select(-placekey, -geometry),
+                       by=list(visitIntegrated$cluster),FUN=mean)
+
+fit1_mean 
+```
+
+As the result, most locations belong to cluster 2, the normal one. Cluster 1 is with extremely high night visit and visit longer than 4h. Cluster 3 is with many transitory visit.
+
+```{r clusterplot of cluster analysis 1}
+clusplot(visitIntegrated.scale, 
+         fit1$cluster, color=TRUE, shade=TRUE,
+   labels=2, lines=0)
+```
+
+```{r}
+visitIntegrated %>%
+  mutate(cluster=as.character(cluster)) %>% 
+  dplyr::select(-placekey, -nightVisit, -geometry) %>% 
+  gather(dwellTimes, visitors, -cluster) %>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",stat='identity', aes(fill=cluster)) +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='') +
+  scale_fill_manual(values = palette5[1:3])+
+  plotTheme(10,20)
+```
+
+```{r}
+fit1_mean %>%
+  mutate(cluster=as.character(Group.1)) %>% 
+  dplyr::select(nightVisit, cluster) %>% 
+  ggplot(aes(cluster,nightVisit)) +
+  geom_bar(position ="dodge",stat='identity', aes(fill=cluster)) +
+  labs(x="Cluster", y="Average Night Visits",
+       title ='') +
+  scale_fill_manual(values = palette5[1:3])+
+  plotTheme(10,20)
+```
+
+##### Conflict clusters
+
+```{r integrate safegraph data with program}
+#inner join
+SGwithProgram <- st_join(visitCount %>% 
+                           group_by(placekey) %>% 
+                           summarize(visits = sum(visits)) %>% 
+                           st_sf(), 
+                         program2021.join %>% 
+                           st_sf() %>% 
+                           group_by(FacilityID) %>% 
+                           summarize(programCount = n()) %>% 
+                           st_sf(),
+                         left=FALSE)
+```
+
+```{r cluster by conflict}
+# normalize
+SGwithProgram.scale <- scale(SGwithProgram %>% 
+                               dplyr::select(visits, programCount) %>% 
+                               st_drop_geometry())
+
+# cluster number
+wss2 <- (nrow(SGwithProgram.scale)-1)*sum(apply(SGwithProgram.scale,2,var)) 
+
+for (i in 2:15) wss2[i] <- sum(kmeans(SGwithProgram.scale, 
+   centers=i)$withinss) 
+
+plot(1:15, wss2, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares") 
+
+# K-Means cluster
+fit2 <- kmeans(SGwithProgram.scale, 3) 
+summary(fit2)
+# integrate 
+SGwithProgram <- SGwithProgram %>% 
+  mutate(cluster = fit2$cluster)
+# mean by cluster
+fit2_mean <- aggregate(SGwithProgram%>% dplyr::select(-placekey, -FacilityID, -cluster) %>% st_drop_geometry(),
+                       by=list(SGwithProgram$cluster),FUN=mean) %>% 
+  mutate(cluster = as.character(Group.1)) %>% 
+  dplyr::select(-Group.1)
+
+fit2_mean 
+```
+
+cluster 2 has high visits but less programs. on the other hand cluster 1 has a lot programs and few vistis. Cluster2 ({AC45E5EF-2467-4926-A1DA-07258305D871). Christy Recreation Center AGAIN!!!
+
+```{r}
+fit2_mean %>%
+  dplyr::select(visits, cluster) %>% 
+  ggplot(aes(cluster,visits)) +
+  geom_bar(position ="dodge",stat='identity', aes(fill=cluster)) +
+  labs(title ='') +
+  scale_fill_manual(values = palette5[1:3])+
+  plotTheme(10,20)
+
+```
+
+```{r}
+fit2_mean %>%
+  dplyr::select(programCount, cluster) %>% 
+  ggplot(aes(cluster,programCount)) +
+  geom_bar(position ="dodge",stat='identity', aes(fill=cluster)) +
+  labs(title ='') +
+  scale_fill_manual(values = palette5[1:3])+
+  plotTheme(10,20)
+
+```
+
+```{r}
+ggplot(SGwithProgram %>% 
+         mutate(cluster = as.character(cluster)), 
+       aes(programCount, visits, color=cluster)) +
+  geom_point(size = 1)+
+  geom_smooth(method = "lm", se = FALSE, colour = palette1_assist) +
+  labs(title ="") +
+  scale_color_manual(values = palette5[1:3])+
+  plotTheme()
+
+ggplot(data.frame(SGwithProgram.scale) %>% 
+         mutate(cluster = fit2$cluster,
+                cluster = as.character(cluster)), 
+       aes(programCount, visits, color=cluster)) +
+  geom_point(size = 1)+
+  geom_smooth(method = "lm", se = FALSE, colour = palette5[4]) +
+  labs(title ="") +
+  scale_color_manual(values = palette5[1:3])+
+  plotTheme()
+```
+
+zzz-222\@63s-dt9-3kf - Eastwick Regional Park
+
+![](images/paste-5AA4C43C.png)
+
+```{r zzz-222@63s-dt9-3kf, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%'}
+
 sumVisit <- dwellTime %>% 
-  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
   dplyr::select(-month) %>% 
   group_by(dwellTimes) %>%
   summarise(visitors=sum(visitors)) %>% 
   st_drop_geometry() 
 
-sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5",">240","11-20","121-240","21-60","5-10","61-120" ))
-
-sumVisit[order(sumVisit$dwellTimes), ]
+sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
 
 sumVisit%>%
   ggplot(aes(dwellTimes,visitors)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="Dwell Time", y="Aggregated Visitors",
-       title ='Zeihler Playground') +
+       title ='Girard Park (zzz-222@63s-dt9-3kf )') +
   plotTheme(10,20)
 ```
 
+```{r}
+visitCount %>% 
+  filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
+  st_drop_geometry()%>%
+  na.omit()%>%
+  ggplot(aes(visitDay,visits)) + 
+  geom_line(color=palette1_main,size=1)+
+  labs(title = 'Eastwick Regional Park (zzz-222@63s-dt9-3kf)',x="Visit Date",y="Safegraph Visit")+
+  plotTheme(10,20)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+```
+
+```{r zzz-222@63s-dt9-3kf }
+sumVisit <- visitHour %>% 
+  filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
+  dplyr::select(-month) %>% 
+  group_by(hour) %>%
+  summarise(visits=sum(visit)) %>% 
+  st_drop_geometry()
+
+sumVisit%>%
+  ggplot(aes(hour,visits)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="hour", y="Aggregated Visits",
+       title ='Eastwick Regional Park (zzz-222@63s-dt9-3kf)') +
+  plotTheme(10,20)
+```
+
+```{r}
+Eastwick <- program2021.join %>% 
+  filter(FacilityID == "{9D68AC8D-CF45-49EC-81E3-022EF3203A04}")
+
+
+EastwickSum <- Eastwick %>%
+  mutate(totalCount = as.numeric(RegisteredIndividualsCount))%>%
+  dplyr::select(totalCount,ActivityType, AttendanceWeekDate) %>% 
+  drop_na() %>% 
+  group_by(ActivityType, AttendanceWeekDate)%>%
+  summarise(totalCount=mean(totalCount)) %>% 
+  ungroup() %>% 
+  group_by(ActivityType)%>%
+  summarise(totalCount=sum(totalCount))
+
+EastwickSum %>%
+  ggplot(aes(ActivityType, totalCount, fill=ActivityType)) +
+  geom_bar(position ="dodge",stat="identity") +
+  labs(y = "Visitor Count", fill="ActivityType", title = "Eastwickr Activity with Total ")
+```
