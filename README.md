@@ -42,3 +42,17 @@ PPR SafeGraph Data Wragnling and [Mapping](demo/) (First Version)
 [Census Data Analysis based on PPR Service Areas](https://ppr-dashboard-xfw9y.ondigitalocean.app/)
 
 [Questions](notes.md)
+
+#### Week4
+
+The most popular facility Analysis (by # of visits and by dwelling time)
+
+The most strange 
+
+Origin Flow Map and Departure Flow Map
+
+[Further Development on Dashboard and Census Analysis](https://ppr-dashboard-xfw9y.ondigitalocean.app/)
+
+Further Analysis of Programs organized by PPR
+
+[Questions](notes.md)

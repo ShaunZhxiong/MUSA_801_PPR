@@ -1057,6 +1057,78 @@ ggplot(sumVisit)+
 ```
 
 The above is the aggragated visits map of PPR sities. The data is from safegraph.
+```{r most popular place in 789 district}
+visitCount789 <- 
+  st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
+  filter(PPR_DIST %in% c(7,8,9))
+
+visitCount789 <- visitCount789 %>% 
+  dplyr::select(placekey,visits) %>% 
+  st_drop_geometry() %>% 
+  group_by(placekey) %>% 
+  mutate(totalVisits = sum(visits)) %>% 
+  dplyr::select(-visits) %>% 
+  distinct()
+```
+
+From above, we can know Christy Recreation Center(zzz-222@63s-dvq-5fz) has the most frequent visits among district 7,8,9. The total visits is 420776
+
+```{r Christy Recreation Center img, echo=FALSE,fig.height = 1,out.width = '75%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
+```
+
+```{r Christy Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '75%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Christy Recreation Center2.jpeg")
+```
+
+
+```{r Christy Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+sumVisit <- dwellTime %>% 
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  dplyr::select(-month) %>% 
+  group_by(dwellTimes) %>%
+  summarise(visitors=sum(visitors)) %>% 
+  st_drop_geometry() 
+
+sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
+
+sumVisit%>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
+  plotTheme(10,20)
+```
+
+```{r Christy Recreation Center temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+visitCount %>% 
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  st_drop_geometry()%>%
+  na.omit()%>%
+  ggplot(aes(visitDay,visits)) + 
+  geom_line(color=palette1_main,size=1)+
+  labs(title = 'Christy Recreation Center (zzz-222@63s-dvq-5fz)',x="Visit Date",y="Safegraph Visit")+
+  plotTheme(10,20)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+
+```
+
+```{r Christy Recreation Center temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
+sumVisit <- visitHour %>% 
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  dplyr::select(-month) %>% 
+  group_by(hour) %>%
+  summarise(visits=sum(visit)) %>% 
+  st_drop_geometry()
+
+sumVisit%>%
+  ggplot(aes(hour,visits)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="hour", y="Aggregated Visits",
+       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
+  plotTheme(10,20)
+```
+
 
 ```{r origine Count plot preparation, include=FALSE}
 census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
@@ -1096,7 +1168,7 @@ orgCountPlotHF <- orgCountPlot%>%
   filter(visitors>2000)
 ```
 
-```{r fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins'}
+```{r origine Count plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins'}
 ggplot(data = orgCountPlot2) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
   geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=2)+
@@ -1217,6 +1289,7 @@ dwellTimeForPlot <- dwellTime %>%
   mutate(sepTotalDwellTime = (visitors*dwellTimes)) %>% 
   group_by(placekey) %>% 
   mutate(totalVisitors=sum(visitors) )%>%
+  filter(totalVisitors>50) %>% 
   mutate(avgDwellTime=sum(sepTotalDwellTime)/totalVisitors) %>% 
   dplyr::select(placekey,avgDwellTime) %>% 
   distinct()
@@ -1242,30 +1315,35 @@ ggplot(dwellTimeForPlot)+
         legend.key.width = unit(1.5, 'cm'),
         legend.key.height  = unit(1.2, 'cm'))
 ```
-From the above plot we can see the largest dwelling time is at Matthias Baldwin Park(zzz-223@628-pgb-hh5) with avgerage dwelling time is 133.
 
-```{r dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+From the above plot we can see the largest dwelling time is at Girard Park (zzz-222@628-pgb-k75) with avgerage dwelling time is 94.9. Interestingly, there is not program by PPR in this park in 2021. There is a activity organized by citizens themselves. The activity is yoga, from April to September, every 1pm to 2pm on Sunday.
+
+#### Longest Dwell Time
+
+```{r Girard Park img, echo=FALSE,fig.height = 1,out.width = '75%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Girard Park.png")
+```
+
+```{r Girard Park dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 sumVisit <- dwellTime %>% 
-  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  filter(placekey=='zzz-222@628-pgb-k75') %>% 
   dplyr::select(-month) %>% 
   group_by(dwellTimes) %>%
   summarise(visitors=sum(visitors)) %>% 
   st_drop_geometry() 
 
-sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5",">240","11-20","121-240","21-60","5-10","61-120" ))
-
-sumVisit[order(sumVisit$dwellTimes), ]
+sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
 
 sumVisit%>%
   ggplot(aes(dwellTimes,visitors)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="Dwell Time", y="Aggregated Visitors",
-       title ='Zeihler Playground') +
+       title ='Girard Park (zzz-222@628-pgb-k75)') +
   plotTheme(10,20)
 ```
 
 
-```{r temperal pattern by month}
+```{r temperal pattern by month, eval=FALSE, include=FALSE}
 sumVisit <- visitCount %>% 
   filter(placekey=='zzz-222@628-pj6-ndv') %>% 
   dplyr::select(-visitDay,-day) %>% 
@@ -1282,22 +1360,22 @@ sumVisit%>%
 
 ```
 
-```{r temperal pattern by day}
+```{r Girard Park temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 visitCount %>% 
-  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  filter(placekey=='zzz-222@628-pgb-k75') %>% 
   st_drop_geometry()%>%
   na.omit()%>%
   ggplot(aes(visitDay,visits)) + 
   geom_line(color=palette1_main,size=1)+
-  labs(title = 'Zeihler Playground',x="Visit Date",y="Safegraph Visit")+
+  labs(title = 'Girard Park',x="Visit Date",y="Safegraph Visit")+
   plotTheme(10,20)+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ```
 
-```{r temperal pattern by hour}
+```{r Girard Park temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
 sumVisit <- visitHour %>% 
-  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  filter(placekey=='zzz-222@628-pgb-k75') %>% 
   dplyr::select(-month) %>% 
   group_by(hour) %>%
   summarise(visits=sum(visit)) %>% 
@@ -1307,11 +1385,11 @@ sumVisit%>%
   ggplot(aes(hour,visits)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="hour", y="Aggregated Visits",
-       title ='Zeihler Playground') +
+       title ='Girard Park (zzz-222@628-pgb-k75)') +
   plotTheme(10,20)
 ```
 
-```{r temperal pattern by weekday}
+```{r temperal pattern by weekday, eval=FALSE, include=FALSE}
 sumVisit <- visitWeekday %>% 
   filter(placekey=='zzz-222@628-pj6-ndv') %>% 
   dplyr::select(-month) %>% 
