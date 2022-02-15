@@ -47,7 +47,9 @@ PPR SafeGraph Data Wragnling and [Mapping](demo/) (First Version)
 
 The most popular facility Analysis (by # of visits and by dwelling time)
 
-The most strange 
+The most strange facility Analysis
+
+Categorized Properties into several types
 
 Origin Flow Map and Departure Flow Map
 
