@@ -147,15 +147,15 @@ get_secrets <- function() {
   
   jsonlite::read_json(path)
 }
-#secrets <- get_secrets()
+secrets <- get_secrets()
 
 # database settings
-# dbname = secrets$db_name
-# host = secrets$db_host
-# port = secrets$db_port
-# username =  secrets$db_username
-# password = secrets$db_password
-# census_api_key(secrets$census_api_key, install=TRUE, overwrite=TRUE)
+dbname = secrets$db_name
+host = secrets$db_host
+port = secrets$db_port
+username =  secrets$db_username
+password = secrets$db_password
+census_api_key(secrets$census_api_key, install=TRUE, overwrite=TRUE)
 ```
 
 ### Data Loading
@@ -267,7 +267,7 @@ for (i in monthList){
 # st_write(patternAllMonth,"data/output/patternAllMonth.csv")
 # hpsAllMonth <- st_read("data/output/hpsAllMonth.csv")
 # vpsAllMonth <- st_read("data/output/vpsAllMonth.csv")
-patternAllMonth <- st_read("data/output/patternAllMonth.csv")
+# patternAllMonth <- st_read("data/output/patternAllMonth.csv")
 ```
 
 **This is the whole safegraph raw data**, it has four datasets. One is the aggregated pattern data for 2021 whole year. That is the primary one for this project. And the other two datasets give information about the number of active devices.
@@ -992,7 +992,34 @@ blocks19 <-
 blocks19_pprArea <- blocks19 %>%
                     st_join(pprDistrict, join=st_intersects)
 
+
+tracts19 <-
+    get_acs(geography = "tract", 
+            variables = acs_vars, 
+            year=2019,
+            state='PA', 
+            county='Philadelphia',
+            geometry=T, 
+            output="wide") %>%
+        st_transform(crs) %>%
+        dplyr::rename(TotalPop = B25026_001E,
+               White = B02001_002E,
+               MedianHouseholdIncome = B19013_001E,
+               MedianRent = B25058_001E,
+               Poverty = B06012_002E,
+               HousingUnits = B07013_002E) %>%
+        dplyr::select(-NAME, -starts_with("B")) %>%
+        mutate(pctNonWhite = ifelse(TotalPop < White, 0, ifelse(TotalPop > 0, 1 -(White / TotalPop),0)),
+               pctPoverty = ifelse(TotalPop > 0, Poverty / TotalPop, 0))
+
+## joined
+tracts19_pprArea <- tracts19 %>%
+                    st_join(pprDistrict, join=st_intersects)
+
 blocks19_summary <- blocks19_pprArea %>%
+      dplyr::select(GEOID, TotalPop, MedianHouseholdIncome, MedianRent, HousingUnits, pctNonWhite, pctPoverty, DISTRICTID, Shape__Area, Shape__Length, geometry)
+
+tracts19_summary <- tracts19_pprArea %>%
       dplyr::select(GEOID, TotalPop, MedianHouseholdIncome, MedianRent, HousingUnits, pctNonWhite, pctPoverty, DISTRICTID, Shape__Area, Shape__Length, geometry)
 
 blocks19_grouped_summary <- blocks19_pprArea %>%
@@ -1029,7 +1056,11 @@ df_to_db <- function(conn, df, table_name) {
 conn <- dbConnect(Postgres(), dbname = dbname, host = host, port = port, 
                   user = username, password = password)
 
-df_to_db(conn, blocks19_summary, "census_block_groups")
+#df_to_db(conn, tracts19_summary, "census_tracts")
+df_to_db(conn, pprServiceArea, "ppr_serviceareas")
+df_to_db(conn, pprProperties, "ppr_properties")
+df_to_db(conn, program2021.clean, "ppr_programs")
+
 # writing to postgres
 # dbListTables(conn)
 ```
