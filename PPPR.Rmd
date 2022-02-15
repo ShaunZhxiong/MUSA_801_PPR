@@ -806,7 +806,10 @@ program2021.joinWithPlaceKey <- st_read("data/output/program2021.joinWithPlaceKe
 #       dplyr::select(-value)
 #   })) %>%
 #   unnest(cols = c("visits_by_day"))
-# 
+# visitCount <- visitCount %>%
+#     rename(visitDay = date_range_start) %>% 
+#     mutate(visitDay = day+visitDay-1) %>% 
+#     mutate(month = month(visitDay))
 # st_write(visitCount,"data/output/visitCount.GeoJSON")
 visitCount <- st_read("data/output/visitCount.GeoJSON",crs=4326)
 
@@ -928,24 +931,6 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON",crs=4326)
 visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=4326)
 ```
 
-```{r left join the place information to the unnested data}
-visitCount <- visitCount %>%
-    rename(visitDay = date_range_start) %>% 
-    mutate(visitDay = day+visitDay-1) %>% 
-    mutate(month = month(visitDay))
-
-# Problem: should the na geometry be dropped?
-# join the location name of 'parks' into the unnested data
-# visitCount2 <- visitCount %>% 
-#   left_join(parks %>% st_drop_geometry() ,by=c('placekey' = 'placekey'))
-# 
-# test <- parks %>% 
-#   mutate(count=1) %>% 
-#   group_by(placekey) %>% 
-#   mutate(location_name = location_name,count=sum(count)) %>% 
-#   filter(count == 2)
-
-```
 
 ### EXPLORATORY -- CENSUS DATA
 
@@ -1044,23 +1029,36 @@ df_to_db(conn, blocks19_summary, "census_block_groups")
 
 ### EXPLORATORY -- SafeGrpah DATA
 
-```{r visit Count}
+```{r visit Count,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of total visits'}
 sumVisit <- visitCount %>%
   dplyr::select(-visitDay,-day,-month) %>% 
   group_by(placekey) %>%
   summarise(visits=sum(visits))
 
 ggplot(sumVisit)+
-  geom_sf(data=pprServiceArea,color='black',size=0.25,fill= "transparent")+
-  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.5,fill= "transparent")+
-  geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
-  mapTheme()
+  geom_sf(data=pprServiceArea,
+          color='black',
+          size=0.25,
+          fill= "transparent")+
+  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),
+          color='black',
+          size=0.5,
+          fill= "transparent")+
+  geom_sf(aes(size = visits),
+          color = palette1_main,
+          fill = palette1_main,
+          alpha = 0.3) +
+  scale_size_continuous(range = c(5, 15),
+                        name = "Visits")+
+  mapTheme()+
+  theme(legend.position = "bottom",
+        legend.key.width = unit(1.5, 'cm'),
+        legend.key.height  = unit(1.2, 'cm'))
 ```
 
 The above is the aggragated visits map of PPR sities. The data is from safegraph.
 
-```{r origine Count, include=FALSE}
-
+```{r origine Count plot preparation, include=FALSE}
 census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
 CensusData <- 
   get_acs(geography = "block group", 
@@ -1072,42 +1070,200 @@ CensusData <-
   as.data.frame() %>% 
   rename("originGeometry" = "geometry")
 
-attempt <- originCount %>% 
-  st_drop_geometry() %>% 
-  group_by(origin,placekey) %>%
-  summarise(visitors=sum(visitors))
-
 placekeyGeometry <- 
   originCount %>% 
   dplyr::select(placekey) %>% 
   group_by(placekey) %>% summarise()
 
-attempt2 <- 
-  attempt %>% 
+
+orgCountPlot <- originCount %>% 
+  st_drop_geometry() %>% 
+  group_by(origin,placekey) %>%
+  summarise(visitors=sum(visitors))%>% 
   left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
-  rename("parkGeometry" = "geometry")
+  rename("parkGeometry" = "geometry")%>%
+  filter(startsWith(origin,"42101"))%>%
+  left_join(CensusData,by=c("origin" = "GEOID"))%>%
+  mutate(park.y=as.numeric(map(parkGeometry,function(x){return(x[2])})),
+         park.x=as.numeric(map(parkGeometry,function(x){return(x[1])})),
+         origin.y=as.numeric(map(originGeometry,function(x){return(x[2])})),
+         origin.x=as.numeric(map(originGeometry,function(x){return(x[1])})))
 
-attempt2 <- attempt2 %>% filter(startsWith(origin,"42101"))%>%left_join(CensusData,by=c("origin" = "GEOID"))
+orgCountPlot2 <- orgCountPlot%>%
+  filter(visitors>200)
 
-attempt3 <- attempt2 %>% mutate(park.y=as.numeric(future_map(parkGeometry,function(x){return(x[2])})),
-                                park.x=as.numeric(future_map(parkGeometry,function(x){return(x[1])})),
-                                origin.y=as.numeric(future_map(originGeometry,function(x){return(x[2])})),
-                                origin.x=as.numeric(future_map(originGeometry,function(x){return(x[1])})))
+orgCountPlotHF <- orgCountPlot%>%
+  filter(visitors>2000)
+```
 
-ggplot(data = head(attempt3,n=300)) + 
-  geom_sf(data = pprServiceArea %>% st_transform(crs=4326))+
+```{r fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins'}
+ggplot(data = orgCountPlot2) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=2)+
   geom_curve(aes(x = origin.x, 
                  y = origin.y, 
                  xend = park.x, 
                  yend = park.y,
-                 size = visitors),
+                 color = q5(visitors)),
+             size = 1.5,
              curvature = -0.2, 
-             color = palette1_main,
-             alpha = 0.5,
+             alpha = 0.4,
              arrow = arrow(length = unit(0.01, "npc")))+
-  scale_colour_distiller(palette="Reds", name="Frequency", guide = "colorbar") +
-  mapTheme()
+  scale_color_manual(values = palette5,
+                     labels = qBr(orgCountPlot2,"visitors"),
+                     name = "Visitors (Quintile Breaks)") +
+  labs(x="",y="")+
+  mapTheme()+
+  theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
+        legend.key.width = unit(1.5, 'cm'),
+        legend.key.height  = unit(1.2, 'cm'))
 ```
+
+```{r fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins - High Frequency'}
+ggplot(data = orgCountPlotHF) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=2)+
+  geom_curve(aes(x = origin.x, 
+                 y = origin.y, 
+                 xend = park.x, 
+                 yend = park.y),
+             size = 2.5,
+             color = palette1_main,
+             curvature = -0.2, 
+             alpha = 0.4,
+             arrow = arrow(length = unit(0.01, "npc")))+
+  labs(x="",y="")+
+  mapTheme()+
+  theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
+        legend.key.width = unit(1.5, 'cm'),
+        legend.key.height  = unit(1.2, 'cm'))
+```
+
+```{r Departure Count plot preparation, include=FALSE}
+depaCountPlot <- departCount %>% 
+  st_drop_geometry() %>% 
+  group_by(departure,placekey) %>%
+  summarise(visitors=sum(visitors))%>% 
+  left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
+  rename("parkGeometry" = "geometry")%>%
+  filter(startsWith(departure,"42101"))%>%
+  left_join(CensusData,by=c("departure" = "GEOID"))%>%
+  mutate(park.y=as.numeric(map(parkGeometry,function(x){return(x[2])})),
+         park.x=as.numeric(map(parkGeometry,function(x){return(x[1])})),
+         departure.y=as.numeric(map(originGeometry,function(x){return(x[2])})),
+         departure.x=as.numeric(map(originGeometry,function(x){return(x[1])})))
+
+depaCountPlot2 <- depaCountPlot%>%
+  filter(visitors>200)
+
+depaCountPlotHF <- depaCountPlot%>%
+  filter(visitors>2000)
+```
+
+```{r fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and departure points'}
+ggplot(data = depaCountPlot2) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=2)+
+  geom_curve(aes(x = departure.x, 
+                 y = departure.y, 
+                 xend = park.x, 
+                 yend = park.y,
+                 color = q5(visitors)),
+             size = 1.5,
+             curvature = -0.2, 
+             alpha = 0.4,
+             arrow = arrow(length = unit(0.01, "npc")))+
+  scale_color_manual(values = palette5,
+                     labels = qBr(depaCountPlot2,"visitors"),
+                     name = "Visitors (Quintile Breaks)") +
+  labs(x="",y="")+
+  mapTheme()+
+  theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
+        legend.key.width = unit(1.5, 'cm'),
+        legend.key.height  = unit(1.2, 'cm'))
+```
+
+```{r fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and departure - High Frequency'}
+ggplot(data = depaCountPlotHF) + 
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=2)+
+  geom_curve(aes(x = departure.x, 
+                 y = departure.y, 
+                 xend = park.x, 
+                 yend = park.y),
+             size = 2.5,
+             color = palette1_main,
+             curvature = -0.2, 
+             alpha = 0.4,
+             arrow = arrow(length = unit(0.01, "npc")))+
+  labs(x="",y="")+
+  mapTheme()+
+  theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
+        legend.key.width = unit(1.5, 'cm'),
+        legend.key.height  = unit(1.2, 'cm'))
+```
+
+
+```{r dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+dwellTimeForPlot <- dwellTime %>% 
+  mutate(dwellTimes = recode(dwellTimes,
+                             "<5" = 2.5,
+                             "5-10" = 7.5,
+                             "11-20" = 15,
+                             "21-60" = 40,
+                             "61-120" = 90,
+                             "121-240" = 180,
+                             ">240" = 0)) %>%
+  mutate(sepTotalDwellTime = (visitors*dwellTimes)) %>% 
+  group_by(placekey) %>% 
+  mutate(totalVisitors=sum(visitors) )%>%
+  mutate(avgDwellTime=sum(sepTotalDwellTime)/totalVisitors) %>% 
+  dplyr::select(placekey,avgDwellTime) %>% 
+  distinct()
+
+ggplot(dwellTimeForPlot)+
+  geom_sf(data=pprServiceArea,
+          color='black',
+          size=0.25,
+          fill= "transparent")+
+  geom_sf(data=pprDistrict,
+          color='black',
+          size=0.75,
+          fill='transparent')+
+  geom_sf(aes(size = avgDwellTime,
+              color = avgDwellTime),
+          alpha = 0.5) +
+  scale_size_continuous(range = c(1, 6),
+                        name = "avgDwellTime")+
+  scale_color_continuous(low = '#FFDEDB',high ='#FF2903',
+                     name = "avgDwellTime") +
+  mapTheme()+
+  theme(legend.position = "bottom",
+        legend.key.width = unit(1.5, 'cm'),
+        legend.key.height  = unit(1.2, 'cm'))
+```
+From the above plot we can see the largest dwelling time is at Matthias Baldwin Park(zzz-223@628-pgb-hh5) with avgerage dwelling time is 133.
+
+```{r dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+sumVisit <- dwellTime %>% 
+  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
+  dplyr::select(-month) %>% 
+  group_by(dwellTimes) %>%
+  summarise(visitors=sum(visitors)) %>% 
+  st_drop_geometry() 
+
+sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5",">240","11-20","121-240","21-60","5-10","61-120" ))
+
+sumVisit[order(sumVisit$dwellTimes), ]
+
+sumVisit%>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='Zeihler Playground') +
+  plotTheme(10,20)
+```
+
 
 ```{r temperal pattern by month}
 sumVisit <- visitCount %>% 
@@ -1176,24 +1332,4 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
-
-```{r dwell time}
-sumVisit <- dwellTime %>% 
-  filter(placekey=='zzz-222@628-pj6-ndv') %>% 
-  dplyr::select(-month) %>% 
-  group_by(dwellTimes) %>%
-  summarise(visitors=sum(visitors)) %>% 
-  st_drop_geometry() 
-
-sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5",">240","11-20","121-240","21-60","5-10","61-120" ))
-
-sumVisit[order(sumVisit$dwellTimes), ]
-
-sumVisit%>%
-  ggplot(aes(dwellTimes,visitors)) +
-  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
-  labs(x="Dwell Time", y="Aggregated Visitors",
-       title ='Zeihler Playground') +
-  plotTheme(10,20)
-```
 

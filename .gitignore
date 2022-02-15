@@ -12,3 +12,5 @@ secrets/secrets.json
 .RDataTmp1
 .Rhistory
 .Rhistory
+data/output/patternAllMonth.csv
+data/output/safeGraph.geo.GeoJSON

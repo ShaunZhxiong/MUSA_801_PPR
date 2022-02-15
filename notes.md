@@ -266,3 +266,7 @@ Answer: EDA will be the main content of this project, to help ppr better underst
 6. Huff model validation: compare the safegraph origin data with huff model market area.
 
 7. 用pprproperty 和 service area spatial join 来得到我们想要的信息， 就不用Service_Area_Sites了
+
+8. Combine hui's work into the whole markdown
+
+7. Arrange next class presentation
