@@ -44,7 +44,6 @@ th{
 }
 </style>
 ```
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -65,6 +64,8 @@ library(tidycensus)
 library(rgdal)
 library(furrr)
 library(mapview)
+library(mclust)
+library(cluster)
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
@@ -132,7 +133,6 @@ palette2 <- c("#f9b294","#f2727f")
 palette1_main <- "#F2727F"
 palette1_assist <- '#F9B294'
 ```
-
 
 ```{r loadSecrets, message=FALSE, warning=FALSE, results='hide'}
 
@@ -711,11 +711,10 @@ safeGraph.geo <-
 ```{r readBackupSafeGraph, include=FALSE,warning=FALSE,message=FALSE}
 #st_write(safeGraph.geo,"data/output/safeGraph.geo.GeoJSON")
 safeGraph.geo <- st_read("data/output/safeGraph.geo.GeoJSON",crs = 4326)
-#st_write(PPRmoves,"data/output/PPRmoves.GeoJSON")
-PPRmoves <- st_read("data/output/PPRmoves.GeoJSON",crs=4326)
+
 ```
 
-```{r filter safegraph data, message=FALSE, warning=FALSE,eval=FALSE}
+```{r filter safegraph data, eval=FALSE, message=FALSE, warning=FALSE}
 # change workers number by yourself
 plan(multiprocess, workers = 10)
 
@@ -759,10 +758,17 @@ print(paste0("The number of PPR properties is ", n_distinct(property$PUBLIC_NAME
 
 ```
 
+```{r readBackup PPRmoves, include=FALSE,warning=FALSE,message=FALSE}
+st_write(PPRmoves,"data/output/PPRmoves.GeoJSON")
+PPRmoves <- st_read("data/output/PPRmoves.GeoJSON",crs=4326)
+
+```
+
 ```{r display the join outcome, warning=FALSE,message=FALSE,include=FALSE}
 # the filtering quality is okay at this point, more data will be added
 mapview(property)+mapview(st_centroid(propertyWithPlaceKey),col.regions = "green")
 ```
+
 In the above map, the polygon is the properties of PPR, the green dots are the successfully join properties with placekey
 
 ```{r update program2021.joinWith with placekey,eval=FALSE}
@@ -931,10 +937,10 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON",crs=4326)
 visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=4326)
 ```
 
-
-### EXPLORATORY -- CENSUS DATA
+### ≠EXPLORATORY -- CENSUS DATA
 
 #### 1. Get each of the Philadelphia PPR zones
+
 ```{r census-exploration-1}
 
 ggplot() + 
@@ -945,7 +951,9 @@ ggplot() +
        x="",y="")+
   mapTheme()
 ```
+
 #### 2. Get the list of PHL census tracts that intersect with each zone
+
 ```{r getCensusTracts}
 
 acs_vars <- c("B25026_001E","B02001_002E","B15001_050E",
@@ -993,7 +1001,6 @@ blocks19_grouped_summary <- blocks19_pprArea %>%
 
 ```
 
-
 ```{r}
 # ggplot(PPRmoves)+
 #   geom_line(aes(x = date_range_start, y = raw_visit_counts))+
@@ -1002,7 +1009,7 @@ blocks19_grouped_summary <- blocks19_pprArea %>%
 
 #### Loading Data into Database
 
-```{r load data into database}
+```{r load data into database, eval=FALSE, include=FALSE}
 library(RPostgres)
 
 df_to_db <- function(conn, df, table_name) {
@@ -1025,7 +1032,6 @@ df_to_db(conn, blocks19_summary, "census_block_groups")
 
 ```{r load data into database}
 ```
-
 
 ### EXPLORATORY -- SafeGrpah DATA
 
@@ -1057,6 +1063,7 @@ ggplot(sumVisit)+
 ```
 
 The above is the aggragated visits map of PPR sities. The data is from safegraph.
+
 ```{r most popular place in 789 district}
 visitCount789 <- 
   st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
@@ -1071,7 +1078,9 @@ visitCount789 <- visitCount789 %>%
   distinct()
 ```
 
-From above, we can know Christy Recreation Center(zzz-222@63s-dvq-5fz) has the most frequent visits among district 7,8,9. The total visits is 420776
+#### The facility with largest visit counts
+
+From above, we can know Christy Recreation Center([zzz-222\@63s-dvq-5fz](mailto:zzz-222@63s-dvq-5fz){.email}) has the most frequent visits among district 7,8,9. The total visits is 420776
 
 ```{r Christy Recreation Center img, echo=FALSE,fig.height = 1,out.width = '75%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
 knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
@@ -1080,7 +1089,6 @@ knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
 ```{r Christy Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '75%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
 knitr::include_graphics("resources/imgaes/Christy Recreation Center2.jpeg")
 ```
-
 
 ```{r Christy Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 sumVisit <- dwellTime %>% 
@@ -1128,7 +1136,6 @@ sumVisit%>%
        title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
   plotTheme(10,20)
 ```
-
 
 ```{r origine Count plot preparation, include=FALSE}
 census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
@@ -1275,7 +1282,6 @@ ggplot(data = depaCountPlotHF) +
         legend.key.height  = unit(1.2, 'cm'))
 ```
 
-
 ```{r dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 dwellTimeForPlot <- dwellTime %>% 
   mutate(dwellTimes = recode(dwellTimes,
@@ -1316,9 +1322,9 @@ ggplot(dwellTimeForPlot)+
         legend.key.height  = unit(1.2, 'cm'))
 ```
 
-From the above plot we can see the largest dwelling time is at Girard Park (zzz-222@628-pgb-k75) with avgerage dwelling time is 94.9. Interestingly, there is not program by PPR in this park in 2021. There is a activity organized by citizens themselves. The activity is yoga, from April to September, every 1pm to 2pm on Sunday.
+From the above plot we can see the largest dwelling time is at Girard Park ([zzz-222\@628-pgb-k75](mailto:zzz-222@628-pgb-k75){.email}) with avgerage dwelling time is 94.9. Interestingly, there is not program by PPR in this park in 2021. There is a activity organized by citizens themselves. The activity is yoga, from April to September, every 1pm to 2pm on Sunday.
 
-#### Longest Dwell Time
+#### The facility with largest average dwell time
 
 ```{r Girard Park img, echo=FALSE,fig.height = 1,out.width = '75%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
 knitr::include_graphics("resources/imgaes/Girard Park.png")
@@ -1341,7 +1347,6 @@ sumVisit%>%
        title ='Girard Park (zzz-222@628-pgb-k75)') +
   plotTheme(10,20)
 ```
-
 
 ```{r temperal pattern by month, eval=FALSE, include=FALSE}
 sumVisit <- visitCount %>% 
@@ -1410,4 +1415,249 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
+#### Cluster analysis for locations
 
+##### Data confidence clusters
+
+```{r integrate safegraph characteristic data}
+# calculate midnight visit
+visitHourNight <- visitHour %>% 
+  filter(hour >= 1 | hour <=5) %>% 
+  group_by(placekey) %>% 
+  summarize(nightVisit = sum(visit))
+
+
+# visitHour, originCount, departCount, dwellTime, visitWeekday
+visitIntegrated <- full_join(visitHourNight %>% 
+                               st_drop_geometry(), 
+                             dwellTime %>% 
+                               group_by(placekey, dwellTimes) %>% 
+                               summarize(visitors = sum(visitors)),
+                             by=c('placekey'))
+
+# wide format
+visitIntegrated <- visitIntegrated %>% 
+  spread(key = dwellTimes, value = visitors)
+```
+
+```{r cluster by data confidence}
+# normalize
+visitIntegrated.scale <- scale(visitIntegrated %>% dplyr::select(-placekey, -geometry))
+
+# cluster number
+wss <- (nrow(visitIntegrated.scale)-1)*sum(apply(visitIntegrated.scale,2,var)) 
+
+for (i in 2:15) wss[i] <- sum(kmeans(visitIntegrated.scale, 
+   centers=i)$withinss) 
+
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares") 
+
+# K-Means cluster
+fit1 <- kmeans(visitIntegrated.scale, 3) 
+summary(fit1)
+# integrate 
+visitIntegrated <- visitIntegrated %>% 
+  mutate(cluster = fit1$cluster)
+# mean by cluster
+fit1_mean <- aggregate(visitIntegrated%>% dplyr::select(-placekey, -geometry),
+                       by=list(visitIntegrated$cluster),FUN=mean)
+
+fit1_mean 
+```
+
+As the result, most locations belong to cluster 2, the normal one. Cluster 1 is with extremely high night visit and visit longer than 4h. Cluster 3 is with many transitory visit.
+
+```{r clusterplot of cluster analysis 1}
+clusplot(visitIntegrated.scale, 
+         fit1$cluster, color=TRUE, shade=TRUE,
+   labels=2, lines=0)
+```
+
+```{r}
+visitIntegrated %>%
+  mutate(cluster=as.character(cluster)) %>% 
+  dplyr::select(-placekey, -nightVisit, -geometry) %>% 
+  gather(dwellTimes, visitors, -cluster) %>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",stat='identity', aes(fill=cluster)) +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='') +
+  scale_fill_manual(values = palette5[1:3])+
+  plotTheme(10,20)
+```
+
+```{r}
+fit1_mean %>%
+  mutate(cluster=as.character(Group.1)) %>% 
+  dplyr::select(nightVisit, cluster) %>% 
+  ggplot(aes(cluster,nightVisit)) +
+  geom_bar(position ="dodge",stat='identity', aes(fill=cluster)) +
+  labs(x="Cluster", y="Average Night Visits",
+       title ='') +
+  scale_fill_manual(values = palette5[1:3])+
+  plotTheme(10,20)
+```
+
+##### Conflict clusters
+
+```{r integrate safegraph data with program}
+#inner join
+SGwithProgram <- st_join(visitCount %>% 
+                           group_by(placekey) %>% 
+                           summarize(visits = sum(visits)) %>% 
+                           st_sf(), 
+                         program2021.join %>% 
+                           st_sf() %>% 
+                           group_by(FacilityID) %>% 
+                           summarize(programCount = n()) %>% 
+                           st_sf(),
+                         left=FALSE)
+```
+
+```{r cluster by conflict}
+# normalize
+SGwithProgram.scale <- scale(SGwithProgram %>% 
+                               dplyr::select(visits, programCount) %>% 
+                               st_drop_geometry())
+
+# cluster number
+wss2 <- (nrow(SGwithProgram.scale)-1)*sum(apply(SGwithProgram.scale,2,var)) 
+
+for (i in 2:15) wss2[i] <- sum(kmeans(SGwithProgram.scale, 
+   centers=i)$withinss) 
+
+plot(1:15, wss2, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares") 
+
+# K-Means cluster
+fit2 <- kmeans(SGwithProgram.scale, 3) 
+summary(fit2)
+# integrate 
+SGwithProgram <- SGwithProgram %>% 
+  mutate(cluster = fit2$cluster)
+# mean by cluster
+fit2_mean <- aggregate(SGwithProgram%>% dplyr::select(-placekey, -FacilityID, -cluster) %>% st_drop_geometry(),
+                       by=list(SGwithProgram$cluster),FUN=mean) %>% 
+  mutate(cluster = as.character(Group.1)) %>% 
+  dplyr::select(-Group.1)
+
+fit2_mean 
+```
+
+cluster 2 has high visits but less programs. on the other hand cluster 1 has a lot programs and few vistis. Cluster2 ({AC45E5EF-2467-4926-A1DA-07258305D871). Christy Recreation Center AGAIN!!!
+
+```{r}
+fit2_mean %>%
+  dplyr::select(visits, cluster) %>% 
+  ggplot(aes(cluster,visits)) +
+  geom_bar(position ="dodge",stat='identity', aes(fill=cluster)) +
+  labs(title ='') +
+  scale_fill_manual(values = palette5[1:3])+
+  plotTheme(10,20)
+
+```
+
+```{r}
+fit2_mean %>%
+  dplyr::select(programCount, cluster) %>% 
+  ggplot(aes(cluster,programCount)) +
+  geom_bar(position ="dodge",stat='identity', aes(fill=cluster)) +
+  labs(title ='') +
+  scale_fill_manual(values = palette5[1:3])+
+  plotTheme(10,20)
+
+```
+
+```{r}
+ggplot(SGwithProgram %>% 
+         mutate(cluster = as.character(cluster)), 
+       aes(programCount, visits, color=cluster)) +
+  geom_point(size = 1)+
+  geom_smooth(method = "lm", se = FALSE, colour = palette1_assist) +
+  labs(title ="") +
+  scale_color_manual(values = palette5[1:3])+
+  plotTheme()
+
+ggplot(data.frame(SGwithProgram.scale) %>% 
+         mutate(cluster = fit2$cluster,
+                cluster = as.character(cluster)), 
+       aes(programCount, visits, color=cluster)) +
+  geom_point(size = 1)+
+  geom_smooth(method = "lm", se = FALSE, colour = palette5[4]) +
+  labs(title ="") +
+  scale_color_manual(values = palette5[1:3])+
+  plotTheme()
+```
+
+zzz-222\@63s-dt9-3kf - Eastwick Regional Park
+
+![](images/paste-5AA4C43C.png)
+
+```{r zzz-222@63s-dt9-3kf, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%'}
+
+sumVisit <- dwellTime %>% 
+  filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
+  dplyr::select(-month) %>% 
+  group_by(dwellTimes) %>%
+  summarise(visitors=sum(visitors)) %>% 
+  st_drop_geometry() 
+
+sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
+
+sumVisit%>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='Girard Park (zzz-222@63s-dt9-3kf )') +
+  plotTheme(10,20)
+```
+
+```{r}
+visitCount %>% 
+  filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
+  st_drop_geometry()%>%
+  na.omit()%>%
+  ggplot(aes(visitDay,visits)) + 
+  geom_line(color=palette1_main,size=1)+
+  labs(title = 'Eastwick Regional Park (zzz-222@63s-dt9-3kf)',x="Visit Date",y="Safegraph Visit")+
+  plotTheme(10,20)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+```
+
+```{r zzz-222@63s-dt9-3kf }
+sumVisit <- visitHour %>% 
+  filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
+  dplyr::select(-month) %>% 
+  group_by(hour) %>%
+  summarise(visits=sum(visit)) %>% 
+  st_drop_geometry()
+
+sumVisit%>%
+  ggplot(aes(hour,visits)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="hour", y="Aggregated Visits",
+       title ='Eastwick Regional Park (zzz-222@63s-dt9-3kf)') +
+  plotTheme(10,20)
+```
+
+```{r}
+Eastwick <- program2021.join %>% 
+  filter(FacilityID == "{9D68AC8D-CF45-49EC-81E3-022EF3203A04}")
+
+
+EastwickSum <- Eastwick %>%
+  mutate(totalCount = as.numeric(RegisteredIndividualsCount))%>%
+  dplyr::select(totalCount,ActivityType, AttendanceWeekDate) %>% 
+  drop_na() %>% 
+  group_by(ActivityType, AttendanceWeekDate)%>%
+  summarise(totalCount=mean(totalCount)) %>% 
+  ungroup() %>% 
+  group_by(ActivityType)%>%
+  summarise(totalCount=sum(totalCount))
+
+EastwickSum %>%
+  ggplot(aes(ActivityType, totalCount, fill=ActivityType)) +
+  geom_bar(position ="dodge",stat="identity") +
+  labs(y = "Visitor Count", fill="ActivityType", title = "Eastwickr Activity with Total ")
+```
