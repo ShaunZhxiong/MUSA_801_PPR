@@ -273,3 +273,5 @@ Will do
 
 1. Combine hui's work into the whole markdown
 2. Arrange next class presentation
+2. Service Area Level Analysis
+2. Model Building
