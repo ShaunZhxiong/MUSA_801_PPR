@@ -10,7 +10,7 @@ output:
     theme: paper
   pdf_document: default
 ---
-  
+
 ```{=html}
 <style>
 p.caption {
@@ -44,8 +44,6 @@ th{
 }
 </style>
 ```
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -206,7 +204,7 @@ XXXXXXXXX
 
 #### Overall Program & Permits Distribution
 
-```{r wrangle program data, eval=FALSE, message=FALSE, warning=FALSE}
+```{r wrangle program data, eval=TRUE, message=FALSE, warning=FALSE}
 permit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
 program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
 facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
@@ -307,8 +305,7 @@ ggplot()+
   mapTheme()
 ```
 
-The above dataset gives information about PPR programs & permits in 2021, including information like the duration of the program, the attendence of the program etc. But some wrangling are needed for further uses. And the wrangling is taken in the next section.
-Through above wrangling, we link program data to their based properties,their belonged Service Area.
+The above dataset gives information about PPR programs & permits in 2021, including information like the duration of the program, the attendence of the program etc. But some wrangling are needed for further uses. And the wrangling is taken in the next section. Through above wrangling, we link program data to their based properties,their belonged Service Area.
 
 #### District 7,8,9
 
@@ -434,6 +431,7 @@ ggplot(Facility_Program_otherDistricts) +
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
 ### SafeGraph Data Analysis
 
 ```{r read SafeGraph Data and filter SafeGraph Data,warning=FALSE,message=FALSE}
@@ -489,10 +487,7 @@ PPRmoves <- safeGraph.geo %>%
   filter(placekey %in% as.list(parks$placekey))
 ```
 
-712190:Nature Parks and Other Similar Institutions; 
-713990:All Other Amusement and Recreation Industries; 
-713940: Fitness and Recreational Sports Centers； 
-711310：Promoters of Performing Arts, Sports, and Similar Events
+712190:Nature Parks and Other Similar Institutions; 713990:All Other Amusement and Recreation Industries; 713940: Fitness and Recreational Sports Centers； 711310：Promoters of Performing Arts, Sports, and Similar Events
 
 ```{r update property and program data with placekey,message=FALSE,warning=FALSE}
 # join filtered safeGraph place with ppr property
@@ -665,6 +660,7 @@ visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=crs)
 ```
 
 #### Limitation Analysis
+
 ```{r}
 
 ```
@@ -832,7 +828,6 @@ ggplot(data = depaCountPlotHF) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-
 ##### Weekday Pattern
 
 ##### Dwelling Time
@@ -890,7 +885,7 @@ ggplot(dwellTImePlotServiceArea)+
 
 ##### Related Brands
 
-#### Case Analysis 
+#### Case Analysis
 
 ##### Clustering Analysis
 
@@ -899,6 +894,7 @@ ggplot(dwellTImePlotServiceArea)+
 ```
 
 ##### Specific Cases1 (templete)
+
 These should come from the outcome of clustering Analysis
 
 ```{r most popular place in 789 district}
@@ -973,6 +969,7 @@ sumVisit%>%
 And its reasons analysis
 
 ##### Specific Cases2 (templete)
+
 These should come from the outcome of clustering Analysis
 
 ```{r most popular place in 789 district}
@@ -1047,6 +1044,7 @@ sumVisit%>%
 And its reasons analysis
 
 ##### Specific Cases3 (templete)
+
 These should come from the outcome of clustering Analysis
 
 ```{r most popular place in 789 district}
@@ -1123,4 +1121,5 @@ And its reasons analysis
 ### Next Stage Plan
 
 ### Use Case
+
 Jeff Dashboard
