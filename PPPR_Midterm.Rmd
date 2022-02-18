@@ -57,7 +57,6 @@ knitr::opts_chunk$set(echo = TRUE)
 #windowsFonts(font = windowsFont('Helvetica'))
 
 crs = 4326
-census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
 
 library(vroom)
 library(sf)
@@ -82,6 +81,8 @@ library(rgdal)
 library(furrr)
 library(mapview)
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
+
+census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
 
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
 source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
@@ -206,7 +207,7 @@ XXXXXXXXX
 
 #### Overall Program & Permits Distribution
 
-```{r wrangle program data, eval=FALSE, message=FALSE, warning=FALSE}
+```{r wrangle program data, message=FALSE, warning=FALSE}
 permit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
 program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
 facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
@@ -714,33 +715,36 @@ ggplot(sumVisitServiceArea)+
 ##### Origin
 
 ```{r origine Count plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins'}
-CensusData <- 
-  get_acs(geography = "block group", 
-          variables = c("B01003_001E"), 
-          year=2019, state="PA", county="Philadelphia", geometry=T, output="wide") %>%
-  st_transform(crs=4326) %>% 
-  dplyr::select(-NAME,-starts_with('B')) %>% 
-  st_centroid() %>% 
-  as.data.frame() %>% 
-  rename("originGeometry" = "geometry")
-
-placekeyGeometry <- 
-  originCount %>% 
-  dplyr::select(placekey) %>% 
-  group_by(placekey) %>% summarise()
-
-orgCountPlot <- originCount %>% 
-  st_drop_geometry() %>% 
-  group_by(origin,placekey) %>%
-  summarise(visitors=sum(visitors))%>% 
-  left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
-  rename("parkGeometry" = "geometry")%>%
-  filter(startsWith(origin,"42101"))%>%
-  left_join(CensusData,by=c("origin" = "GEOID"))%>%
-  mutate(park.y=as.numeric(map(parkGeometry,function(x){return(x[2])})),
-         park.x=as.numeric(map(parkGeometry,function(x){return(x[1])})),
-         origin.y=as.numeric(map(originGeometry,function(x){return(x[2])})),
-         origin.x=as.numeric(map(originGeometry,function(x){return(x[1])})))
+# CensusData <-
+#   get_acs(geography = "block group",
+#           variables = c("B01003_001E"),
+#           year=2019, state="PA", county="Philadelphia", geometry=T, output="wide") %>%
+#   st_transform(crs=4326) %>%
+#   dplyr::select(-NAME,-starts_with('B')) %>%
+#   st_centroid() %>%
+#   as.data.frame() %>%
+#   rename("originGeometry" = "geometry")
+# 
+# placekeyGeometry <-
+#   originCount %>%
+#   dplyr::select(placekey) %>%
+#   group_by(placekey) %>% summarise()
+# 
+# orgCountPlot <- originCount %>% 
+#   st_drop_geometry() %>% 
+#   group_by(origin,placekey) %>%
+#   summarise(visitors=sum(visitors))%>% 
+#   left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
+#   rename("parkGeometry" = "geometry")%>%
+#   filter(startsWith(origin,"42101"))%>%
+#   left_join(CensusData,by=c("origin" = "GEOID"))%>%
+#   mutate(park.y=as.numeric(map(parkGeometry,function(x){return(x[2])})),
+#          park.x=as.numeric(map(parkGeometry,function(x){return(x[1])})),
+#          origin.y=as.numeric(map(originGeometry,function(x){return(x[2])})),
+#          origin.x=as.numeric(map(originGeometry,function(x){return(x[1])})))
+# 
+# st_write(orgCountPlot,"data/output/orgCountPlot.GEOJSON")
+orgCountPlot <- st_read("data/output/orgCountPlot.GEOJSON")
 
 orgCountPlot2 <- orgCountPlot%>%
   filter(visitors>200)
@@ -782,18 +786,21 @@ ggplot(data = orgCountPlotHF) +
 ##### Departure
 
 ```{r deaprture plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and departure points'}
-depaCountPlot <- departCount %>% 
-  st_drop_geometry() %>% 
-  group_by(departure,placekey) %>%
-  summarise(visitors=sum(visitors))%>% 
-  left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
-  rename("parkGeometry" = "geometry")%>%
-  filter(startsWith(departure,"42101"))%>%
-  left_join(CensusData,by=c("departure" = "GEOID"))%>%
-  mutate(park.y=as.numeric(map(parkGeometry,function(x){return(x[2])})),
-         park.x=as.numeric(map(parkGeometry,function(x){return(x[1])})),
-         departure.y=as.numeric(map(originGeometry,function(x){return(x[2])})),
-         departure.x=as.numeric(map(originGeometry,function(x){return(x[1])})))
+# depaCountPlot <- departCount %>% 
+#   st_drop_geometry() %>% 
+#   group_by(departure,placekey) %>%
+#   summarise(visitors=sum(visitors))%>% 
+#   left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
+#   rename("parkGeometry" = "geometry")%>%
+#   filter(startsWith(departure,"42101"))%>%
+#   left_join(CensusData,by=c("departure" = "GEOID"))%>%
+#   mutate(park.y=as.numeric(map(parkGeometry,function(x){return(x[2])})),
+#          park.x=as.numeric(map(parkGeometry,function(x){return(x[1])})),
+#          departure.y=as.numeric(map(originGeometry,function(x){return(x[2])})),
+#          departure.x=as.numeric(map(originGeometry,function(x){return(x[1])})))
+# 
+# st_write(depaCountPlot,"data/output/depaCountPlot.GEOJSON")
+depaCountPlot <- st_read("data/output/depaCountPlot.GEOJSON")
 
 depaCountPlot2 <- depaCountPlot%>%
   filter(visitors>200)
