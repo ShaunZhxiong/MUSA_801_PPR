@@ -445,11 +445,13 @@ propertyKid <- pprProperties %>%
 #### Join program data
 
 ```{r join property and program data}
+
 program2021.join <- left_join(program2021.clean, facilityID, by =c("FacilityID")) %>% 
   left_join(., pprProperties, by =c("PPR_Properties_ObjectID"="OBJECTID"))
-```
 
+```
 ### 2022/02/15 Existing Program Analysis
+
 ```{r lirbary}
 
 library(sf)
@@ -465,12 +467,30 @@ library(rgeos)
 
 ```{r property join permit}
 
-# permit2021_join <- left_join(perimit2021, FacilityID, by =c("FacilityID")) %>% 
-#  left_join(., pprProperties, by =c("PPR_Properties_ObjectID"="OBJECTID"))
+permit2021.join <- left_join(permit2021, facilityID, by =c("FacilityID")) %>% 
+  left_join(., pprProperties, by =c("PPR_Properties_ObjectID"="OBJECTID"))
 
+# find a column in data frame with unique value 
+# View(perimit2021)
+# n_distinct(permit2021$FacilityID)
+
+#View Facilities in Permit & Program records
+
+ggplot()+
+
+ geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
+    geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
+  geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
+ geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
+  
+    geom_sf(data=permit2021.join,aes(geometry = geometry),color ="#f9b294",fill = "#f9b294", alpha = 0.7) +
+  
+  geom_sf(data=program2021.join,aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
+
+  labs(title="Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 7,8 & 9", colour = "data")
+  mapTheme()
+  
 ```
-
-
 
 #### 1.1 Distribution of Facilities and Programs in Service Area 7
 
@@ -509,6 +529,11 @@ Facility_2021 <- distinct(Facility_2021,.keep_all = FALSE)
 Facility_7 <- Facility_2021 %>%
   filter(PPR_DISTRICT == 7)
 
+# Permit in DISTRICT 7
+
+Permit_7 <- permit2021.join %>%
+  filter(PPR_DISTRICT == 7)
+
 #Monthly Count by ActivityType 
 
 MonthVisit_7 <- aggregate(Facility_7$RegisteredIndividualsCount, by=list(month=Facility_7$month,Facility=Facility_7$Facility, ActivityType=Facility_7$ActivityType ), sum)%>%
@@ -527,17 +552,21 @@ C_WeekVisit_7 <- aggregate(Facility_7$RegisteredIndividualsCount, by=list(week=F
   mutate(VisitWeekCount = x)%>%
   select(-x)
 
-# District 7 Facility Location Map & Service Radius
-
-ggplot(Facility_7)+
-
-  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
+# Facility w/ Programs and Permits in District 7 
+  
+ggplot()+
+  
+    geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
+  
     geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
-  geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
-  geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
-  geom_sf(aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.8) +
-  labs(title="Parks w/ Programs in District 7")
+  
+    geom_sf(data=Permit_7,aes(geometry = geometry),color ="#f9b294",fill = "#f9b294", alpha = 0.7) +
+  
+    geom_sf(data=Facility_7,aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
+  
+  labs(title="Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 7", colour = "data")
   mapTheme()
+    
 
 #### Park Buffer
 # xx <- Facility_7 %>% 
@@ -559,9 +588,6 @@ ggplot(Facility_7, aes(x= Facility, fill = ActivityType)) +
     geom_bar(position="stack")+
     labs(y = "Occurence", fill="Facility", title = "1.1 Facility & Activity Distribution in Service Area 7")+ 
     facet_grid(~PPR_DISTRICT)
-
-
-
 
 ```
 
@@ -606,6 +632,11 @@ ggplot(C_WeekVisit_7, aes(x = week, y = VisitWeekCount, group = ActivityTypeCate
 Facility_8 <- Facility_2021 %>%
   filter(PPR_DISTRICT == 8)
 
+# Permit in DISTRICT 8
+
+Permit_8 <- permit2021.join %>%
+  filter(PPR_DISTRICT == 8)
+
 #Monthly Count by ActivityType
 
 MonthVisit_8 <- aggregate(Facility_8$RegisteredIndividualsCount, by = list(month = Facility_8$month,Facility = Facility_8$Facility, ActivityType = Facility_8$ActivityType ), sum)%>%
@@ -624,17 +655,19 @@ C_WeekVisit_8 <- aggregate(Facility_8$RegisteredIndividualsCount, by=list(week=F
   mutate(VisitWeekCount = x)%>%
   select(-x)
 
-
-# District 8 Facility Location Map & Service Radius
-
-ggplot(Facility_8)+
-
-  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
-    geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
-  geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
-  geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
-  geom_sf(aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.3) +
-  labs(title="Parks w/ Programs in District 8")
+# Facility w/ Programs and Permits in District 8 
+  
+ggplot()+
+  
+   geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(8)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
+  
+    geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
+  
+    geom_sf(data=Permit_8,aes(geometry = geometry),color ="#f9b294",fill = "#f9b294", alpha = 0.7) +
+  
+    geom_sf(data=Facility_8,aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
+  
+  labs(title="Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 8", colour = "data")
   mapTheme()
 
 #Facility & Activity Category in Service Area 8
@@ -645,7 +678,7 @@ ggplot(Facility_8, aes(x= Facility, fill = ActvityTypeCategory)) +
     facet_grid(~PPR_DISTRICT)+
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-#Facility & Activity Distribution in Service Area 7
+#Facility & Activity Distribution in Service Area 8
 
 ggplot(Facility_8, aes(x= Facility, fill = ActivityType)) + 
     geom_bar(position="stack")+
@@ -728,6 +761,11 @@ ggplot(ChristyRec_Week, aes(x = week, y = VisitWeekCount, group = ActivityType, 
 Facility_9 <- Facility_2021 %>%
   filter(PPR_DISTRICT == 9)
 
+# Permit in DISTRICT 9
+
+Permit_9 <- permit2021.join %>%
+  filter(PPR_DISTRICT == 9)
+
 #Monthly Count by ActivityType
 
 MonthVisit_9 <- aggregate(Facility_9$RegisteredIndividualsCount, by = list(month = Facility_9$month,Facility = Facility_9$Facility, ActivityType = Facility_9$ActivityType), sum)%>%
@@ -746,28 +784,20 @@ C_WeekVisit_9 <- aggregate(Facility_9$RegisteredIndividualsCount, by=list(week=F
   mutate(VisitWeekCount = x)%>%
   select(-x)
 
-# District 9 Facility Location Map & Service Radius
-
-ggplot(Facility_9)+
-
-  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
-    geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
-  geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
-  geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
-  geom_sf(aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.3) +
-  labs(title="Parks w/ Programs in District 9")
-
+# Facility w/ Programs and Permits in District 9 
+  
+ggplot()+
+  
+    geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(9)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
+  
+    geom_sf(data=st_union(pprDestServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
+  
+    geom_sf(data=Permit_9,aes(geometry = geometry),color ="#f9b294",fill = "#f9b294", alpha = 0.7) +
+  
+    geom_sf(data=Facility_9,aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
+  
+  labs(title="Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 9", colour = "data")
   mapTheme()
-
-
-#Buffers_9 <- buffer(Facility_9, width=1, dissolve=TRUE)
-
-#Buffers_9_1mile = st_buffer(unique(Facility_9), dist =1600)
-
-#buffer <- filter(B_Buffers, Legend=="Unioned Buffer")
-
-#gBuffer(Facility_9, byid=FALSE, id=NULL, width=1.0, quadsegs=5, capStyle="ROUND",
-#joinStyle="ROUND", mitreLimit=1.0)
 
 #Facility & Activity Category in Service Area 9
 
@@ -807,7 +837,7 @@ ggplot(C_MonthVisit_9, aes(x = month, y = VisitorCount, group = ActivityTypeCate
        x = "Month",
        y = "Visitor Counts")
 
-# Visitor Counts by Week & Activity Category in Service Area 8
+# Visitor Counts by Week & Activity Category in Service Area 9
 
 ggplot(C_WeekVisit_9, aes(x = week, y = VisitWeekCount, group = ActivityTypeCategory, colour = ActivityTypeCategory)) +
   geom_line() + geom_point() +
@@ -823,15 +853,19 @@ ggplot(C_WeekVisit_9, aes(x = week, y = VisitWeekCount, group = ActivityTypeCate
 # Facility in Other DISTRICTS
 
 
-Facility_other <- mutate_at(Facility_2021, c('PPR_DISTRICT'), ~replace(., is.na(.), 0))
+Facility_other <- mutate_at(program2021.join, c('PPR_DISTRICT'), ~replace(., is.na(.), 0))
+  
 
+#class(Facility_other)
 
 Facility_other <- Facility_other %>%
   filter(PPR_DISTRICT == 0)
 
-MonthVisit_other <- aggregate(Facility_other$RegisteredIndividualsCount, by = list(month = Facility_other$month,Facility = Facility_other$Facility, ActivityType = Facility_other$ActivityType), sum)%>%
-  mutate(VisitorCount = x)%>%
-  select(-x)
+# Permit in Other DISTRICTS
+
+Permit_other <- permit2021.join %>%
+  filter(PPR_DISTRICT == 1,PPR_DISTRICT == 2,PPR_DISTRICT == 3,PPR_DISTRICT == 4,PPR_DISTRICT == 5,PPR_DISTRICT == 6,PPR_DISTRICT == 10)
+
 
 #Facility & Activity Distribution in other Service Areas
 
