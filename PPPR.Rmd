@@ -147,15 +147,15 @@ get_secrets <- function() {
   
   jsonlite::read_json(path)
 }
-#secrets <- get_secrets()
+secrets <- get_secrets()
 
 # database settings
-# dbname = secrets$db_name
-# host = secrets$db_host
-# port = secrets$db_port
-# username =  secrets$db_username
-# password = secrets$db_password
-# census_api_key(secrets$census_api_key, install=TRUE, overwrite=TRUE)
+dbname = secrets$db_name
+host = secrets$db_host
+port = secrets$db_port
+username =  secrets$db_username
+password = secrets$db_password
+census_api_key(secrets$census_api_key, install=TRUE, overwrite=TRUE)
 ```
 
 ### Data Loading
@@ -1046,7 +1046,7 @@ df_to_db <- function(conn, df, table_name) {
 conn <- dbConnect(Postgres(), dbname = dbname, host = host, port = port, 
                   user = username, password = password)
 
-df_to_db(conn, blocks19_summary, "census_block_groups")
+df_to_db(conn, propertyWithPlaceKey, "ppr_properties")
 # writing to postgres
 # dbListTables(conn)
 ```
@@ -1499,7 +1499,7 @@ clusplot(visitIntegrated.scale,
    labels=2, lines=0)
 ```
 
-```{r}
+```{r dwell time for cluster analysis 1}
 visitIntegrated %>%
   mutate(cluster=as.character(cluster)) %>% 
   dplyr::select(-placekey, -nightVisit, -geometry) %>% 
@@ -1512,7 +1512,7 @@ visitIntegrated %>%
   plotTheme(10,20)
 ```
 
-```{r}
+```{r night visit for cluster analysis 1}
 fit1_mean %>%
   mutate(cluster=as.character(Group.1)) %>% 
   dplyr::select(nightVisit, cluster) %>% 
@@ -1572,7 +1572,7 @@ fit2_mean
 
 cluster 2 has high visits but less programs. on the other hand cluster 1 has a lot programs and few vistis. Cluster2 ({AC45E5EF-2467-4926-A1DA-07258305D871). Christy Recreation Center AGAIN!!!
 
-```{r}
+```{r visit for clouster analysis 2}
 fit2_mean %>%
   dplyr::select(visits, cluster) %>% 
   ggplot(aes(cluster,visits)) +
@@ -1583,7 +1583,7 @@ fit2_mean %>%
 
 ```
 
-```{r}
+```{r preogeam counts for cluster analysis 2}
 fit2_mean %>%
   dplyr::select(programCount, cluster) %>% 
   ggplot(aes(cluster,programCount)) +
@@ -1594,7 +1594,7 @@ fit2_mean %>%
 
 ```
 
-```{r}
+```{r scater plot for cluster analysis 2}
 ggplot(SGwithProgram %>% 
          mutate(cluster = as.character(cluster)), 
        aes(programCount, visits, color=cluster)) +
@@ -1619,7 +1619,7 @@ zzz-222\@63s-dt9-3kf - Eastwick Regional Park
 
 ![](images/paste-5AA4C43C.png)
 
-```{r zzz-222@63s-dt9-3kf, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%'}
+```{r dwell zzz-222@63s-dt9-3kf, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%'}
 
 sumVisit <- dwellTime %>% 
   filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
@@ -1638,7 +1638,7 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
-```{r}
+```{r visit zzz-222@63s-dt9-3kf, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%'}
 visitCount %>% 
   filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
   st_drop_geometry()%>%
@@ -1650,7 +1650,7 @@ visitCount %>%
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 ```
 
-```{r zzz-222@63s-dt9-3kf }
+```{r  hour zzz-222@63s-dt9-3kf }
 sumVisit <- visitHour %>% 
   filter(placekey=='zzz-222@63s-dt9-3kf') %>% 
   dplyr::select(-month) %>% 
@@ -1666,7 +1666,7 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
-```{r}
+```{r zzz-222@63s-dt9-3kf program}
 Eastwick <- program2021.join %>% 
   filter(FacilityID == "{9D68AC8D-CF45-49EC-81E3-022EF3203A04}")
 
