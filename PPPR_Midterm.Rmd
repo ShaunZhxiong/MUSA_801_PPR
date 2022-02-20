@@ -202,7 +202,7 @@ ggplot() +
   mapTheme()
 ```
 
-XXXXXXXXX
+The activities hold in PPR properties are recorded in two systems: the program schedules and the permit. With the former, the PPR staffing arrange many activities seasonally in different PPR facilities. With the latter, people outside the PPR apply for conducting activities and reserve space in Parks & Recreation areas. In 2021, there are 4376 times of activities recorded in program schedules, covering 7 categories of After School, Athletic, Camp, Cultural, Educational, Environmental/Outdoor, and other activities, while 3861 times of activities are recorded in the permit system. 
 
 ### Program & Permits Analysis
 
@@ -298,6 +298,8 @@ WeekVisit <- aggregate(
   RegisteredIndividualsCount ~ AttendanceWeekDate + ActvityTypeCategory + PPR_DISTRICT, data = Facility_Program, FUN = sum)
 ```
 
+In the figure below, red legends show the locations of facilities with program schedules while orange legends show the distributions of facilities with permit records. One limitation should be pointed out here is that some facilities didn’t spatial joined the geographic information successfully, so, there are more facilities with program and permit compared to the number showing on the figure. 
+
 ```{r programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of Programs and Permits'}
 ggplot()+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
@@ -310,9 +312,11 @@ ggplot()+
   mapTheme()
 ```
 
-The above dataset gives information about PPR programs & permits in 2021, including information like the duration of the program, the attendence of the program etc. But some wrangling are needed for further uses. And the wrangling is taken in the next section. Through above wrangling, we link program data to their based properties,their belonged Service Area.
+The above dataset gives information about PPR programs & permits in 2021, including information like the duration of the program, the attendance of the program etc. But some wrangling are needed for further uses. And the wrangling is taken in the next section. Through above wrangling, we link program data to their based properties,their belonged Service Area.
 
 #### District 7,8,9
+
+There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. Marian Anderson Recreation Center hold more activities in athletic category, like soccer and baseball. The other two facilities hold more cultural activities, like art and music. Athletic activities were hold from March to November while cultural and after school activities mostly took place in fall.
 
 ##### District 7
 
@@ -353,6 +357,8 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
   plotTheme()
 ```
 
+There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center. Laura Sims Skate House hold hockey and ice skating activities from October to May the next year, while Morris Recreation Center hosted more cultural activities like dance as well as athletic activities of gymnastics, tumbling and basketball from October to December.
+
 ##### District 8
 
 ```{r SA8_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of Programs and Permits'}
@@ -392,6 +398,8 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
   plotTheme()
 ```
 
+There are seven facilities with program scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories. Athletic activities took place throughout the whole year, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. Cultural activities, like art, dance, music, usually suspended in summer. 
+
 ##### District 9
 
 ```{r SA9_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of Programs and Permits'}
@@ -424,6 +432,8 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
        y = "Visitor Counts")+
   plotTheme()
 ```
+
+There are 27 facilities with program scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
 
 #### Other Districts
 
