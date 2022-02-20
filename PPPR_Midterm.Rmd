@@ -78,6 +78,7 @@ library(tidycensus)
 library(rgdal)
 library(furrr)
 library(mapview)
+library(NbClust)
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
 census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
@@ -662,11 +663,82 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON",crs=crs)
 visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=crs)
 ```
 
-#### Limitation Analysis
+#### Limitation Analysis and Data Rectification 
 
-```{r}
+```{r integrate safegraph data with their characteristic, eval=FALSE}
+# calculate midnight visit
+visitHourNight <- visitHour %>% 
+  filter(hour >= 1 | hour <=5) %>% 
+  group_by(placekey) %>% 
+  summarize(nightVisit = sum(visit))
+
+
+# integrate sg data by midnight visit and dweel time
+visitIntegrated <- full_join(visitHourNight %>% 
+                               st_drop_geometry(), 
+                             dwellTime %>% 
+                               group_by(placekey, dwellTimes) %>% 
+                               summarize(visitors = sum(visitors)),
+                             by=c('placekey'))
+
+# wide format
+visitIntegrated <- visitIntegrated %>% 
+  spread(key = dwellTimes, value = visitors)
+
+# export
+# st_write(visitIntegrated, "data/output/visitIntegrated.GeoJSON")
+```
+
+```{r cluster by data confidence}
+# import
+visitIntegrated <- st_read("data/output/visitIntegrated.GeoJSON") %>% 
+  rename(c("<5"="X.5",">240"="X.240","11-20"="X11.20","121-240"="X121.240","21-60"="X21.60","5-10"="X5.10","61-120"="X61.120" ))
+
+# normalize
+visitIntegrated.scale <- scale(visitIntegrated %>% 
+                                 dplyr::select(-placekey) %>% 
+                                 st_drop_geometry())
+
+# decide cluster number (only run once)
+
+#set.seed(1234)
+#nc <- NbClust(visitIntegrated.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
+#table(nc$Best.n[1,])
+# 
+# barplot(table(nc$Best.n[1,]),
+#         xlab="Numer of Clusters", ylab="Number of Criteria",
+#         main="Number of Clusters Chosen by 26 Criteria")
+
+
+# Run K-Means cluster
+cluster1 <- kmeans(visitIntegrated.scale, 3) 
+summary(cluster1)
+
+# add cluster number back
+visitIntegrated <- visitIntegrated %>% 
+  mutate(cluster = cluster1$cluster)
+
+# mean by cluster
+cluster1_mean <- aggregate(visitIntegrated %>% 
+                             dplyr::select(-placekey, -cluster) %>% 
+                             st_drop_geometry(),
+                       by=list(visitIntegrated$cluster),
+                       FUN=mean) %>% 
+  rename(c("cluster"="Group.1"))
+
+
+kable(cluster1_mean,align = 'c',caption = '<center>Table 1. Mean values of clusters for SafeGraph data <center/>') %>%
+  kable_classic(full_width = F)%>%
+  kable_styling(position = "center")%>%
+  scroll_box(width = "100%", height = "400px")
 
 ```
+```{r clusplot1}
+clusplot(visitIntegrated.scale, 
+         fit1$cluster, color=TRUE, shade=TRUE,
+   labels=2, lines=0)
+```
+
 
 #### Overall SafeGraph Patterns
 
