@@ -888,19 +888,33 @@ visitHour <- visitHour %>%
   
 visitHour <- visitHour %>% 
   filter(cluster==2) %>% 
-  filter(hour<=6) %>% 
-  mutate(visit = visit-residents*0.95) %>%  
+  filter(hour<=5) %>% 
+  mutate(visit = ifelse(visit-residents*0.9<0,
+                        visit*0.05,
+                        visit-residents*0.9)) %>%  
   rbind(
     visitHour %>% 
       filter(cluster==2) %>% 
-      filter(hour>=7 & hour<=18) %>% 
-      filter(visit=visit-residents*0.25*20/24)
+      filter(hour>=6 & hour<=10) %>% 
+      mutate(visit=ifelse(visit-residents*(0.9-0.115*(hour-5))<0,
+                          visit*0.05,
+                          visit-residents*(0.9-0.115*(hour-5))))
+  ) %>% 
+  rbind(
+    visitHour %>% 
+      filter(cluster==2) %>% 
+      filter(hour>=11 & hour<=18) %>% 
+      mutate(visit=ifelse(visit-residents*0.25*20/24<0,
+                          visit*0.05,
+                          visit-residents*0.25*20/24))
   ) %>% 
   rbind(
     visitHour %>% 
       filter(cluster==2) %>% 
       filter(hour>=19) %>% 
-      filter(visit=visit-residents*(0.25*20/24+0.1235*hour))
+      mutate(visit=ifelse(visit-residents*(0.25*20/24+0.115*(hour-18))<0,
+                          visit*0.05,
+                          visit-residents*(0.25*20/24+0.115*(hour-18))))
   ) %>% 
   rbind(
     visitHour %>% 
