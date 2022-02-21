@@ -1317,12 +1317,12 @@ set.seed(1234)
 
 # decide cluster number (only run once)
 
-# nc <- NbClust(sgIntegrated_byMonth.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
-# table(nc$Best.n[1,])
-# 
-# barplot(table(nc$Best.n[1,]),
-#         xlab="Numer of Clusters", ylab="Number of Criteria",
-#         main="Number of Clusters Chosen by 26 Criteria")
+nc <- NbClust(sgIntegrated_byMonth.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
+table(nc$Best.n[1,])
+
+barplot(table(nc$Best.n[1,]),
+        xlab="Numer of Clusters", ylab="Number of Criteria",
+        main="Number of Clusters Chosen by 26 Criteria")
 
 
 # Run K-Means cluster
@@ -1398,11 +1398,11 @@ sgIntegrated_byMonth %>%
   scroll_box(width = "100%", height = "400px")
 ```
 
-**cluster2** : Comparatively normal positions. The dwell pattern is different for these two clusters.
+**cluster2** : Comparatively normal positions. 
 
 **cluster 1** (**choose one** place with a howManyMonthBelongToThisCluster of 11, there are many of them): normal performance on sg data (dwell and visits), but with many permit plans
 
-**cluster3 'zzz-222\@63s-dvq-5fz' 'zzz-222\@628-pm9-jn5' 'zzw-222\@628-pg9-tgk'** (choose one or more)**:** perform well in sg data (dwell and visits), but not more permit plans
+**cluster3 'zzz-222\@63s-dvq-5fz' 'zzz-222\@628-pm9-jn5' 'zzw-222\@628-pg9-tgk' 'zzz-222@628-pm7-nnq'** (choose one or more)**:** perform well in sg data (dwell and visits), but not more permit plans
 
 ##### Specific Cases1 (templete)
 
