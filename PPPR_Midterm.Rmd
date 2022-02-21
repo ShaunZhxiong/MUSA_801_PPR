@@ -857,7 +857,9 @@ group1.dwell <- dwellTime %>%
   left_join(visitIntegrated %>% dplyr::select(placekey, cluster) %>% st_drop_geometry(), by="placekey") %>% 
   filter(cluster==1) %>% 
   mutate(Total = `<5`+`5-10`+`11-20`+`21-60`+`61-120`+`121-240`+`>240`,
-         `rectified5-10`=ifelse(Total*ratio5To10<=`5-10`,Total*ratio5To10,`5-10`),
+         `rectified5-10`=ifelse((`5-10`-ratio5To10*Total/(ratio5To10-1)/`5-10`)<=`5-10`,
+                                `5-10`-ratio5To10*Total/(ratio5To10-1)/`5-10`,
+                                `5-10`),
          `rectified5-10rate`=`rectified5-10`/Total,
          `<5rate`=`<5`/Total)
 
@@ -876,8 +878,8 @@ ratio2h <- visitHour %>%
               dplyr::select(placekey, cluster)) %>% 
   mutate(residents = (`1`+`2`+`3`+`4`+`5`)/5,
          hourlySum = (`1`+`2`+`3`+`4`+`5`+`6`+`7`+`8`+`9`+`10`+`11`+`12`+`13`+`14`+`15`+`16`+`17`+`18`+`19`+`20`+`21`+`22`+`23`+`24`),
-         `ratio>2h` = 17*residents/hourlySum) %>% 
-  dplyr::select(placekey, month, `ratio>2h`, cluster)
+         `ratio>2h` = 16.25*residents/hourlySum) %>% 
+  dplyr::select(placekey, month, `ratio>2h`, cluster, residents)
 
 
 # rectify 'visitHour'
@@ -886,18 +888,25 @@ visitHour <- visitHour %>%
   
 visitHour <- visitHour %>% 
   filter(cluster==2) %>% 
-  filter(hour<=7 | hour>=19) %>% 
-  mutate(visit = visit*(1-`ratio>2h`)) %>%  
+  filter(hour<=6) %>% 
+  mutate(visit = visit-residents*0.95) %>%  
   rbind(
     visitHour %>% 
-      filter(cluster!=2)
+      filter(cluster==2) %>% 
+      filter(hour>=7 & hour<=18) %>% 
+      filter(visit=visit-residents*0.25*20/24)
   ) %>% 
   rbind(
     visitHour %>% 
       filter(cluster==2) %>% 
-      filter(hour>7 & hour<19)
+      filter(hour>=19) %>% 
+      filter(visit=visit-residents*(0.25*20/24+0.1235*hour))
   ) %>% 
-  dplyr::select(-`ratio>2h`, -cluster)
+  rbind(
+    visitHour %>% 
+      filter(cluster!=2)
+  ) %>% 
+  dplyr::select(-`ratio>2h`, -cluster,-residents)
 
 # rectify 'dwellTime'
 dwellTime <- dwellTime %>% 
