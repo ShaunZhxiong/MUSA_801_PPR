@@ -150,10 +150,11 @@ palette1_assist <- '#F9B294'
 ```
 
 xxxxXXXXX --- from Jeff
+The following discussion in default uses data in 2021 without further annotation.
 
 #### District & Service Area
 
-```{r openData_pprDistrictAndServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of PPR Districts and Service Areas'}
+```{r openData_pprDistrictAndServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure1. Locations of PPR Districts and Service Areas'}
 
 pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
   st_transform(crs)
@@ -175,11 +176,11 @@ ggmap(base_map) +
   mapTheme()
 ```
 
-The whole Philadelphia is divided into 10 PPR districts, each district unit is divided into several service area units for the sake of administration. the project mainly focus on the District 7、8、9, The pink lines in the map are the services areas in District 7,8,9. Note: The 9 district does not include the Smith Area.
+The whole Philadelphia is divided into 10 PPR districts, each district unit is further divided into several service area units for the sake of administration. Besides macro analyses, this practicum mainly focuses on the District 7、8、9, The areas bounded by pink lines in the Figure.1 are the services areas in District 7,8,9.
 
 #### Properties
 
-```{r openData_pprProperty,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of PPR Properties'}
+```{r openData_pprProperty,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure2. Locations of PPR Properties'}
 pprProperties <- st_read('https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson')%>%
   st_transform(crs)
 
@@ -202,13 +203,15 @@ ggplot() +
   mapTheme()
 ```
 
-XXXXXXXXX
+The Figure2 is the map of their respective locations.PPR administrates more than 500 facilities within Philadelphia boundary. Notably, for some huge parks,  PPR divides them into several sub-facilities. For example, 'Wissahickon Valley Park' is divided into 16 sub-facilities ('Wissahickon Valley Park', 'Wissahickon Environmental Center', 'Salvatore Pachella Memorial Field', 'David P Montgomery Field', 'John F Boyce Memorial Field', 'Arrow Field', 'Walnut Lane Golf Club', 'Samuel F Houston Playground', 'Carpenters Woods', 'Dodge Tract', 'Historic Rittenhouse Town', 'Clifford Park', 'Blue Bell Park', 'Saul High School Farm', 'Andorra Natural Area',and 'Saylors Grove').
 
 ### Program & Permits Analysis
 
-#### Overall Program & Permits Distribution
+For events in PPR facilities, there are two types. The first type we call program is the event that is officially organized by PPR staffs. The second type, permit, is the event that is organized by volunteers and got approvals from PPR. In the following analyses, events refer to the combination of the programs and the permits.
 
-```{r wrangle program data, eval=TRUE, message=FALSE, warning=FALSE}
+#### Overall Distribution in District 7,8,9
+
+```{r wrangle program data, message=FALSE, warning=FALSE}
 
 permit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
 program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
@@ -298,7 +301,9 @@ WeekVisit <- aggregate(
   RegisteredIndividualsCount ~ AttendanceWeekDate + ActvityTypeCategory + PPR_DISTRICT, data = Facility_Program, FUN = sum)
 ```
 
-```{r programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of Programs and Permits'}
+Through above wrangling, we obtain information like the duration of the events, the attendance of the events etc. Furthermore, we link program and permit datasets to their based properties,their belonged Service Area, which is shown in the following map.
+
+```{r programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure3. Locations of Programs and Permits in District 7,8,9'}
 ggplot()+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
@@ -306,13 +311,11 @@ ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
   geom_sf(data=permit2021.join,aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
   geom_sf(data=program2021.join,aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
-  labs(title="Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 7,8 & 9")+
+  labs(title="Facilities w/ Programmed (red) & Permited (orange) Activities in Disdrict 7,8 & 9")+
   mapTheme()
 ```
 
-The above dataset gives information about PPR programs & permits in 2021, including information like the duration of the program, the attendence of the program etc. But some wrangling are needed for further uses. And the wrangling is taken in the next section. Through above wrangling, we link program data to their based properties,their belonged Service Area.
-
-#### District 7,8,9
+The Figure3 is the locations of facilities with events in District 7,8,9. The color red is used to represent the facilities with programs. And the color orange is used to represent the facilities with permits. From the map, we can see that permits cover larger area than programs which indicates the demand exceeds PPR programming scope and the ways to improve PPR service.
 
 ##### District 7
 
@@ -439,6 +442,10 @@ ggplot(Facility_Program_otherDistricts) +
 
 ### SafeGraph Data Analysis
 
+This practicum aims to use SafeGraph's Pattern dataset to analyze if PPR programmings achieve their goals of meeting citizens' needs and serving them well. Further, SafeGraph data can be used to suggest PPR's future programming strategies in Philadelphia.
+
+SafeGraph’s Patterns dataset includes visitor and demographic aggregations for points of interest (POIs) in the US. This contains aggregated raw counts of visits to POIs from a panel of mobile devices, answering how often people visit, how long they stay, where they came from, where else they go, and more. [More Information](https://docs.safegraph.com/docs/monthly-patterns#:~:text=Patterns%20is%20a%20dataset%20of,in%20Canada%2C%20see%20Weekly%20Patterns.)
+
 ```{r read SafeGraph Data and filter SafeGraph Data,warning=FALSE,message=FALSE}
 # brand_info <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv")
 # core_poi <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/core_poi.csv")
@@ -492,9 +499,14 @@ PPRmoves <- safeGraph.geo %>%
   filter(placekey %in% as.list(parks$placekey))
 ```
 
-712190:Nature Parks and Other Similar Institutions; 713990:All Other Amusement and Recreation Industries; 713940: Fitness and Recreational Sports Centers； 711310：Promoters of Performing Arts, Sports, and Similar Events
+In the above wrangling, we first combine all 11 month pattern data from SafeGraph, attaching them with geometry information. Further, we filter the data into Pennsylvania region and into Practicum-related POIs using [NAICS code](https://www.naics.com/code-search/?naicstrms=park). The NAICS codes we chose are as follow.
 
-```{r update property and program data with placekey,message=FALSE,warning=FALSE}
+712190: Nature Parks and Other Similar Institutions; <br>
+713990: All Other Amusement and Recreation Industries; <br>
+713940: Fitness and Recreational Sports Centers；<br>
+711310：Promoters of Performing Arts, Sports, and Similar Events
+
+```{r update property and program data with placekey,fig.height = 5,message = FALSE, warning = FALSE,out.width = '75%',fig.align = 'center',fig.cap = 'Figure4. Comparison between all PPR properties and sucessfully joined properties'}
 # join filtered safeGraph place with ppr property
 propertyWithPlaceKey <- st_join(property %>% st_buffer(10),parks %>% dplyr::select(placekey, geometry),left=FALSE) %>%
   st_drop_geometry() %>% 
@@ -518,12 +530,14 @@ program2021.joinWithPlaceKey <-
   st_sf() %>% 
   st_transform(crs=crs)
 
-mapview(property)+mapview(st_centroid(propertyWithPlaceKey),col.regions = "green")
+mapview(property,layer.name = c("All PPR Facilities"))+mapview(st_centroid(propertyWithPlaceKey),col.regions = "green",layer.name = c("Sucessfully Joined Facilities"))
 ```
 
-In the above map, the polygon is the properties of PPR, the green dots are the successfully join properties with placekey
+Through above wrangling, the filtered SafeGraph POIs were linked with PPR facilities and PPR programmings&permits, using spatial join. So far we have successfully bridged the channel of communicating among these three main datasets.
 
-```{r unnest safegraph data, message=FALSE, warning=FALSE}
+In the Figure4, the purple polygons are the all properties of PPR, the green dots are the successfully joined properties with placekey. From  the map we can believe the join is sucessfully, it covers all most all PPR properties.
+
+```{r unnest safegraph data, message=FALSE, warning=FALSE, results='hide'}
 # unnest visit Count data
 # visitCount <-
 #   PPRmoves %>%
@@ -664,9 +678,12 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON",crs=crs)
 visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=crs)
 ```
 
+Because SafeGraph data is nested within the dataframe. To further use this data into analyses, we have to unsent them into respective dataframes. Through above wrangling, we obtain information like number of visits to these facilities by day, the number of visits to these facilities by hour, the number of visits to these facilities by weekday, the census block groups of these visitors' home, the census block groups of these visitors' departure places, the distribution of these visits' dwelling time etc.  
+Notably, the visits here refer to the visits in SafeGraph Mobile Device Panel instead of the true visits to these facilities. Even though there might be some [biases](https://www.safegraph.com/blog/what-about-bias-in-the-safegraph-dataset) in the representatives, we still believe this data can give us insights about the pattern of actual visits. However, some data rectifications are still deployed in the following to make it more reliable.
+
 #### Bias Analysis and Data Rectification
 
-Sometimes, SafeGraph will count "Residents" or "passer-bys" of the position in "visits", which will result in huge bias and mislead the analysis. So, to conclude **typical position types of SafeGraph data bias**, we choose ***midnight visits***and ***dwell time*** as factors for **cluster analysis**. We also apply principal component analysis here to assist in understanding characteristics of clusters.
+Sometimes, SafeGraph will count "Residents" or "passer-bys" of the position in "visits", which will result in huge bias and mislead the analysis. So, to conclude **typical position types of SafeGraph data bias**, we choose ***midnight visits***and ***dwelling time*** as factors for **cluster analysis**. We also apply principal component analysis here to assist in understanding characteristics of clusters.
 
 Taking results of both cluster analysis and component analysis, most locations, **1094** out of 1117, belong to **cluster 3** with **reliable** data. **Cluster 2** are **14** positions with extremely **more night visits and long visits** that are more than 2 hours. **Cluster 1** consists of **9** locations with **many transitory visits** that are less than 10 minutes.
 
@@ -678,7 +695,7 @@ visitHourNight <- visitHour %>%
   summarize(nightVisit = sum(visit))
 
 
-# integrate sg data by midnight visit and dweel time
+# integrate sg data by midnight visit and dwell time
 visitIntegrated <- full_join(visitHourNight %>% 
                                st_drop_geometry(), 
                              dwellTime %>% 
@@ -694,7 +711,7 @@ visitIntegrated <- visitIntegrated %>%
 # st_write(visitIntegrated, "data/output/visitIntegrated.GeoJSON")
 ```
 
-```{r cluster by data confidence}
+```{r cluster by data confidence,message=FALSE,warning=FALSE}
 # import
 visitIntegrated <- st_read("data/output/visitIntegrated.GeoJSON") %>% 
   rename(c("Dwell<5"="X.5","Dwell>240"="X.240","Dwell11-20"="X11.20","Dwell121-240"="X121.240","Dwell21-60"="X21.60","Dwell5-10"="X5.10","Dwell61-120"="X61.120" ))
@@ -719,7 +736,7 @@ set.seed(1234)
 
 # Run K-Means cluster
 cluster1 <- kmeans(visitIntegrated.scale, 3) 
-summary(cluster1)
+#summary(cluster1)
 
 # add cluster number back
 visitIntegrated <- visitIntegrated %>% 
@@ -744,7 +761,7 @@ kable(cluster1_mean,align = 'c',caption = '<center>Table 1. Mean values of clust
 
 ```
 
-```{r correlation matrix for cluster1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Correlation Matrix of SafeGraph Bias'}
+```{r correlation matrix for cluster1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure5. Correlation Matrix of SafeGraph Bias'}
 ## put histograms on the diagonal
 panel.hist <- function(x, ...)
 {
@@ -757,7 +774,7 @@ panel.hist <- function(x, ...)
 }
 
 #Color points by groups
-my_cols <- palette4[1:3]
+my_cols <- c(palette5[5],palette5[4],palette5[1])
 
 pairs(visitIntegrated %>% 
         st_drop_geometry() %>% 
@@ -771,13 +788,13 @@ pairs(visitIntegrated %>%
 
 ```
 
-```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Cluster Plot with Main Component'}
+```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure6. Cluster Plot with Main Component'}
 x <- clusplot(visitIntegrated.scale, 
          cluster1$cluster, color=TRUE, shade=TRUE, main = "",
          labels=5, lines=0, stand=TRUE, col.txt=palette5[1:3], col.clus=palette5[1:3], col.p=palette5[5])
 ```
 
-```{r component analysis1}
+```{r component analysis1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure7. Parallel Analysis Scree Plots'}
 # decide component number (2)
 fa.parallel(as.data.frame(visitIntegrated.scale), fa = 'pc', n.iter = 100, show.legend = FALSE)
 
@@ -787,7 +804,7 @@ cluster1_pca <- principal(visitIntegrated.scale, nfactors = 2, rotate = "none", 
 
 options(digits = 2) 
 
-kable(cluster1_pca$Structure[1:8,1:2],align = 'c',caption = '<center>Table 2. Correlations between variables and components <center/>') %>%
+kable(t(cluster1_pca$Structure[1:8,1:2]),align = 'c',caption = '<center>Table 2. Correlations between variables and components <center/>') %>%
   kable_classic(full_width = F)%>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
@@ -796,7 +813,7 @@ kable(cluster1_pca$Structure[1:8,1:2],align = 'c',caption = '<center>Table 2. Co
 
 Based on the bias analysis above, we **rectify SafeGraph data** depending on its cluster / type. First, all visit counts with dwell time that is **less than 5 minutes** are removed. Also, for **cluster 1,** visit counts with dwell time that is **between 5 and 10 minutes** will be reduced referring to the related proportion in the normal cluster 3. On top of that, long visits that are **longer than 2 hours** in **Cluster 2** will be trimmed into the appropriate ratio according to midnight visitors which can be treated as "residents".
 
-```{r rectify sg data}
+```{r rectify sg data,message=FALSE,warning=FALSE,results='hide'}
 # cluster info
 cluster <- visitIntegrated %>% 
               st_drop_geometry() %>%
@@ -811,7 +828,7 @@ Sum <- visitIntegrated %>%
             `Dwell<5` = sum(`Dwell<5`),
             Total = sum(Total))
 
-ratio5To10 <- Sum[1,]$`Dwell5-10`/Sum[1,]$Total
+ratio5To10 <- Sum[3,]$`Dwell5-10`/Sum[3,]$Total
 
 group1.dwell <- dwellTime %>% 
   st_drop_geometry() %>% 
@@ -913,16 +930,18 @@ visitCount <- visitCount %>%
 
 #### Overall SafeGraph Patterns
 
-##### Device Visit Counts
+Through above complicated analysis and rectification, we finally obtain more reliable SafeGraph data. In the following section, we attempt to draw insights from the SafeGraph data in 5 aspects: visit counts in device panel,origins of visits in device panel, departure of visits in device panel, weekday pattern of device panel visits, dwelling time of device panel visits, and related brands of device panel visits at the same day.
 
-```{r visit Count map,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of total device visits'}
+##### Visit Counts in Device Panel
+
+```{r visit Count map,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure8. Map of Visit Counts in Device Panel'}
 sumVisit <- visitCount %>%
   dplyr::select(-visitDay,-day,-month) %>% 
   group_by(placekey) %>%
   summarise(visits=sum(visits))
 
 ggplot(sumVisit)+
-  geom_sf(data=pprServiceArea,color='black',size=0.25,fill= "transparent")+
+  geom_sf(data=pprServiceArea,color='black',size=0.35,fill= "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.5,fill= "transparent")+
   geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
   scale_size_continuous(range = c(1, 3),name = "Visits")+
@@ -931,6 +950,8 @@ ggplot(sumVisit)+
         legend.key.width = unit(0.5, 'cm'),
         legend.key.height  = unit(0.2, 'cm'))
 ```
+
+From the Figure8 we can see that people frequently visit facilities in the city center
 
 ```{r visit Count distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of total device visits'}
 sumVisitServiceArea <- pprServiceArea %>%
