@@ -811,7 +811,7 @@ Sum <- visitIntegrated %>%
             `Dwell<5` = sum(`Dwell<5`),
             Total = sum(Total))
 
-ratio5To10 <- Sum[1,]$`Dwell5-10`/Sum[1,]$Total
+ratio5To10 <- Sum[3,]$`Dwell5-10`/Sum[3,]$Total
 
 group1.dwell <- dwellTime %>% 
   st_drop_geometry() %>% 
