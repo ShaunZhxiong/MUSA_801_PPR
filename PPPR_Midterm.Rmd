@@ -207,7 +207,9 @@ The Figure2 is the map of their respective locations.PPR administrates more than
 
 ### Program & Permits Analysis
 
-The activities hold in PPR properties are recorded in two systems: the program schedules and the permit. With the former, the PPR staffing arrange many activities seasonally in different PPR facilities. With the latter, people outside the PPR apply for conducting activities and reserve space in Parks & Recreation areas. In 2021, there are 4376 times of activities recorded in program schedules, covering 7 categories of After School, Athletic, Camp, Cultural, Educational, Environmental/Outdoor, and other activities, while 3861 times of activities are recorded in the permit system. In the following analyses, events refer to the combination of the programs and the permits.
+The activities hold in PPR properties are recorded in two systems: the program schedules and the permit. With the former, the PPR staffing arrange many activities seasonally in different PPR facilities. With the latter, people outside the PPR apply for conducting activities and reserve space in Parks & Recreation areas. 
+
+In 2021, there are 4376 times of activities recorded in program schedules, covering 7 categories of After School, Athletic, Camp, Cultural, Educational, Environmental/Outdoor, and other activities, while 3861 times of activities are recorded in the permit system. In the following analyses, events refer to the combination of the programs and the permits.
 
 #### Overall Distribution in District 7,8,9
 
