@@ -149,14 +149,11 @@ palette1_main <- "#F2727F"
 palette1_assist <- '#F9B294'
 ```
 
-xxxxXXXXX --- from Jeff
-The following discussion in default uses data in 2021 without further annotation.
+xxxxXXXXX --- from Jeff The following discussion in default uses data in 2021 without further annotation.
 
 #### District & Service Area
 
 ```{r openData_pprDistrictAndServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure1. Locations of PPR Districts and Service Areas'}
-
-setwd("C:\\PENN\\2022\\MUSA_801_Practicum\\MUSA_801_PPR")
 
 pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
   st_transform(crs)
@@ -205,11 +202,11 @@ ggplot() +
   mapTheme()
 ```
 
-The Figure2 is the map of their respective locations.PPR administrates more than 500 facilities within Philadelphia boundary. Notably, for some huge parks,  PPR divides them into several sub-facilities. For example, 'Wissahickon Valley Park' is divided into 16 sub-facilities ('Wissahickon Valley Park', 'Wissahickon Environmental Center', 'Salvatore Pachella Memorial Field', 'David P Montgomery Field', 'John F Boyce Memorial Field', 'Arrow Field', 'Walnut Lane Golf Club', 'Samuel F Houston Playground', 'Carpenters Woods', 'Dodge Tract', 'Historic Rittenhouse Town', 'Clifford Park', 'Blue Bell Park', 'Saul High School Farm', 'Andorra Natural Area',and 'Saylors Grove').
+The Figure2 is the map of their respective locations.PPR administrates more than 500 facilities within Philadelphia boundary. Notably, for some huge parks, PPR divides them into several sub-facilities. For example, 'Wissahickon Valley Park' is divided into 16 sub-facilities ('Wissahickon Valley Park', 'Wissahickon Environmental Center', 'Salvatore Pachella Memorial Field', 'David P Montgomery Field', 'John F Boyce Memorial Field', 'Arrow Field', 'Walnut Lane Golf Club', 'Samuel F Houston Playground', 'Carpenters Woods', 'Dodge Tract', 'Historic Rittenhouse Town', 'Clifford Park', 'Blue Bell Park', 'Saul High School Farm', 'Andorra Natural Area',and 'Saylors Grove').
 
 ### Program & Permits Analysis
 
-The activities hold in PPR properties are recorded in two systems: the program schedules and the permit. With the former, the PPR staffing arrange many activities seasonally in different PPR facilities. With the latter, people outside the PPR apply for conducting activities and reserve space in Parks & Recreation areas. 
+The activities hold in PPR properties are recorded in two systems: the program schedules and the permit. With the former, the PPR staffing arrange many activities seasonally in different PPR facilities. With the latter, people outside the PPR apply for conducting activities and reserve space in Parks & Recreation areas.
 
 In 2021, there are 4376 times of activities recorded in program schedules, covering 7 categories of After School, Athletic, Camp, Cultural, Educational, Environmental/Outdoor, and other activities, while 3861 times of activities are recorded in the permit system. In the following analyses, events refer to the combination of the programs and the permits.
 
@@ -320,7 +317,7 @@ ggplot()+
   mapTheme()
 ```
 
-In the figure3 above, red legends show the locations of facilities with program schedules while orange legends show the distributions of facilities with permit records. From the map, we can see that permits cover larger area than programs which indicates the demand exceeds PPR programming scope and the ways to improve PPR service. One limitation should be pointed out here is that some facilities didn’t spatial joined the geographic information successfully, so, there are more facilities with program and permit compared to the number showing on the figure. 
+In the figure3 above, red legends show the locations of facilities with program schedules while orange legends show the distributions of facilities with permit records. From the map, we can see that permits cover larger area than programs which indicates the demand exceeds PPR programming scope and the ways to improve PPR service. One limitation should be pointed out here is that some facilities didn't spatial joined the geographic information successfully, so, there are more facilities with program and permit compared to the number showing on the figure.
 
 #### District 7,8,9
 
@@ -459,7 +456,7 @@ ggplot(Facility_Program_otherDistricts) +
 
 This practicum aims to use SafeGraph's Pattern dataset to analyze if PPR programmings achieve their goals of meeting citizens' needs and serving them well. Further, SafeGraph data can be used to suggest PPR's future programming strategies in Philadelphia.
 
-SafeGraph’s Patterns dataset includes visitor and demographic aggregations for points of interest (POIs) in the US. This contains aggregated raw counts of visits to POIs from a panel of mobile devices, answering how often people visit, how long they stay, where they came from, where else they go, and more. [More Information](https://docs.safegraph.com/docs/monthly-patterns#:~:text=Patterns%20is%20a%20dataset%20of,in%20Canada%2C%20see%20Weekly%20Patterns.)
+SafeGraph's Patterns dataset includes visitor and demographic aggregations for points of interest (POIs) in the US. This contains aggregated raw counts of visits to POIs from a panel of mobile devices, answering how often people visit, how long they stay, where they came from, where else they go, and more. [More Information](https://docs.safegraph.com/docs/monthly-patterns#:~:text=Patterns%20is%20a%20dataset%20of,in%20Canada%2C%20see%20Weekly%20Patterns.)
 
 ```{r read SafeGraph Data and filter SafeGraph Data,warning=FALSE,message=FALSE}
 # brand_info <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv")
@@ -516,10 +513,7 @@ PPRmoves <- safeGraph.geo %>%
 
 In the above wrangling, we first combine all 11 month pattern data from SafeGraph, attaching them with geometry information. Further, we filter the data into Pennsylvania region and into Practicum-related POIs using [NAICS code](https://www.naics.com/code-search/?naicstrms=park). The NAICS codes we chose are as follow.
 
-712190: Nature Parks and Other Similar Institutions; <br>
-713990: All Other Amusement and Recreation Industries; <br>
-713940: Fitness and Recreational Sports Centers；<br>
-711310：Promoters of Performing Arts, Sports, and Similar Events
+712190: Nature Parks and Other Similar Institutions; <br> 713990: All Other Amusement and Recreation Industries; <br> 713940: Fitness and Recreational Sports Centers；<br> 711310：Promoters of Performing Arts, Sports, and Similar Events
 
 ```{r update property and program data with placekey,fig.height = 5,message = FALSE, warning = FALSE,out.width = '75%',fig.align = 'center',fig.cap = 'Figure11. Comparison between all PPR properties and sucessfully joined properties'}
 # join filtered safeGraph place with ppr property
@@ -550,7 +544,7 @@ mapview(property,layer.name = c("All PPR Facilities"))+mapview(st_centroid(prope
 
 Through above wrangling, the filtered SafeGraph POIs were linked with PPR facilities and PPR programmings&permits, using spatial join. So far we have successfully bridged the channel of communicating among these three main datasets.
 
-In the Figure4, the purple polygons are the all properties of PPR, the green dots are the successfully joined properties with placekey. From  the map we can believe the join is sucessfully, it covers all most all PPR properties.
+In the Figure4, the purple polygons are the all properties of PPR, the green dots are the successfully joined properties with placekey. From the map we can believe the join is sucessfully, it covers all most all PPR properties.
 
 ```{r unnest safegraph data, message=FALSE, warning=FALSE, results='hide'}
 # unnest visit Count data
@@ -693,7 +687,7 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON",crs=crs)
 visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=crs)
 ```
 
-Because SafeGraph data is nested within the dataframe. To further use this data into analyses, we have to unsent them into respective dataframes. Through above wrangling, we obtain information like number of visits to these facilities by day, the number of visits to these facilities by hour, the number of visits to these facilities by weekday, the census block groups of these visitors' home, the census block groups of these visitors' departure places, the distribution of these visits' dwelling time etc.  
+Because SafeGraph data is nested within the dataframe. To further use this data into analyses, we have to unsent them into respective dataframes. Through above wrangling, we obtain information like number of visits to these facilities by day, the number of visits to these facilities by hour, the number of visits to these facilities by weekday, the census block groups of these visitors' home, the census block groups of these visitors' departure places, the distribution of these visits' dwelling time etc.\
 Notably, the visits here refer to the visits in SafeGraph Mobile Device Panel instead of the true visits to these facilities. Even though there might be some [biases](https://www.safegraph.com/blog/what-about-bias-in-the-safegraph-dataset) in the representatives, we still believe this data can give us insights about the pattern of actual visits. However, some data rectifications are still deployed in the following to make it more reliable.
 
 #### Bias Analysis and Data Rectification
@@ -802,7 +796,6 @@ pairs(visitIntegrated %>%
       lower.panel=NULL, panel = panel.smooth)
 
 ```
-
 
 ```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure13. Cluster Plot with Main Component'}
 x <- clusplot(visitIntegrated.scale, 
@@ -946,7 +939,7 @@ visitCount <- visitCount %>%
 
 #### Overall SafeGraph Patterns
 
-Through above complicated analysis and rectification, we finally obtain more reliable SafeGraph data. In the following section, we attempt to draw insights from the SafeGraph data in 5 aspects: visit counts in device panel,origins of visits in device panel, departure of visits in device panel, weekday pattern of device panel visits, dwelling time of device panel visits, and related brands of device panel visits at the same day.
+Through above complicated analysis and rectification, we finally obtain more reliable SafeGraph data. In the following section, we attempt to draw insights from the SafeGraph data in 5 aspects: visit counts in device panel, origins of visits in device panel, departure of visits in device panel, weekday pattern of device panel visits, dwelling time of device panel visits, and related brands of device panel visits at the same day.
 
 ##### Visit Counts in Device Panel
 
@@ -967,9 +960,9 @@ ggplot(sumVisit)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-From the Figure15 we can see that people frequently visit facilities in the city center where have dense PPR facilities. However, the large visit counts happen at the outskirt of Philadelphia where
+From the Figure15 we can see that people frequently visit facilities in the city center where have dense PPR facilities. For those facilities, visit counts are small because citizens are spread into other facilities. However, the large visit counts happen at the outskirt of Philadelphia where have less facilities
 
-```{r visit Count distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of total device visits'}
+```{r visit Count distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure16. Map of total device visits'}
 sumVisitServiceArea <- pprServiceArea %>%
   st_join(sumVisit,left =TRUE) %>% 
   drop_na(INFO) %>% 
@@ -990,9 +983,11 @@ ggplot(sumVisitServiceArea)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-##### Origin
+If we aggregate the visits into service area level, we can correspond the findings above based on Figure16. Overall, service areas in the city center where has dense facilities will have larger visit counts. Notably, 'Junod Area' service area also has high total device visits which may attribute to the Walton Run Park and the Poquessing Valley Park.
 
-```{r origine Count plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins'}
+##### Origins of Visits in Device Panel
+
+```{r origine Count plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure17. Flow map of parks and origins'}
 # CensusData <-
 #   get_acs(geography = "block group",
 #           variables = c("B01003_001E"),
@@ -1028,12 +1023,13 @@ orgCountPlot2 <- orgCountPlot%>%
   filter(visitors>200)
 
 orgCountPlotHF <- orgCountPlot%>%
-  filter(visitors>2000)
+  filter(visitors>5000)
 
 
 ggplot(data = orgCountPlot2) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
   geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=propertyWithPlaceKey %>% dplyr::select(OBJECTID) %>%distinct() %>%  st_transform(crs=crs), fill ='#C5C5C5', color='#C5C5C5',alpha=0.1,size=0)+
   geom_curve(aes(x = origin.x, y = origin.y,xend = park.x,yend = park.y,color = q5(visitors)),
              size = 0.5,
              curvature = -0.2, 
@@ -1048,12 +1044,14 @@ ggplot(data = orgCountPlot2) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-```{r HF origine Count plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and origins - High Frequency'}
+```{r HF origine Count plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure18. Flow map of parks and origins - High Frequency'}
 ggplot(data = orgCountPlotHF) + 
-  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
-  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=2)+
+  geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
+  geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=propertyWithPlaceKey %>% dplyr::select(OBJECTID) %>%distinct() %>%  st_transform(crs=crs), fill ='#C5C5C5', color='#C5C5C5',alpha=0.3,size=0)+
   geom_curve(aes(x = origin.x,y = origin.y,xend = park.x,yend = park.y),
-             size = 1,color = palette1_main,curvature = -0.2, alpha = 0.4)+
+             arrow = arrow(length = unit(0.01, "npc"), type="closed"),
+             size = 0.75,color = palette1_main,curvature = -0.2, alpha = 0.4)+
   labs(x="",y="")+
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
@@ -1061,9 +1059,11 @@ ggplot(data = orgCountPlotHF) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-##### Departure
+In the Figure17, we plot the origin of visits in device panel while in the Figure18, we filter the high frequent routes with the visit threshold as 5000 in 2021 and plot it. The map is interesting because most high frequent routes origin from one census block group 421010177011 (the intersection of Kensington Avenue and E Street). The reasons needs us to have further analysis.
 
-```{r deaprture plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and departure points'}
+##### Departure of visits in device panel
+
+```{r deaprture plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure19. Flow map of parks and departure points'}
 # depaCountPlot <- departCount %>% 
 #   st_drop_geometry() %>% 
 #   group_by(departure,placekey) %>%
@@ -1084,11 +1084,12 @@ depaCountPlot2 <- depaCountPlot%>%
   filter(visitors>200)
 
 depaCountPlotHF <- depaCountPlot%>%
-  filter(visitors>2000)
+  filter(visitors>5000)
 
 ggplot(data = depaCountPlot2) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
   geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=propertyWithPlaceKey %>% dplyr::select(OBJECTID) %>%distinct() %>%  st_transform(crs=crs), fill ='#C5C5C5', color='#C5C5C5',alpha=0.1,size=0)+
   geom_curve(aes(x = departure.x, y = departure.y, xend = park.x, yend = park.y,color = q5(visitors)),
              size = 0.5,curvature = -0.2, alpha = 0.4)+
   scale_color_manual(values = palette5,
@@ -1101,10 +1102,11 @@ ggplot(data = depaCountPlot2) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-```{r HF deaprture plot,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Flow map of parks and departure - High Frequency'}
+```{r HF deaprture plot,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure20. Flow map of parks and departure - High Frequency'}
 ggplot(data = depaCountPlotHF) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
   geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
+  geom_sf(data=propertyWithPlaceKey %>% dplyr::select(OBJECTID) %>%distinct() %>%  st_transform(crs=crs), fill ='#C5C5C5', color='#C5C5C5',alpha=0.3,size=0)+
   geom_curve(aes(x = departure.x, y = departure.y, xend = park.x, yend = park.y,color = q5(visitors)),
              size = 1,curvature = -0.2, alpha = 0.4)+
   scale_color_manual(values = palette5,
@@ -1117,11 +1119,59 @@ ggplot(data = depaCountPlotHF) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-##### Weekday Pattern
+Figure19 and Figure20 are the maps of the departure of visits in device panel. Figure20 correspond to the above findings because most high frequent routes depart from one census block group 421010177011 (the intersection of Kensington Avenue and E Street). The different part is that the departure points are close to the parks they visit, which makes sense.
 
-##### Dwelling Time
+As for why residents in 421010177011 census block group more tend to visit PPR facilities frequently. We guess that may because people with low income, no job, addition to drug or even homeless are from this cbg. Parks are good places for them to hang out during the day, and sometimes charity assign free food there. But these hypothesis need us further find support or overturn it.
 
-```{r dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+##### Weekday Pattern of Device Panel Visits
+
+```{r temperal pattern by weekday,fig.height = 10,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure21. Distribution of weekday pattern by service area level'}
+VisitWeekdaybyServiceArea <- pprServiceArea %>% 
+  st_join(visitWeekday) %>% 
+  st_drop_geometry() %>%  
+  dplyr::select(-placekey,-month,-PPR_DIST,-Shape_Leng,-Shape_Area)%>% 
+  group_by(NAME,INFO,visitWeekday) %>%
+  summarise(totalVisit = sum(visits, na.rm = T)) %>% 
+  ungroup()
+
+VisitWeekdaybyServiceArea$visitWeekday <- factor(VisitWeekdaybyServiceArea$visitWeekday, levels= c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday"))
+
+VisitWeekdaybyServiceArea%>%
+  ggplot(aes(visitWeekday,totalVisit)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Weekday", y="Aggregated Visits in device panel") +
+  facet_wrap(~NAME, ncol = 8, scales = "fixed")+
+  plotTheme(10,20)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+In Figure21, we group the data by weekday to see their weekday distribution pattern. Apart from their own difference in total visit counts, there is not obvious weekday level difference on their own. All seven days in a week have similar total visit counts in device panel.
+
+##### Hour Pattern of Device Panel Visits
+
+```{r temperal pattern by hour,fig.height = 10,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure22. Distribution of hour pattern by service area level'}
+VisitHourbyServiceArea <- pprServiceArea %>% 
+  st_join(visitHour) %>% 
+  st_drop_geometry() %>%  
+  dplyr::select(-placekey,-month,-PPR_DIST,-Shape_Leng,-Shape_Area)%>% 
+  group_by(NAME,INFO,hour) %>%
+  summarise(totalVisit = sum(visit, na.rm = T)) %>% 
+  ungroup()
+
+VisitHourbyServiceArea%>%
+  ggplot(aes(hour,totalVisit)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="hour", y="Aggregated Visits in device panel") +
+  facet_wrap(~NAME, ncol = 8, scales = "fixed")+
+  plotTheme(10,20)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+After the rectification above, we finally obtain the commonsensible hour pattern. In the Figure22, we group the data by hour to see their hour distribution pattern. Apart from their own difference in total visit counts, they all seem to have peak time from 10am to 12pm, escept the McVeigh Area which has its peak time at around 15pm.
+
+##### Dwelling Time of Device Panel Visits
+
+```{r dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure23. Map of dwell time'}
 dwellTimeForPlot <- dwellTime %>% 
   mutate(dwellTimes = recode(dwellTimes,
                              "<5" = 2.5,
@@ -1130,7 +1180,7 @@ dwellTimeForPlot <- dwellTime %>%
                              "21-60" = 40,
                              "61-120" = 90,
                              "121-240" = 180,
-                             ">240" = 0)) %>%
+                             ">240" = 240)) %>%
   mutate(sepTotalDwellTime = (visitors*dwellTimes)) %>% 
   group_by(placekey) %>% 
   mutate(totalVisitors=sum(visitors) )%>%
@@ -1152,7 +1202,9 @@ ggplot(dwellTimeForPlot)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-```{r dwell time distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of average dwelling time'}
+In Figure23, we calculate the average dwelling time for every facility. From the map, we can find out that the longest dwelling time happes at the placekey([223-222\@628-pm9-wkz](mailto:223-222@628-pm9-wkz){.email}) Independent Square Region.
+
+```{r dwell time distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure24. Map of average dwelling time'}
 dwellTImePlotServiceArea <- pprServiceArea %>%
   st_join(dwellTimeForPlot,left =TRUE) %>% 
   drop_na(INFO) %>% 
@@ -1172,7 +1224,7 @@ ggplot(dwellTImePlotServiceArea)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-##### Related Brands
+If we aggregate them into the service area level, individual facility's characteristics are erased, we can see that long dwelling time happens are more likely happening at the residential regions, which have more higher population densities. And facilities in this area are more likely visited by chance.
 
 #### Case Analysis
 
@@ -1540,10 +1592,12 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
-And its reasons analysis
+### [Use Case](https://ppr-dashboard-xfw9y.ondigitalocean.app/)
+
+The Dashboard will help to convey the PPR related information, useful exploratory analysis, and the outcome of the huff model in the end. This dashboard will help PPR better understand the situation of their programs and permits, each facility, service area, and district. Doing so to help PPR make better decision in the future programming.
 
 ### Next Stage Plan
 
-### Use Case
+In this stage, we have successfully understand the data from PPR and SafeGraph. And we also try to draw exploratory analysis by PPR service area level based on SafeGraph pattern data. For the outcome, we have gained many interesting insights shown above. These insights will not be obtianed without SafeGraph pattern data. Besides, we have the outline of the dashboard, which in the end will help us communicate the information of this Practicum with PPR and help them do better programming.
 
-Jeff Dashboard
+In the next stage of the Practicum, we will focus on the modeling with Huff model in District 7,8,9, and try to define and construct the attractiveness metric of facility. This attractiveness metric will be used in the huff model to obtain the market area for each facility. Finally we will compare the market area with SafeGraph pattern area to see whether PPR current programmings have achieve their goals, serving the target residents.

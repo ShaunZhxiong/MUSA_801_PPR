@@ -271,8 +271,8 @@ Questions
 
 Will do
 
-1. Combine hui's work into the whole markdown
-2. Tidy up next class presentation
-3. Service Area Level Analysis
+1. - [x] Combine hui's work into the whole markdown
+2. - [x] Tidy up next class presentation
+3. - [x] Service Area Level Analysis
 4. Decide how to properly modify and use safegraph data into our model
 4. Model Building
