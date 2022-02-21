@@ -324,7 +324,7 @@ In the figure3 above, red legends show the locations of facilities with program 
 
 ##### District 7
 
-```{r SA7_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of Programs and Permits'}
+```{r SA7_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure4. Locations of Programs and Permits'}
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==7),color="black",linetype ="dashed",size=1,fill = "transparent")+
@@ -334,7 +334,7 @@ ggplot()+
   mapTheme()
 ```
 
-```{r SA7_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Categories of Events in District7'}
+```{r SA7_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure5. Categories of Events in District7'}
 
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
@@ -365,7 +365,7 @@ There are three facilities with program scheduled in District 7: Athletic Recrea
 
 ##### District 8
 
-```{r SA8_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of Programs and Permits'}
+```{r SA8_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure6. Locations of Programs and Permits'}
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==8),color="black",linetype ="dashed",size=1,fill = "transparent")+
@@ -375,7 +375,7 @@ ggplot()+
   mapTheme()
 ```
 
-```{r SA8_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Categories of Events in District8'}
+```{r SA8_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure7. Categories of Events in District8'}
 
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
@@ -406,7 +406,7 @@ There are five facilities with program scheduled in District 8: 48th & Woodland 
 
 ##### District 9
 
-```{r SA9_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Locations of Programs and Permits'}
+```{r SA9_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure8. Locations of Programs and Permits'}
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==9),color="black",linetype ="dashed",size=1,fill = "transparent")+
@@ -416,7 +416,7 @@ ggplot()+
   mapTheme()
 ```
 
-```{r SA9_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Categories of Events in District8'}
+```{r SA9_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure9. Categories of Events in District8'}
 
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
@@ -443,7 +443,7 @@ There are seven facilities with program scheduled in District 9: Barry Playgroun
 
 There are 27 facilities with program scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
 
-```{r SAOthers_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure. Categories of Events in other Districts'}
+```{r SAOthers_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure10. Categories of Events in other Districts'}
 
 ggplot(Facility_Program_otherDistricts) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
@@ -519,7 +519,7 @@ In the above wrangling, we first combine all 11 month pattern data from SafeGrap
 713940: Fitness and Recreational Sports Centers；<br>
 711310：Promoters of Performing Arts, Sports, and Similar Events
 
-```{r update property and program data with placekey,fig.height = 5,message = FALSE, warning = FALSE,out.width = '75%',fig.align = 'center',fig.cap = 'Figure4. Comparison between all PPR properties and sucessfully joined properties'}
+```{r update property and program data with placekey,fig.height = 5,message = FALSE, warning = FALSE,out.width = '75%',fig.align = 'center',fig.cap = 'Figure11. Comparison between all PPR properties and sucessfully joined properties'}
 # join filtered safeGraph place with ppr property
 propertyWithPlaceKey <- st_join(property %>% st_buffer(10),parks %>% dplyr::select(placekey, geometry),left=FALSE) %>%
   st_drop_geometry() %>% 
@@ -774,7 +774,7 @@ kable(cluster1_mean,align = 'c',caption = '<center>Table 1. Mean values of clust
 
 ```
 
-```{r correlation matrix for cluster1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure5. Correlation Matrix of SafeGraph Bias'}
+```{r correlation matrix for cluster1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure12. Correlation Matrix of SafeGraph Bias'}
 ## put histograms on the diagonal
 panel.hist <- function(x, ...)
 {
@@ -801,13 +801,13 @@ pairs(visitIntegrated %>%
 
 ```
 
-```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure6. Cluster Plot with Main Component'}
+```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure13. Cluster Plot with Main Component'}
 x <- clusplot(visitIntegrated.scale, 
          cluster1$cluster, color=TRUE, shade=TRUE, main = "",
          labels=5, lines=0, stand=TRUE, col.txt=palette5[1:3], col.clus=palette5[1:3], col.p=palette5[5])
 ```
 
-```{r component analysis1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure7. Parallel Analysis Scree Plots'}
+```{r component analysis1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure14. Parallel Analysis Scree Plots'}
 # decide component number (2)
 fa.parallel(as.data.frame(visitIntegrated.scale), fa = 'pc', n.iter = 100, show.legend = FALSE)
 
@@ -947,7 +947,7 @@ Through above complicated analysis and rectification, we finally obtain more rel
 
 ##### Visit Counts in Device Panel
 
-```{r visit Count map,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure8. Map of Visit Counts in Device Panel'}
+```{r visit Count map,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure15. Map of Visit Counts in Device Panel'}
 sumVisit <- visitCount %>%
   dplyr::select(-visitDay,-day,-month) %>% 
   group_by(placekey) %>%
@@ -964,7 +964,7 @@ ggplot(sumVisit)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-From the Figure8 we can see that people frequently visit facilities in the city center
+From the Figure15 we can see that people frequently visit facilities in the city center where have dense PPR facilities. However, the large visit counts happen at the outskirt of Philadelphia where
 
 ```{r visit Count distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of total device visits'}
 sumVisitServiceArea <- pprServiceArea %>%
