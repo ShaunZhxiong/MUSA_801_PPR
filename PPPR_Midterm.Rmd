@@ -157,6 +157,7 @@ The following discussion in default uses data in 2021 without further annotation
 ```{r openData_pprDistrictAndServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure1. Locations of PPR Districts and Service Areas'}
 
 setwd("C:\\PENN\\2022\\MUSA_801_Practicum\\MUSA_801_PPR")
+
 pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
   st_transform(crs)
 
@@ -449,6 +450,7 @@ There are 27 facilities with program scheduled in other districts of PPR serving
 ggplot(Facility_Program_otherDistricts) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette7)+
+  labs(y = "Program Frequency", fill="Program Category", title = "Facility & Program Categories in other Districts")+
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
@@ -698,6 +700,7 @@ Notably, the visits here refer to the visits in SafeGraph Mobile Device Panel in
 
 Sometimes, SafeGraph will count "Residents" or "passer-bys" of the position in "visits", which will result in huge bias and mislead the analysis. So, to conclude **typical position types of SafeGraph data bias**, we choose ***midnight visits***and ***dwelling time*** as factors for **cluster analysis**. We also apply principal component analysis here to assist in understanding characteristics of clusters.
 
+Taking results of both cluster analysis and component analysis, most locations, **1094** out of 1117, belong to **cluster 3** with **reliable** data. **Cluster 2** includes **14** places with extremely **more night visits and long visits** that are more than 2 hours. **Cluster 1** consists of **9** locations with **many transitory visits** that are less than 10 minutes.
 
 ```{r integrate safegraph data with their characteristic, eval=FALSE}
 # calculate midnight visit
@@ -803,8 +806,13 @@ pairs(visitIntegrated %>%
 <<<<<<< Updated upstream
 ```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure6. Cluster Plot with Main Component'}
 x <- clusplot(visitIntegrated.scale, 
+=======
+```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Cluster Plot with Main Component'}
+clusplot(visitIntegrated.scale, 
+>>>>>>> Stashed changes
          cluster1$cluster, color=TRUE, shade=TRUE, main = "",
          labels=5, lines=0, stand=TRUE, col.txt=palette5[1:3], col.clus=palette5[1:3], col.p=palette5[5])
+
 ```
 
 ```{r component analysis1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure7. Parallel Analysis Scree Plots'}
@@ -1318,6 +1326,7 @@ sgIntegrated_byMonth %>%
 
 These should come from the outcome of clustering Analysis
 
+```{r 1 most popular place in 789 district}
 visitCount789 <- 
   st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
   filter(PPR_DIST %in% c(7,8,9))
@@ -1392,6 +1401,7 @@ And its reasons analysis
 
 These should come from the outcome of clustering Analysis
 
+```{r 2 most popular place in 789 district}
 visitCount789 <- 
   st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
   filter(PPR_DIST %in% c(7,8,9))
@@ -1405,12 +1415,15 @@ visitCount789 <- visitCount789 %>%
   distinct()
 ```
 
+```{r 2 Christy Recreation Center img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
 knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
 ```
 
+```{r 2 Christy Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
 knitr::include_graphics("resources/imgaes/Christy Recreation Center2.jpeg")
 ```
 
+```{r 2 Christy Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 sumVisit <- dwellTime %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
@@ -1428,6 +1441,7 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
+```{r 2 Christy Recreation Center temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 visitCount %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   st_drop_geometry()%>%
@@ -1440,6 +1454,7 @@ visitCount %>%
 
 ```
 
+```{r 2 Christy Recreation Center temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
 sumVisit <- visitHour %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
@@ -1461,6 +1476,7 @@ And its reasons analysis
 
 These should come from the outcome of clustering Analysis
 
+```{r 3 most popular place in 789 district}
 visitCount789 <- 
   st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
   filter(PPR_DIST %in% c(7,8,9))
@@ -1474,12 +1490,15 @@ visitCount789 <- visitCount789 %>%
   distinct()
 ```
 
+```{r 3 Christy Recreation Center img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
 knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
 ```
 
+```{r 3 Christy Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
 knitr::include_graphics("resources/imgaes/Christy Recreation Center2.jpeg")
 ```
 
+```{r 3 Christy Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 sumVisit <- dwellTime %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
@@ -1497,6 +1516,7 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
+```{r 3 Christy Recreation Center temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 visitCount %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   st_drop_geometry()%>%
@@ -1509,6 +1529,7 @@ visitCount %>%
 
 ```
 
+```{r 3 Christy Recreation Center temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
 sumVisit <- visitHour %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
