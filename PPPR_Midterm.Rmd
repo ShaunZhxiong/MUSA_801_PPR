@@ -1326,7 +1326,7 @@ set.seed(1234)
 
 
 # Run K-Means cluster
-cluster2 <- kmeans(sgIntegrated_byMonth.scale, 4) 
+cluster2 <- kmeans(sgIntegrated_byMonth.scale, 3) 
 summary(cluster2)
 
 # add cluster number back
@@ -1365,7 +1365,7 @@ panel.hist <- function(x, ...)
 }
 
 #Color points by groups
-my_cols <- palette4[1:4]
+my_cols <- palette4[1:3]
 
 pairs(sgIntegrated_byMonth %>% 
         st_drop_geometry() %>% 
@@ -1389,7 +1389,7 @@ sgIntegrated_byMonth %>%
 
 sgIntegrated_byMonth %>%
   st_drop_geometry() %>% 
-  filter(cluster == 4) %>% 
+  filter(cluster == 3) %>% 
   group_by(placekey) %>% 
   summarize(size=n()) %>% 
   kable(.,align = 'c') %>%
@@ -1398,11 +1398,11 @@ sgIntegrated_byMonth %>%
   scroll_box(width = "100%", height = "400px")
 ```
 
-**cluster1 & 3** : Comparatively normal positions. The dwell pattern is different for these two clusters.
+**cluster2** : Comparatively normal positions. The dwell pattern is different for these two clusters.
 
-**cluster 2** (**choose one** place with a howManyMonthBelongToThisCluster of 11, there are many of them): normal performance on sg data (dwell and visits), but with many permit plans
+**cluster 1** (**choose one** place with a howManyMonthBelongToThisCluster of 11, there are many of them): normal performance on sg data (dwell and visits), but with many permit plans
 
-**cluster4 'zzz-222\@63s-dvq-5fz' 'zzz-222\@628-pm9-jn5' 'zzw-222\@628-pg9-tgk'** (choose one or more)**:** perform well in sg data (dwell and visits), but not more permit plans
+**cluster3 'zzz-222\@63s-dvq-5fz' 'zzz-222\@628-pm9-jn5' 'zzw-222\@628-pg9-tgk'** (choose one or more)**:** perform well in sg data (dwell and visits), but not more permit plans
 
 ##### Specific Cases1 (templete)
 
