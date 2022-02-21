@@ -50,6 +50,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Introduction
 
+The Philadelphia Parks and Recreation department is responsible for hosting all sorts of programming in their facilities.
+Currently their best understanding of demand for programming comes from existing programs data (like attendance) and some rudimentary data about park visits (eg. total trash collected). 
+
+Only recently, thanks to data collected by SafeGraph, it is now possible to analyze large data sets of cell phone location activity, including where people are traveling and how long they stay.
+
+By incorporating this novel dataset, our goal for this project is to help the PPR better understand the usage of their facilities and provide new recommendations about how staff members should be allocated within their service areas and what programs they should hold. 
+
+About the data objects: Philadelphia Parks and Recreation divides the city into 10 districts. Each district contains  service areas. Each service area contains facilities like parks and rec centers. Each service area also has staff members who can run programs at specific  facilities.
+
+
+
+
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 
 #windowsFonts(font = windowsFont('Helvetica'))
