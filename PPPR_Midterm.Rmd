@@ -335,6 +335,8 @@ In the figure3 above, red legends show the locations of facilities with program 
 
 ##### District 7
 
+There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. Marian Anderson Recreation Center hold more activities in athletic category, like soccer and baseball. The other two facilities hold more cultural activities, like art and music. Athletic activities were hold from March to November while cultural and after school activities mostly took place in fall.
+
 ```{r SA7_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure4. Locations of Programs and Permits'}
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
@@ -376,6 +378,8 @@ There are three facilities with program scheduled in District 7: Athletic Recrea
 
 ##### District 8
 
+There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center. Laura Sims Skate House hold hockey and ice skating activities from October to May the next year, while Morris Recreation Center hosted more cultural activities like dance as well as athletic activities of gymnastics, tumbling and basketball from October to December.
+
 ```{r SA8_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure6. Locations of Programs and Permits'}
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
@@ -392,13 +396,15 @@ ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette5)+
   labs(y = "Program Frequency", fill="Program Category", title = "Facility & Program Categories in District 8")+
-  plotTheme()
+  plotTheme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) + 
   geom_bar(aes(x= Facility, fill = ActivityType),position="stack")+
   scale_fill_manual(values = palette9)+
   labs(y = "Program Frequency", fill="Program sub-Category", title = "Facility & Sub-categories in District 8")+ 
-  plotTheme()
+  plotTheme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
   geom_point(aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory, size = RegisteredIndividualsCount)) +
@@ -413,9 +419,10 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
   plotTheme()
 ```
 
-There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center. Laura Sims Skate House hold hockey and ice skating activities from October to May the next year, while Morris Recreation Center hosted more cultural activities like dance as well as athletic activities of gymnastics, tumbling and basketball from October to December.
-
 ##### District 9
+
+There are seven facilities with program scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories. Athletic activities took place throughout the whole year, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. Cultural activities, like art, dance, music, usually suspended in summer.
+
 
 ```{r SA9_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure8. Locations of Programs and Permits'}
 ggplot()+
@@ -433,7 +440,8 @@ ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette7[2:7])+
   labs(y = "Program Frequency", fill="Program Category", title = "Facility & Program Categories in District 9")+
-  plotTheme()
+  plotTheme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
   geom_point(aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory, size = RegisteredIndividualsCount)) +
@@ -447,8 +455,6 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
        y = "Visitor Counts")+
   plotTheme()
 ```
-
-There are seven facilities with program scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories. Athletic activities took place throughout the whole year, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. Cultural activities, like art, dance, music, usually suspended in summer.
 
 #### Other Districts
 
@@ -1156,7 +1162,7 @@ ggplot(data = depaCountPlotHF) +
 
 Figure19 and Figure20 are the maps of the departure of visits in device panel. Figure20 correspond to the above findings because most high frequent routes depart from one census block group 421010177011 (the intersection of Kensington Avenue and E Street). The different part is that the departure points are close to the parks they visit, which makes sense.
 
-As for why residents in 421010177011 census block group more tend to visit PPR facilities frequently. We guess that may because people with low income, no job, addition to drug or even homeless are from this cbg. Parks are good places for them to hang out during the day, and sometimes charity assign free food there. But these hypothesis need us further find support or overturn it.
+As for why residents in 421010177011 census block group more tend to visit PPR facilities frequently. We guess that may because people with low income, no job, addition to drug or even homeless are from this cbg. Parks are good places for them to hang out during the day, and sometimes charity distribute free food there. But these hypothesis need further evidence to support or overturn it.
 
 ##### Weekday Pattern of Device Panel Visits
 
@@ -1404,35 +1410,60 @@ sgIntegrated_byMonth %>%
 
 **cluster3 'zzz-222\@63s-dvq-5fz' 'zzz-222\@628-pm9-jn5' 'zzw-222\@628-pg9-tgk' 'zzz-222@628-pm7-nnq'** (choose one or more)**:** perform well in sg data (dwell and visits), but not more permit plans
 
-##### Specific Cases1 (templete)
+##### Special Cases1: Thomas B. Smith Recreation Center
 
-These should come from the outcome of clustering Analysis
+Thomas B. Smith Recreation Center, located in District 9, is a representative facility with certain number of permits, but as low as 100-300 times of visits per month and short average dwell time around one hour. There are several sport courts, the Smith playground, and a spray park surrounding the B. Smith Recreation Center. According to scheduled program, more activities of athletic, education, and after school take place here.
 
-```{r 1 most popular place in 789 district}
-visitCount789 <- 
-  st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
-  filter(PPR_DIST %in% c(7,8,9))
+Much feedback from the Google review represent it is a great place for the community residents to use, but a three-year old kid gets bored in 10 minutes due to the limited equipment in playground. More equipment, renovations and better management and maintenance are needed to improve this facility.  
 
-visitCount789 <- visitCount789 %>% 
-  dplyr::select(placekey,visits) %>% 
-  st_drop_geometry() %>% 
-  group_by(placekey) %>% 
-  mutate(totalVisits = sum(visits)) %>% 
-  dplyr::select(-visits) %>% 
-  distinct()
+```{r facility with many permits but low visits in district 9}
+# visitCount789 <- 
+#   st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
+#   filter(PPR_DIST %in% c(7,8,9))
+# 
+# visitCount789 <- visitCount789 %>% 
+#   dplyr::select(placekey,visits) %>% 
+#   st_drop_geometry() %>% 
+#   group_by(placekey) %>% 
+#   mutate(totalVisits = sum(visits)) %>% 
+#   dplyr::select(-visits) %>% 
+#   distinct()
 ```
 
-```{r Christy Recreation Center img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
-knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
+```{r Thomas B. Smith Recreation Center img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Thomas B. Smith Recreation Center.png")
 ```
 
-```{r Christy Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
-knitr::include_graphics("resources/imgaes/Christy Recreation Center2.jpeg")
+```{r Thomas B. Smith Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/SmithRecCenter2.jpg")
 ```
 
-```{r Christy Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+```{r Thomas B. Smith Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Program'}
+
+Smith <- program2021.join %>% 
+  filter(FacilityID == "{13600B8B-AB62-4A39-95CF-5F31C6942010}")
+
+
+SmithSum <- Smith %>%
+  mutate(totalCount = as.numeric(RegisteredIndividualsCount))%>%
+  dplyr::select(totalCount,ActivityType, AttendanceWeekDate) %>% 
+  drop_na() %>% 
+  group_by(ActivityType, AttendanceWeekDate)%>%
+  summarise(totalCount=mean(totalCount)) %>% 
+  ungroup() %>% 
+  group_by(ActivityType)%>%
+  summarise(totalCount=sum(totalCount))
+
+SmithSum %>%
+  ggplot(aes(ActivityType, totalCount, fill=ActivityType)) +
+  geom_bar(position ="dodge",stat="identity") +
+  labs(y = "Visitor Count", fill=palette1_main, title = "Smith Rec Center Activity with Total ")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r Thomas B. Smith Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 sumVisit <- dwellTime %>% 
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  filter(placekey=='zzw-222@628-pm7-rtv') %>% 
   dplyr::select(-month) %>% 
   group_by(dwellTimes) %>%
   summarise(visitors=sum(visitors)) %>% 
@@ -1444,26 +1475,26 @@ sumVisit%>%
   ggplot(aes(dwellTimes,visitors)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="Dwell Time", y="Aggregated Visitors",
-       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
+       title ='Thomas B. Smith Recreation Center (zzz-222@63s-dvq-5fz)') +
   plotTheme(10,20)
 ```
 
-```{r Christy Recreation Center temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+```{r Thomas B. Smith Recreation Center temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 visitCount %>% 
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  filter(placekey=='zzw-222@628-pm7-rtv') %>% 
   st_drop_geometry()%>%
   na.omit()%>%
   ggplot(aes(visitDay,visits)) + 
   geom_line(color=palette1_main,size=1)+
-  labs(title = 'Christy Recreation Center (zzz-222@63s-dvq-5fz)',x="Visit Date",y="Safegraph Visit")+
+  labs(title = 'Thomas B. Smith Recreation Center (zzw-222@628-pm7-rtv)',x="Visit Date",y="Safegraph Visit")+
   plotTheme(10,20)+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ```
 
-```{r Christy Recreation Center temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
+```{r Thomas B. Smith Recreation Center temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
 sumVisit <- visitHour %>% 
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  filter(placekey=='zzw-222@628-pm7-rtv') %>% 
   dplyr::select(-month) %>% 
   group_by(hour) %>%
   summarise(visits=sum(visit)) %>% 
@@ -1473,70 +1504,70 @@ sumVisit%>%
   ggplot(aes(hour,visits)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="hour", y="Aggregated Visits",
-       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
+       title ='Thomas B. Smith Recreation Center (zzw-222@628-pm7-rtv)') +
   plotTheme(10,20)
 ```
 
-And its reasons analysis
+##### Special Cases2:Girard Estates Park
 
-##### Specific Cases2 (templete)
+In clustering 4, Girard Estates Park is a representative case of non-normal facility with low permits, high visits and long dwell time. According to permit records, yoga is the only activity applied for permit 13:00-14:00 every Sunday from April to September. No other programs are scheduled by the PPR. However, it is a super active facility and important open space for local community to use. The four peaks of visits may respond to children concerts take place in spring, summer and fall. The Girard Estate Neighbors Association organizes various activities,like outdoor movie, education music and science, as well as other popular events for festivals, like Easter Egg Hunt and Christmas carriage rides. Compared to PPR program/ permit records, Safegraph data can reflect better situation of use cases in the park.
 
-These should come from the outcome of clustering Analysis
+[Click here](https://www.girardestateneighbors.org/events-committee) for more information.
 
-```{r 2 most popular place in 789 district}
-visitCount789 <- 
-  st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
-  filter(PPR_DIST %in% c(7,8,9))
-
-visitCount789 <- visitCount789 %>% 
-  dplyr::select(placekey,visits) %>% 
-  st_drop_geometry() %>% 
-  group_by(placekey) %>% 
-  mutate(totalVisits = sum(visits)) %>% 
-  dplyr::select(-visits) %>% 
-  distinct()
+```{r non-normal facility in cluster4, district 7}
+# visitCount789 <- 
+#   st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
+#   filter(PPR_DIST %in% c(7,8,9))
+# 
+# visitCount789 <- visitCount789 %>% 
+#   dplyr::select(placekey,visits) %>% 
+#   st_drop_geometry() %>% 
+#   group_by(placekey) %>% 
+#   mutate(totalVisits = sum(visits)) %>% 
+#   dplyr::select(-visits) %>% 
+#   distinct()
 ```
 
-```{r 2 Christy Recreation Center img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
-knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
+```{r GEP img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Stephen Girard Park.png")
 ```
 
-```{r 2 Christy Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
-knitr::include_graphics("resources/imgaes/Christy Recreation Center2.jpeg")
+```{r 2 GEP2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
+knitr::include_graphics("resources/imgaes/Stephen Girard Park2.png")
 ```
 
-```{r 2 Christy Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
-sumVisit <- dwellTime %>% 
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+```{r 2 GEP dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+sumVisit3 <- dwellTime %>% 
+  filter(placekey=='zzz-222@628-pm9-jn5') %>% 
   dplyr::select(-month) %>% 
   group_by(dwellTimes) %>%
   summarise(visitors=sum(visitors)) %>% 
   st_drop_geometry() 
 
-sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
+sumVisit3$dwellTimes <- factor(sumVisit3$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
 
-sumVisit%>%
+sumVisit3%>%
   ggplot(aes(dwellTimes,visitors)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="Dwell Time", y="Aggregated Visitors",
-       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
+       title ='Girard Estates Park (zzz-222@628-pm9-jn5)') +
   plotTheme(10,20)
 ```
 
-```{r 2 Christy Recreation Center temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+```{r GEP temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 visitCount %>% 
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
+  filter(placekey=='zzz-222@628-pm9-jn5') %>% 
   st_drop_geometry()%>%
   na.omit()%>%
   ggplot(aes(visitDay,visits)) + 
   geom_line(color=palette1_main,size=1)+
-  labs(title = 'Christy Recreation Center (zzz-222@63s-dvq-5fz)',x="Visit Date",y="Safegraph Visit")+
+  labs(title = 'Girard Estates Park (zzz-222@628-pm9-jn5)',x="Visit Date",y="Safegraph Visit")+
   plotTheme(10,20)+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ```
 
-```{r 2 Christy Recreation Center temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
+```{r GEP temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
 sumVisit <- visitHour %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
@@ -1548,84 +1579,10 @@ sumVisit%>%
   ggplot(aes(hour,visits)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="hour", y="Aggregated Visits",
-       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
+       title ='Girard Estates Park (zzz-222@63s-dvq-5fz)') +
   plotTheme(10,20)
 ```
 
-And its reasons analysis
-
-##### Specific Cases3 (templete)
-
-These should come from the outcome of clustering Analysis
-
-```{r 3 most popular place in 789 district}
-visitCount789 <- 
-  st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
-  filter(PPR_DIST %in% c(7,8,9))
-
-visitCount789 <- visitCount789 %>% 
-  dplyr::select(placekey,visits) %>% 
-  st_drop_geometry() %>% 
-  group_by(placekey) %>% 
-  mutate(totalVisits = sum(visits)) %>% 
-  dplyr::select(-visits) %>% 
-  distinct()
-```
-
-```{r 3 Christy Recreation Center img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
-knitr::include_graphics("resources/imgaes/Christy Recreation Center.png")
-```
-
-```{r 3 Christy Recreation Center2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
-knitr::include_graphics("resources/imgaes/Christy Recreation Center2.jpeg")
-```
-
-```{r 3 Christy Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
-sumVisit <- dwellTime %>% 
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
-  dplyr::select(-month) %>% 
-  group_by(dwellTimes) %>%
-  summarise(visitors=sum(visitors)) %>% 
-  st_drop_geometry() 
-
-sumVisit$dwellTimes <- factor(sumVisit$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
-
-sumVisit%>%
-  ggplot(aes(dwellTimes,visitors)) +
-  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
-  labs(x="Dwell Time", y="Aggregated Visitors",
-       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
-  plotTheme(10,20)
-```
-
-```{r 3 Christy Recreation Center temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
-visitCount %>% 
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
-  st_drop_geometry()%>%
-  na.omit()%>%
-  ggplot(aes(visitDay,visits)) + 
-  geom_line(color=palette1_main,size=1)+
-  labs(title = 'Christy Recreation Center (zzz-222@63s-dvq-5fz)',x="Visit Date",y="Safegraph Visit")+
-  plotTheme(10,20)+
-  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
-
-```
-
-```{r 3 Christy Recreation Center temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
-sumVisit <- visitHour %>% 
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
-  dplyr::select(-month) %>% 
-  group_by(hour) %>%
-  summarise(visits=sum(visit)) %>% 
-  st_drop_geometry()
-
-sumVisit%>%
-  ggplot(aes(hour,visits)) +
-  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
-  labs(x="hour", y="Aggregated Visits",
-       title ='Christy Recreation Center (zzz-222@63s-dvq-5fz)') +
-  plotTheme(10,20)
-```
 
 ### [Use Case](https://ppr-dashboard-xfw9y.ondigitalocean.app/)
 
@@ -1633,6 +1590,6 @@ The Dashboard will help to convey the PPR related information, useful explorator
 
 ### Next Stage Plan
 
-In this stage, we have successfully understand the data from PPR and SafeGraph. And we also try to draw exploratory analysis by PPR service area level based on SafeGraph pattern data. For the outcome, we have gained many interesting insights shown above. These insights will not be obtianed without SafeGraph pattern data. Besides, we have the outline of the dashboard, which in the end will help us communicate the information of this Practicum with PPR and help them do better programming.
+In this stage, we have successfully understand the data from PPR and SafeGraph. And we also try to draw exploratory analysis by PPR service area level based on SafeGraph pattern data. For the outcome, we have gained many interesting insights shown above and would like to present the progress outcome to the PPR. These insights will not be obtianed without SafeGraph pattern data. Besides, we have the outline of the dashboard, which in the end will help us communicate the information of this Practicum with PPR and help them do better programming.
 
 In the next stage of the Practicum, we will focus on the modeling with Huff model in District 7,8,9, and try to define and construct the attractiveness metric of facility. This attractiveness metric will be used in the huff model to obtain the market area for each facility. Finally we will compare the market area with SafeGraph pattern area to see whether PPR current programmings have achieve their goals, serving the target residents.
