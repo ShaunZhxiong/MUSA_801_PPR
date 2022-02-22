@@ -1134,9 +1134,6 @@ depaCountPlot <- st_read("data/output/depaCountPlot.GEOJSON")
 depaCountPlot2 <- depaCountPlot%>%
   filter(visitors>200)
 
-depaCountPlotHF <- depaCountPlot%>%
-  filter(visitors>5000)
-
 ggplot(data = depaCountPlot2) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
   geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
@@ -1154,11 +1151,23 @@ ggplot(data = depaCountPlot2) +
 ```
 
 ```{r HF deaprture plot,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure20. Flow map of parks and departure - High Frequency'}
+
+depaCountPlotMostPopular <- depaCountPlot%>%
+  st_drop_geometry() %>% 
+  dplyr::select(placekey,visitors) %>% 
+  group_by(placekey) %>% 
+  summarise(totalvisits = sum(visitors)) %>% 
+  filter(totalvisits==max(totalvisits))
+
+depaCountPlotHF <- depaCountPlot%>%
+  filter(placekey==depaCountPlotMostPopular$placekey[1] & visitors>=1000)
+
 ggplot(data = depaCountPlotHF) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
   geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
   geom_sf(data=propertyWithPlaceKey %>% dplyr::select(OBJECTID) %>%distinct() %>%  st_transform(crs=crs), fill ='#C5C5C5', color='#C5C5C5',alpha=0.3,size=0)+
   geom_curve(aes(x = departure.x, y = departure.y, xend = park.x, yend = park.y,color = q5(visitors)),
+             arrow = arrow(length = unit(0.01, "npc"), type="closed"),
              size = 1,curvature = -0.2, alpha = 0.4)+
   scale_color_manual(values = palette5,
                      labels = qBr(depaCountPlot2,"visitors"),
@@ -1559,7 +1568,7 @@ visitCount %>%
 
 The three peaks of visits on the figure above may respond to events for celebrating major festivals, like Easter Egg Hunt, Halloween and Christmas carriage rides. The spring, summer and fall children concerts also take place in May, June and September. Compared to limited PPR program/ permit records, Safegraph data can reflect better using conditions of high visits in the park.
 
-```{r GEP img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Girard Estates Park Pic2'}
+```{r GEP img2, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Girard Estates Park Pic2'}
 
 knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9.png", "resources/imgaes/Stephen Girard Park-easter.jpg" ))
 
@@ -1603,7 +1612,7 @@ sumVisit3%>%
 
 According to the figures above, most activities, like live concert, educational class take place during the day with long dwell time. It seems 11 am to 3 pm is the most time period with the most aggregated visits.
 
-```{r GEP img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Girard Estates Park Pic3'}
+```{r GEP img3, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Girard Estates Park Pic3'}
 
 knitr::include_graphics(c("resources/imgaes/Stephen Girard-concert.jpg", "resources/imgaes/Stephen Girard Park5.png" ))
 ```
