@@ -335,7 +335,7 @@ In the figure3 above, red legends show the locations of facilities with program 
 
 ##### District 7
 
-There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. Marian Anderson Recreation Center hold more activities in athletic category, like soccer and baseball. The other two facilities hold more cultural activities, like art and music. Athletic activities were hold from March to November while cultural and after school activities mostly took place in fall.
+There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. 
 
 ```{r SA7_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure4. Locations of Programs and Permits'}
 ggplot()+
@@ -346,6 +346,8 @@ ggplot()+
   labs(title="Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 7")+
   mapTheme()
 ```
+
+Marian Anderson Recreation Center hold more activities in athletic category, like soccer and baseball. The other two facilities hold more cultural activities, like art and music.
 
 ```{r SA7_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure5. Categories of Events in District7'}
 
@@ -374,11 +376,11 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
   plotTheme()
 ```
 
-There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. Marian Anderson Recreation Center hold more activities in athletic category, like soccer and baseball. The other two facilities hold more cultural activities, like art and music. Athletic activities were hold from March to November while cultural and after school activities mostly took place in fall.
+Athletic activities were hold from March to November while cultural and after school activities mostly took place in fall.
 
 ##### District 8
 
-There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center. Laura Sims Skate House hold hockey and ice skating activities from October to May the next year, while Morris Recreation Center hosted more cultural activities like dance as well as athletic activities of gymnastics, tumbling and basketball from October to December.
+There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center.
 
 ```{r SA8_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure6. Locations of Programs and Permits'}
 ggplot()+
@@ -389,6 +391,8 @@ ggplot()+
   labs(title="Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 8")+
   mapTheme()
 ```
+
+Laura Sims Skate House hold hockey and ice skating activities from October to May the next year, while Morris Recreation Center hosted more cultural activities like dance as well as athletic activities of gymnastics, tumbling and basketball from October to December.
 
 ```{r SA8_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure7. Categories of Events in District8'}
 
@@ -418,11 +422,11 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
        y = "Visitor Counts")+
   plotTheme()
 ```
+Hockey and ice skating activities take place in fall, winter and spring, while cultural and after school are mainly hold in fall.
 
 ##### District 9
 
-There are seven facilities with program scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories. Athletic activities took place throughout the whole year, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. Cultural activities, like art, dance, music, usually suspended in summer.
-
+There are seven facilities with program scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. 
 
 ```{r SA9_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure8. Locations of Programs and Permits'}
 ggplot()+
@@ -433,6 +437,8 @@ ggplot()+
   labs(title="Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 9")+
   mapTheme()
 ```
+
+Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories. 
 
 ```{r SA9_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure9. Categories of Events in District8'}
 
@@ -456,9 +462,9 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
   plotTheme()
 ```
 
-#### Other Districts
+Athletic activities took place throughout the whole year, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. Cultural activities, like art, dance, music, usually suspended in summer.
 
-There are 27 facilities with program scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
+#### Other Districts
 
 ```{r SAOthers_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure10. Categories of Events in other Districts'}
 
@@ -469,6 +475,8 @@ ggplot(Facility_Program_otherDistricts) +
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+There are 27 facilities with program scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
 
 ### SafeGraph Data Analysis
 
@@ -1416,18 +1424,6 @@ Thomas B. Smith Recreation Center, located in District 9, is a representative fa
 
 Much feedback from the Google review represent it is a great place for the community residents to use, but a three-year old kid gets bored in 10 minutes due to the limited equipment in playground. More equipment, renovations and better management and maintenance are needed to improve this facility.  
 
-```{r facility with many permits but low visits in district 9}
-# visitCount789 <- 
-#   st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
-#   filter(PPR_DIST %in% c(7,8,9))
-# 
-# visitCount789 <- visitCount789 %>% 
-#   dplyr::select(placekey,visits) %>% 
-#   st_drop_geometry() %>% 
-#   group_by(placekey) %>% 
-#   mutate(totalVisits = sum(visits)) %>% 
-#   dplyr::select(-visits) %>% 
-#   distinct()
 ```
 
 ```{r Thomas B. Smith Recreation Center img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
@@ -1461,7 +1457,7 @@ SmithSum %>%
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-```{r Thomas B. Smith Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
+```{r Thomas B. Smith Recreation Center dwell time2 ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 sumVisit <- dwellTime %>% 
   filter(placekey=='zzw-222@628-pm7-rtv') %>% 
   dplyr::select(-month) %>% 
@@ -1510,51 +1506,22 @@ sumVisit%>%
 
 ##### Special Cases2:Girard Estates Park
 
-In clustering 4, Girard Estates Park is a representative case of non-normal facility with low permits, high visits and long dwell time. According to permit records, yoga is the only activity applied for permit 13:00-14:00 every Sunday from April to September. No other programs are scheduled by the PPR. However, it is a super active facility and important open space for local community to use. The four peaks of visits may respond to children concerts take place in spring, summer and fall. The Girard Estate Neighbors Association organizes various activities,like outdoor movie, education music and science, as well as other popular events for festivals, like Easter Egg Hunt and Christmas carriage rides. Compared to PPR program/ permit records, Safegraph data can reflect better situation of use cases in the park.
+Girard Estates Park is a representative case of non-normal facility with low permits, high visits and long dwell time. According to permit records, yoga is the only activity applied for permit 13:00-14:00 every Sunday from April to September. No other programs are scheduled by the PPR. However, it is a super active facility and important open space for local community to use. 
 
 [Click here](https://www.girardestateneighbors.org/events-committee) for more information.
 
-```{r non-normal facility in cluster4, district 7}
-# visitCount789 <- 
-#   st_join(visitCount %>% st_transform(crs=4326),pprServiceArea%>% st_transform(crs=4326),left=TRUE) %>% 
-#   filter(PPR_DIST %in% c(7,8,9))
-# 
-# visitCount789 <- visitCount789 %>% 
-#   dplyr::select(placekey,visits) %>% 
-#   st_drop_geometry() %>% 
-#   group_by(placekey) %>% 
-#   mutate(totalVisits = sum(visits)) %>% 
-#   dplyr::select(-visits) %>% 
-#   distinct()
+
+```{r GEP img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Girard Estates Park Pic1'}
+
+knitr::include_graphics(c("resources/imgaes/Stephen Girard Park.png", "resources/imgaes/Stephen Girard Park-1.png" ))
+
 ```
 
-```{r GEP img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
-knitr::include_graphics("resources/imgaes/Stephen Girard Park.png")
-```
+The Girard Estate Neighbors Association, a volunteer neighborhood organization, engage residents and plan social, recreational, and educational events. They meet once a month and as needed for each event.
+ 
 
-```{r 2 GEP2 img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Matthias Baldwin Park'}
-knitr::include_graphics("resources/imgaes/Stephen Girard Park2.png")
-```
+```{r GEP temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Temperal Vistis Pattern By Day'}
 
-```{r 2 GEP dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
-sumVisit3 <- dwellTime %>% 
-  filter(placekey=='zzz-222@628-pm9-jn5') %>% 
-  dplyr::select(-month) %>% 
-  group_by(dwellTimes) %>%
-  summarise(visitors=sum(visitors)) %>% 
-  st_drop_geometry() 
-
-sumVisit3$dwellTimes <- factor(sumVisit3$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
-
-sumVisit3%>%
-  ggplot(aes(dwellTimes,visitors)) +
-  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
-  labs(x="Dwell Time", y="Aggregated Visitors",
-       title ='Girard Estates Park (zzz-222@628-pm9-jn5)') +
-  plotTheme(10,20)
-```
-
-```{r GEP temperal pattern by day ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of dwell time'}
 visitCount %>% 
   filter(placekey=='zzz-222@628-pm9-jn5') %>% 
   st_drop_geometry()%>%
@@ -1567,7 +1534,16 @@ visitCount %>%
 
 ```
 
-```{r GEP temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Map of visit time'}
+The three peaks of visits on the figure above may respond to events for celebrating major festivals, like Easter Egg Hunt, Halloween and Christmas carriage rides. The spring, summer and fall children concerts also take place in May, June and September. Compared to limited PPR program/ permit records, Safegraph data can reflect better using conditions of high visits in the park.
+
+```{r GEP img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Girard Estates Park Pic2'}
+
+knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9.png", "resources/imgaes/Stephen Girard Park-easter.jpg" ))
+
+```
+
+
+```{r GEP temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Temperal Vistis Pattern By Hour'}
 sumVisit <- visitHour %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
@@ -1583,6 +1559,33 @@ sumVisit%>%
   plotTheme(10,20)
 ```
 
+
+```{r 2 GEP dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure. Vistis Dwell Time '}
+
+sumVisit3 <- dwellTime %>% 
+  filter(placekey=='zzz-222@628-pm9-jn5') %>% 
+  dplyr::select(-month) %>% 
+  group_by(dwellTimes) %>%
+  summarise(visitors=sum(visitors)) %>% 
+  st_drop_geometry() 
+
+sumVisit3$dwellTimes <- factor(sumVisit3$dwellTimes, levels= c("<5","5-10","11-20","21-60","61-120","121-240",">240" ))
+
+sumVisit3%>%
+  ggplot(aes(dwellTimes,visitors)) +
+  geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
+  labs(x="Dwell Time", y="Aggregated Visitors",
+       title ='Girard Estates Park (zzz-222@628-pm9-jn5)') +
+  plotTheme(10,20)
+
+```
+ 
+ According to the figures above, most activities, like live concert, educational class take place during the day with long dwell time. It seems 11 am to 3 pm is the most time period with the most aggregated visits. 
+
+```{r GEP img, echo=FALSE,fig.height = 1,out.width = '35%',fig.align = 'center', fig.cap = 'Figure Girard Estates Park Pic3'}
+
+knitr::include_graphics(c("resources/imgaes/Stephen Girard-concert.jpg", "resources/imgaes/Stephen Girard Park5.png" ))
+```
 
 ### [Use Case](https://ppr-dashboard-xfw9y.ondigitalocean.app/)
 
