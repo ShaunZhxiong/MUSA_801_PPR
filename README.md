@@ -58,3 +58,11 @@ Origin Flow Map and Departure Flow Map
 Further Analysis of Programs organized by PPR
 
 [Questions](notes.md)
+
+#### Week5 - Midterm
+
+[PPT](https://docs.google.com/presentation/d/1bBRV1WXwandpqySlg-J_grMCS6epUF8gNEZjnMhIpu8/edit) 
+
+[Markdown](PPPR_Midterm.html)
+
+[Feedback](midtermfeedback.md)
