@@ -59,11 +59,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### 1 Introduction
 
-The Philadelphia Parks and Recreation department is responsible for hosting all sorts of programming in their facilities. Currently their best understanding of demand for programming comes from existing programs data (like attendance) and some rudimentary data about park visits (eg. total trash collected).
+Philadelphia Parks and Recreation department (PPR) has 524 facilities that host around 4,000 programs annually throughout the city. Currently PPR estimates the demand for programming comes from existing programs data (like attendance) and some rudimentary data about park visits (eg. total trash collected).However, the demand and supply might not be consistent due to limited data from visitors. How do we make smarter decisions about allocating program in our parks and recreation facilities?
 
-Only recently, thanks to data collected by SafeGraph, it is now possible to analyze large data sets of cell phone location activity, including where people are traveling and how long they stay.
+Only recently, thanks to dynamic data collected by SafeGraph, it is now possible to analyze large data sets of cell phone location activity, including where people are traveling and how long they stay.
 
-By incorporating this novel dataset, our goal for this project is to help the PPR better understand the usage of their facilities and provide new recommendations about how programming resources should be allocated within their service areas and what programs they should hold.
+By incorporating this novel dataset, our goal for this project is to help the PPR better understand the usage of their facilities, and provide recommendations to allocate programming resources within their service areas and what programs they should hold to meet demands from visitors.
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 
@@ -192,7 +192,7 @@ ggmap(base_map) +
   mapTheme()
 ```
 
-Philadelphia Parks and Recreation divides the city into 10 districts. Each district contains service areas. Each service area contains facilities like parks and rec centers. Each service area also has staff members who can run programs at specific facilities. Besides macro analyses, this practicum mainly focuses on the District 7、8、9, The areas bounded by pink lines in the Figure1.1.1 are the services areas in District 7,8,9.
+The city is divided into 10 districts. Each district contains several subset service areas, where locates facilities like parks and rec centers.  The PPR allocates staff members to run programs at specific facilities and rotate within the district. Besides macro analyses, this practicum mainly focuses on the District 7, 8 and 9 per the PPR request. In the Figure1.1.1, the areas highlighted by pink lines are the services areas in District 7,8 and 9.
 
 #### 1.2 Properties
 
@@ -219,7 +219,7 @@ ggplot() +
   mapTheme()
 ```
 
-The Figure1.2.1 is the map of their respective locations.PPR administrates more than 500 facilities within Philadelphia boundary. Notably, for some huge parks, PPR divides them into several sub-facilities. For example, 'Wissahickon Valley Park' is divided into 16 sub-facilities ('Wissahickon Valley Park', 'Wissahickon Environmental Center', 'Salvatore Pachella Memorial Field', 'David P Montgomery Field', 'John F Boyce Memorial Field', 'Arrow Field', 'Walnut Lane Golf Club', 'Samuel F Houston Playground', 'Carpenters Woods', 'Dodge Tract', 'Historic Rittenhouse Town', 'Clifford Park', 'Blue Bell Park', 'Saul High School Farm', 'Andorra Natural Area',and 'Saylors Grove').
+The Figure 1.2.1 shows respective locations of more than 500 facilities within Philadelphia boundary. Notably, for some huge parks, PPR divides them into several sub-facilities. For example, 'Wissahickon Valley Park' includes 16 sub-facilities ('Wissahickon Valley Park', 'Wissahickon Environmental Center', 'Salvatore Pachella Memorial Field', 'David P Montgomery Field', 'John F Boyce Memorial Field', 'Arrow Field', 'Walnut Lane Golf Club', 'Samuel F Houston Playground', 'Carpenters Woods', 'Dodge Tract', 'Historic Rittenhouse Town', 'Clifford Park', 'Blue Bell Park', 'Saul High School Farm', 'Andorra Natural Area',and 'Saylors Grove').
 
 ### 2 Program & Permits Analysis
 
@@ -227,7 +227,7 @@ The activities hold in PPR properties are recorded in two systems: the program s
 
 In 2021, there are 4376 times of activities recorded in program schedules, covering 7 categories of After School, Athletic, Camp, Cultural, Educational, Environmental/Outdoor, and other activities, while 3861 times of activities are recorded in the permit system. In the following analyses, events refer to the combination of the programs and the permits.
 
-#### 2.1 Overall Distribution in District 7,8,9
+#### 2.1 Overall Distribution in District 7,8 & 9
 
 ```{r wrangle program data, message=FALSE, warning=FALSE}
 
@@ -319,7 +319,7 @@ WeekVisit <- aggregate(
   RegisteredIndividualsCount ~ AttendanceWeekDate + ActvityTypeCategory + PPR_DISTRICT, data = Facility_Program, FUN = sum)
 ```
 
-Through above wrangling, we obtain information like the duration of the events, the attendance of the events etc. Furthermore, we link program and permit datasets to their based properties,their belonged Service Area, which is shown in the following map.
+Through the data wrangling above, we obtain information like the duration of the events, the attendance of the events etc, recorded by the PPR. Furthermore, we link program and permit datasets to their based properties,their belonged Service Area, which is shown in the following map.
 
 ```{r programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure2.1.1 Facilities w/ Programmed (red) & Permited (orange) Activities in Disdrict 7,8 & 9'}
 
@@ -334,15 +334,16 @@ ggplot()+
   mapTheme()
 ```
 
-In the figure2.1.1 above, red legends show the locations of facilities with program schedules while orange legends show the distributions of facilities with permit records. From the map, we can see that permits cover larger area than programs which indicates the demand exceeds PPR programming scope and the ways to improve PPR service. 
+In the figure 2.1.1 above, red legends show the locations of facilities with program schedules while orange legends show the distributions of facilities with permit records. From the map, we can see that permits cover larger area than programs which indicates the demand of self-proposed activities exceeds PPR programming scope and there is a potential to improve the programming schedule. Since no information of attendance is recorded in permit, we only analyze program frequency and visitor counts in program in Chapter 2. 
 
-One limitation should be pointed out here is that some facilities didn't spatial joined the geographic information successfully, so, there are more facilities with program and permit compared to the number showing on the figure.
+One limitation should be pointed out here is that some facilities didn't spatial joined the geographic information successfully. So, there are more facilities with programs and permits compared to the number showing on the figure.
 
 #### 2.2 District 7,8,9
 
 ##### District 7
 
-There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center.
+There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. Orange legends of facilities with permit are not discussed in Chapter 2. 
+
 
 ```{r SA7_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.2 Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 7'}
 ggplot()+
@@ -354,7 +355,7 @@ ggplot()+
   mapTheme()
 ```
 
-In the Figure2.2.3, we can see that Marian Anderson Recreation Center hold more activities in athletic category, like soccer and baseball. The other two facilities hold more cultural activities, like art and music.
+In the Figure 2.2.3, we can see that Marian Anderson Recreation Center hold more activities in athletic category, like soccer and baseball. The other two facilities hold more cultural activities, like art and music.
 
 ```{r SA7_Events,fig.height = 4,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.3 Categories of Events in District7'}
 plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
@@ -393,11 +394,11 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
   plotTheme()
 ```
 
-In the Figure2.2.4, we can see that Athletic activities were hold from March to November while cultural and after school activities mostly took place in fall.
+In the Figure 2.2.4, we can see that Athletic activities were hold from March to November while cultural and after school activities mostly took place in fall.
 
 ##### District 8
 
-There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center.
+There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center. Orange legends of facilities with permit are not discussed in Chapter 2. 
 
 ```{r SA8_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.5 Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 8'}
 ggplot()+
@@ -409,7 +410,7 @@ ggplot()+
   mapTheme()
 ```
 
-In Figure2.2.6 we can see that Laura Sims Skate House hold hockey and ice skating activities from October to May the next year, while Morris Recreation Center hosted more cultural activities like dance as well as athletic activities of gymnastics, tumbling and basketball from October to December.
+In Figure 2.2.6 we can see that Laura Sims Skate House hold hockey and ice skating activities from October to May the next year, while Morris Recreation Center hosted more cultural activities like dance as well as athletic activities of gymnastics, tumbling and basketball from October to December.
 
 ```{r SA8_Events,fig.height = 4,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.6 Categories of Events in District8'}
 plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
@@ -448,11 +449,11 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
   plotTheme()
 ```
 
-In Figure2.2.7 we can see that Hockey and ice skating activities take place in fall, winter and spring, while cultural and after school are mainly hold in fall.
+In Figure 2.2.7 we can see that Hockey and ice skating activities take place in fall, winter and spring, while cultural and after school are mainly hold in fall.
 
 ##### District 9
 
-There are seven facilities with program scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center.
+There are seven facilities with program scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. Orange legends of facilities with permit are not discussed in Chapter 2.
 
 ```{r SA9_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.8 Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 9'}
 ggplot()+
@@ -464,7 +465,7 @@ ggplot()+
   mapTheme()
 ```
 
-In Figure2.2.9 we can see that Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories.
+In Figure 2.2.9 we can see that Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories.
 
 ```{r SA9_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.9 Facility & Program Categories in District 9'}
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
@@ -491,7 +492,7 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
   plotTheme()
 ```
 
-In Figure2.2.9 we can see that Athletic activities took place throughout the whole year, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. Cultural activities, like art, dance, music, usually suspended in summer.
+In Figure 2.2.10 indicates that Athletic activities took place throughout the whole year, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. Cultural activities, like art, dance, music, usually suspended in summer.
 
 #### 2.3 Other Districts
 
@@ -506,7 +507,7 @@ ggplot(Facility_Program_otherDistricts) +
         legend.position = "bottom")
 ```
 
-In Figure2.3.1 we can see that There are 27 facilities with program scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
+In Figure2.3.1 there are 27 facilities with program scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
 
 ### 3 SafeGraph Data Analysis
 
@@ -1024,7 +1025,7 @@ visitCount <- visitCount %>%
 
 #### 3.2 Overall SafeGraph Patterns
 
-Through above complicated analysis and rectification, we finally obtain more reliable SafeGraph data. In the following section, we attempt to draw insights from the SafeGraph data in 5 aspects: visit counts in device panel, origins of visits in device panel, departure of visits in device panel, weekday pattern of device panel visits, dwelling time of device panel visits, and related brands of device panel visits at the same day.
+Through the above complicated analysis and rectification, we finally obtain more reliable SafeGraph data. In the following section, we attempt to draw insights from the SafeGraph data in 5 aspects: visit counts in device panel, origins of visits in device panel, departure of visits in device panel, weekday pattern of device panel visits, dwelling time of device panel visits, and related brands of device panel visits at the same day.
 
 ##### Visit Counts in Device Panel
 
@@ -1045,7 +1046,7 @@ ggplot(sumVisit)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-From the Figure3.2.1 we can see that people frequently visit facilities in the city center where have dense PPR facilities. For those facilities, visit counts are small because citizens are spread into other facilities. However, the large visit counts happen at the outskirt of Philadelphia where have less facilities
+From the Figure 3.2.1 we can see that people frequently visit facilities in the Center City where locate dense PPR facilities. For those facilities, visit counts are small because citizens dispersed into many facilities. However, the large visit counts happen at the outskirt of Philadelphia where have less facilities
 
 ```{r visit Count distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.2 Map of total device visits'}
 sumVisitServiceArea <- pprServiceArea %>%
@@ -1068,7 +1069,7 @@ ggplot(sumVisitServiceArea)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-If we aggregate the visits into service area level, we can correspond the findings above based on Figure3.2.2 Overall, service areas in the city center where has dense facilities will have larger visit counts. Notably, 'Junod Area' service area also has high total device visits which may attribute to the Walton Run Park and the Poquessing Valley Park.
+We aggregate the visits into service area level on Figure3.2.2. Overall, service areas in the Center City where locates dense facilities will attract larger visits. Notably, 'Junod Area' service area also has high total device visits which may attribute to the Walton Run Park and the Poquessing Valley Park.
 
 ##### Origins of Visits in Device Panel
 
@@ -1144,9 +1145,9 @@ ggplot(data = orgCountPlotHF) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-In the Figure3.2.3, we plot the origin of visits in device panel while in the Figure3.2.4, we filter routes have more than 5000 device visits in 2021 and plot it. The map is interesting because people from this census block group (421010177011), which are located at the Kensington Ave  are more likely to go to PPR facilities compared to the people in other census block group. 
+In the Figure 3.2.3, we plot the origin of visits in device panel while we filter routes have more than 5000 device visits in 2021 and plot it in the Figure3.2.4. Then we find interesting result because people from this census block group (421010177011), which are located at the Kensington Ave,  are more likely to go to PPR facilities compared to the people in other census block group. 
 
-One possible cause maybe that vulnerable groups have a stronger need for public resources. These public resources may make up their unsatisfying living environment. They can have social connections, taken part in the training program and even have free food there. 
+One possible cause maybe that special groups have a stronger need for public resources. These public resources may make up their unsatisfying living environment. They can have social connections, taken part in the training program and even have free food there. 
 
 ##### Departure of visits in device panel
 
@@ -1215,7 +1216,7 @@ ggplot(data = depaCountPlotHF) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-Figure3.2.5 and Figure3.2.6 are the maps of the departure of visits in device panel. In Figure3.2.6 we can see that the PPR facility has largest visits based on safegraph device panel is the charles playgroud. And people are mainly coming from these three census block groups (421010241001, 421010177011, 421010160005). 
+Figure 3.2.5 and Figure 3.2.6 are the maps of the departure of visits in device panel. In Figure3.2.6 we can see that the PPR facility has largest visits based on safegraph device panel is the Charles playgroud. And people who like to go there are mainly from these three census block groups (421010241001, 421010177011, 421010160005). 
 
 
 ##### Weekday Pattern of Device Panel Visits
@@ -1243,7 +1244,7 @@ VisitWeekdaybyServiceArea%>%
         strip.text.x = element_text( size = 5))
 ```
 
-In Figure3.2.7, we group the data by weekday to see their weekday distribution pattern. Apart from their own difference in total visit counts, there are three types of distribution. One is that all seven days in a week have similar total visit counts in device panel. Second is that the peak appears in the weekend. And the third is that the peak happens during the week.
+In Figure 3.2.7, we group the data by weekday to see their weekday distribution pattern. Apart from their own difference in total visit counts, there are three types of distribution. One is that similar total visit counts in device panel occur on every day of a week. The second is that the peak appears on weekend. And the third is that the peak happens during weekdays.
 
 ##### Hour Pattern of Device Panel Visits
 
@@ -1265,7 +1266,7 @@ VisitHourbyServiceArea%>%
   theme(axis.text = element_text( size=5),strip.text = element_text( size=5),strip.text.x = element_text( size = 5))
 ```
 
-After the rectification above, we finally obtain the commonsensible hour pattern. In the Figure3.2.8, we group the data by hour to see their hour distribution pattern. Apart from their own difference in total visit counts, there are two types of distribution. One is that there is no obvious hourly pattern during the day. Another one has obvious peak time happening at the mid-day. 
+After the rectification above, we finally obtain the common sensible hour pattern. In the Figure3.2.8, we group the data by hour to see their hour distribution pattern. Apart from their own difference in total visit counts, there are two types of distribution. One is that there is no obvious hourly pattern during the day. The other one has obvious peak time happening at the mid-day. 
 
 ##### Dwelling Time of Device Panel Visits
 
@@ -1300,7 +1301,7 @@ ggplot(dwellTimeForPlot)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-In Figure3.2.9, we calculate the average dwelling time for every facility. From the map, we can find out that the longest dwelling time happes at the placekey(223-222\@628-pm9-wkz) Independent Square Region.
+In Figure 3.2.9, we calculate the average dwelling time for each facility. From the map, we can find out that the longest dwelling time happes at the placekey (223-222\@628-pm9-wkz), the Independent Square Region.
 
 ```{r dwell time distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.10 Map of average dwelling time'}
 dwellTImePlotServiceArea <- pprServiceArea %>%
@@ -1322,7 +1323,7 @@ ggplot(dwellTImePlotServiceArea)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-If we aggregate them into the service area level, individual facility's characteristics are erased, we can see that long dwelling time happens are more likely happening at the residential regions, which have more higher population densities. And facilities in this area are more likely visited by chance.
+If we aggregate them into the service area level, individual facility's characteristics are erased, we can see that long dwelling times are more likely to happen at the residential regions, which have more higher population densities. And facilities in this area are more likely visited by chance.
 
 #### 3.3 Case Analysis
 
