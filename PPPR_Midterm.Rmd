@@ -1414,12 +1414,15 @@ cluster2_mean <- aggregate(sgIntegrated_byMonth %>%
               summarize(size = n()),
             by="cluster")
 
+```
+
+```{r cluster2_mean}
 kable(cluster2_mean %>% 
-        mutate(color=c("pink","orange","blue"),.before = 2),align = 'c',caption = '<center>Table 3.3 Mean values of clusters for conflicts <center/>') %>%
+        mutate(color=c("pink","orange","blue"),.before = 2) %>% 
+        mutate(group=c("supportive","normal","potential"),.before = 2),align = 'c',caption = '<center>Table 3.3 Mean values of clusters for conflicts <center/>') %>%
   kable_classic(full_width = F)%>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
-
 ```
 
 ```{r correlation matrix for cluster2, fig.height = 5,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.1 Correlation Matrix of Conflicts between Mobility Data $ Activities'}
@@ -1449,20 +1452,6 @@ pairs(sgIntegrated_byMonth %>%
 
 The Figure 3.3.2 shows how these three types of facilities are spatially distributed in District 7,8,9. There are many supportive facilities in the south Philadelphia.
 
-```{r spatially distribution of sg bias clusters,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.3.2 Map of Bias Type of SafeGraph Data'}
-
-ggplot() + 
-  geom_sf(data=sgIntegrated_byMonth,aes(color=as.factor(cluster)))+
-  geom_sf(data=pprDistrict,color="black",size=0.7,linetype ="dashed",fill = "transparent")+
-  geom_sf(data=pprDistrict %>% filter(DISTRICTID %in% c(7,8,9)),color="black",size=1,fill = "transparent")+
-  labs(title = "", 
-       subtitle = "",
-       x="",y="")+
-  scale_color_manual(values = my_cols,name = "Facility Clusters", label=c("Supportive (few visits many permits)","Nromal","Potetial (many visits few permits)")) +
-  mapTheme()+
-  theme(legend.position = "bottom")
-```
-
 ```{r find the case, include=FALSE, eval=FALSE}
 sgIntegrated_byMonth %>%
   st_drop_geometry() %>% 
@@ -1483,6 +1472,23 @@ sgIntegrated_byMonth %>%
   kable_classic(full_width = F)%>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
+```
+
+```{r spatially distribution of sg bias clusters,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.3.2 Map of Bias Type of SafeGraph Data'}
+
+ggplot() + 
+  geom_sf(data=sgIntegrated_byMonth %>%
+            group_by(placekey,cluster) %>% 
+            summarize(howManyMonthBelongToThisCluster=n()) %>% 
+            filter(howManyMonthBelongToThisCluster >=6),aes(color=as.factor(cluster)))+
+  geom_sf(data=pprDistrict,color="black",size=0.7,linetype ="dashed",fill = "transparent")+
+  geom_sf(data=pprDistrict %>% filter(DISTRICTID %in% c(7,8,9)),color="black",size=1,fill = "transparent")+
+  labs(title = "", 
+       subtitle = "",
+       x="",y="")+
+  scale_color_manual(values = my_cols,name = "Facility Clusters", label=c("Supportive (few visits many permits)","Nromal","Potetial (many visits few permits)")) +
+  mapTheme()+
+  theme(legend.position = "bottom")
 ```
 
 ##### Special Cases1: Thomas B. Smith Recreation Center
