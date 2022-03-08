@@ -2,6 +2,7 @@
 
 ### Data and Code
 - `./Data/` contains the data retrieved using [Flickr API](https://www.flickr.com/services/api/) in Acadia and Yosemite National Parks from Jan 1, 2010 to Dec 31, 2019. The example query used to access the data in Acadia National Park: 
+  
   ```
   flickr.photos.search(min_taken_date = '2010-01-01', max_taken_date = '2019-12-31', accuracy = '11', bbox = '-68.5, 44.0, -68.0, 44.5', per_page = '100', extras='date_taken, tags, geo, views', page=1)['photos']['photo']
   ```
@@ -12,7 +13,22 @@
     - A workflow to calibrate the proposed socially-aware Huff model with the probability matrices generated from `Trip Construction.ipynb` for the two national parks. 
     - **Note**: The SA-Huff model files read data provided in `./Data/acadia_pmatrix/` and `./Data/yosemite_pmatrix/` by default. If you would like to generate your own output from `Trip Construction.ipynb` and feed into the SA-Huff model files in Binder, you can follow the instruction at the top of the files to switch the input.
 
+
+
+# Notes
+
+'position' is the data frame with the attraction locations
+
+
+
+
+
+
+
+
+
 ### Binder
+
 A Binder-ready repository, which allows you to open the Jupyter Notebook and reproduce the code in an executable environment, can be accessed [HERE](https://mybinder.org/v2/gh/meilinshi/Socially-aware-Huff-model/HEAD). There is no need to download the data, code or software.
 - **Note**: The `requirements.txt` file should list all Python libraries that the notebooks depend on, and they will be installed using:
   ```

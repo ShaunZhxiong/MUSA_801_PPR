@@ -66,3 +66,11 @@ Further Analysis of Programs organized by PPR
 [Markdown](PPPR_Midterm.html)
 
 [Feedback](midtermfeedback.md)
+
+#### Week6
+
+Program further division
+
+Huff model Python scripts
+
+Huff model limitation
