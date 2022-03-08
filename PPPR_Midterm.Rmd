@@ -59,11 +59,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### 1 Introduction
 
-The Philadelphia Parks and Recreation department is responsible for hosting all sorts of programming in their facilities. Currently their best understanding of demand for programming comes from existing programs data (like attendance) and some rudimentary data about park visits (eg. total trash collected).
+Currently Philadelphia Parks and Recreation department (PPR) estimates the demand for programming comes from existing programs data (like attendance) and some rudimentary data about park visits (eg. total trash collected). However, the demand and supply might not be consistent due to limited data from visitors. How do we make smarter decisions about allocating program in our parks and recreation facilities?
 
-Only recently, thanks to data collected by SafeGraph, it is now possible to analyze large data sets of cell phone location activity, including where people are traveling and how long they stay.
+Only recently, thanks to dynamic data collected by SafeGraph, it is now possible to analyze large data sets of cell phone location activity, including where people are traveling and how long they stay.
 
-By incorporating this novel dataset, our goal for this project is to help the PPR better understand the usage of their facilities and provide new recommendations about how programming resources should be allocated within their service areas and what programs they should hold.
+By incorporating this novel dataset, our goal for this project is to help the PPR better understand the usage of their facilities, and provide recommendations to allocate programming resources within their service areas and what programs they should hold to meet demands from visitors.
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 
@@ -167,7 +167,6 @@ palette1_main <- "#F2727F"
 palette1_assist <- '#F9B294'
 ```
 
-
 #### 1.1 District & Service Area
 
 ```{r openData_pprDistrictAndServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure1.1.1. Locations of PPR Districts and Service Areas'}
@@ -192,7 +191,7 @@ ggmap(base_map) +
   mapTheme()
 ```
 
-Philadelphia Parks and Recreation divides the city into 10 districts. Each district contains service areas. Each service area contains facilities like parks and rec centers. Each service area also has staff members who can run programs at specific facilities. Besides macro analyses, this practicum mainly focuses on the District 7、8、9, The areas bounded by pink lines in the Figure1.1.1 are the services areas in District 7,8,9.
+The city is divided into 10 districts. Each district contains several subset service areas, where locates facilities like parks and rec centers. The PPR allocates staff members to run programs at specific facilities and rotate within the district. Besides macro analyses, this practicum mainly focuses on the District 7, 8 and 9 per the PPR request. In the Figure1.1.1, the areas highlighted by pink lines are the services areas in District 7,8 and 9.
 
 #### 1.2 Properties
 
@@ -219,7 +218,7 @@ ggplot() +
   mapTheme()
 ```
 
-The Figure1.2.1 is the map of their respective locations.PPR administrates more than 500 facilities within Philadelphia boundary. Notably, for some huge parks, PPR divides them into several sub-facilities. For example, 'Wissahickon Valley Park' is divided into 16 sub-facilities ('Wissahickon Valley Park', 'Wissahickon Environmental Center', 'Salvatore Pachella Memorial Field', 'David P Montgomery Field', 'John F Boyce Memorial Field', 'Arrow Field', 'Walnut Lane Golf Club', 'Samuel F Houston Playground', 'Carpenters Woods', 'Dodge Tract', 'Historic Rittenhouse Town', 'Clifford Park', 'Blue Bell Park', 'Saul High School Farm', 'Andorra Natural Area',and 'Saylors Grove').
+The Figure 1.2.1 shows respective locations of more than 500 facilities within Philadelphia boundary. Notably, for some huge parks, PPR divides them into several sub-facilities. For example, 'Wissahickon Valley Park' includes 16 sub-facilities ('Wissahickon Valley Park', 'Wissahickon Environmental Center', 'Salvatore Pachella Memorial Field', 'David P Montgomery Field', 'John F Boyce Memorial Field', 'Arrow Field', 'Walnut Lane Golf Club', 'Samuel F Houston Playground', 'Carpenters Woods', 'Dodge Tract', 'Historic Rittenhouse Town', 'Clifford Park', 'Blue Bell Park', 'Saul High School Farm', 'Andorra Natural Area',and 'Saylors Grove').
 
 ### 2 Program & Permits Analysis
 
@@ -227,7 +226,7 @@ The activities hold in PPR properties are recorded in two systems: the program s
 
 In 2021, there are 4376 times of activities recorded in program schedules, covering 7 categories of After School, Athletic, Camp, Cultural, Educational, Environmental/Outdoor, and other activities, while 3861 times of activities are recorded in the permit system. In the following analyses, events refer to the combination of the programs and the permits.
 
-#### 2.1 Overall Distribution in District 7,8,9
+#### 2.1 Overall Distribution in District 7,8 & 9
 
 ```{r wrangle program data, message=FALSE, warning=FALSE}
 
@@ -319,7 +318,7 @@ WeekVisit <- aggregate(
   RegisteredIndividualsCount ~ AttendanceWeekDate + ActvityTypeCategory + PPR_DISTRICT, data = Facility_Program, FUN = sum)
 ```
 
-Through above wrangling, we obtain information like the duration of the events, the attendance of the events etc. Furthermore, we link program and permit datasets to their based properties,their belonged Service Area, which is shown in the following map.
+Through the data wrangling above, we obtain information like the duration of the events, the attendance of the events etc, recorded by the PPR. Furthermore, we link program and permit datasets to their based properties,their belonged Service Area, which is shown in the following map.
 
 ```{r programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure2.1.1 Facilities w/ Programmed (red) & Permited (orange) Activities in Disdrict 7,8 & 9'}
 
@@ -334,15 +333,15 @@ ggplot()+
   mapTheme()
 ```
 
-In the figure2.1.1 above, red legends show the locations of facilities with program schedules while orange legends show the distributions of facilities with permit records. From the map, we can see that permits cover larger area than programs which indicates the demand exceeds PPR programming scope and the ways to improve PPR service. 
+In the figure 2.1.1 above, red legends show the locations of facilities with program schedules while orange legends show the distributions of facilities with permit records. From the map, we can see that permits cover more sites than programs which indicates the demand of self-proposed activities exceeds PPR programming scope and there is a potential to improve the programming schedule. Since no information of attendance is recorded in permit, we only analyze program frequency and visitor counts in program in Chapter 2.
 
-One limitation should be pointed out here is that some facilities didn't spatial joined the geographic information successfully, so, there are more facilities with program and permit compared to the number showing on the figure.
+One limitation should be pointed out here is that some facilities didn't spatial joined the geographic information successfully. So, there are more facilities with programs and permits compared to the number showing on the figure.
 
 #### 2.2 District 7,8,9
 
 ##### District 7
 
-There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center.
+There are three facilities with program scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. Orange legends of facilities with permit are not discussed in Chapter 2.
 
 ```{r SA7_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.2 Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 7'}
 ggplot()+
@@ -353,8 +352,6 @@ ggplot()+
   labs(title="")+
   mapTheme()
 ```
-
-In the Figure2.2.3, we can see that Marian Anderson Recreation Center hold more activities in athletic category, like soccer and baseball. The other two facilities hold more cultural activities, like art and music.
 
 ```{r SA7_Events,fig.height = 4,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.3 Categories of Events in District7'}
 plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
@@ -378,6 +375,7 @@ plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
 grid.arrange(plot1, plot2,ncol=2,top = "")
 ```
 
+In the Figure 2.2.3, we can see that **Marian Anderson Recreation Center** hold more activities in **athletic** category, like soccer and baseball. **The other two** facilities hold more **cultural** activities, like art and music.
 
 ```{r SA7_Events 2,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.4 Visitor Counts by Week and Activity Categories in District 7'}
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
@@ -393,11 +391,11 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
   plotTheme()
 ```
 
-In the Figure2.2.4, we can see that Athletic activities were hold from March to November while cultural and after school activities mostly took place in fall.
+In the Figure 2.2.4, we can see that **Athletic** activities were hold from **March to November** while **cultural** and **after school** activities mostly took place in **fall**.
 
 ##### District 8
 
-There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center.
+There are five facilities with program scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center. Orange legends of facilities with permit are not discussed in Chapter 2.
 
 ```{r SA8_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.5 Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 8'}
 ggplot()+
@@ -408,8 +406,6 @@ ggplot()+
   labs(title="")+
   mapTheme()
 ```
-
-In Figure2.2.6 we can see that Laura Sims Skate House hold hockey and ice skating activities from October to May the next year, while Morris Recreation Center hosted more cultural activities like dance as well as athletic activities of gymnastics, tumbling and basketball from October to December.
 
 ```{r SA8_Events,fig.height = 4,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.6 Categories of Events in District8'}
 plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
@@ -433,6 +429,7 @@ plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
 grid.arrange(plot1, plot2,ncol=2,top = "")
 ```
 
+In Figure 2.2.6 we can see that **Laura Sims Skate House** hold hockey and **ice skating** activities, while **Morris Recreation Center** hosted more **cultural** activities like dance as well as **athletic** activities of gymnastics, tumbling and basketball.
 
 ```{r SA8_Events 2,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.7 Visitor Counts by Week and Activity Categories in District 8'}
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
@@ -448,11 +445,11 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
   plotTheme()
 ```
 
-In Figure2.2.7 we can see that Hockey and ice skating activities take place in fall, winter and spring, while cultural and after school are mainly hold in fall.
+In Figure 2.2.7 we can see that **Hockey and ice skating** activities take place in **fall, winter and spring**, while **cultural and after school** are mainly hold in **fall**.
 
 ##### District 9
 
-There are seven facilities with program scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center.
+There are 7 facilities with programs scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. Orange legends of facilities with permit are not discussed in Chapter 2.
 
 ```{r SA9_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.8 Facilities w/ Programed (red) & Permited (orange) Activities in Disdrict 9'}
 ggplot()+
@@ -464,7 +461,7 @@ ggplot()+
   mapTheme()
 ```
 
-In Figure2.2.9 we can see that Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories.
+In Figure 2.2.9 we can see that Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the most two popular facilities with activities of athletic, after school, cultural, educational, and other categories.
 
 ```{r SA9_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.9 Facility & Program Categories in District 9'}
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
@@ -475,7 +472,6 @@ ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom")
 ```
-
 
 ```{r SA9_Events 2,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.10 Visitor Counts by Week and Activity Categories in District 9'}
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
@@ -491,9 +487,11 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
   plotTheme()
 ```
 
-In Figure2.2.9 we can see that Athletic activities took place throughout the whole year, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. Cultural activities, like art, dance, music, usually suspended in summer.
+In Figure 2.2.10 indicates that **Athletic** activities took place throughout the **whole year**, while other category of activities, like older adults and mentoring, were hold in the 2nd half of the year. **Cultural** activities, like art, dance, music, **usually suspended in summer.**
 
 #### 2.3 Other Districts
+
+In Figure2.3.1 there are 27 facilities with program scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
 
 ```{r SAOthers_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure2.3.1 Facility & Program Categories in other Districts'}
 
@@ -506,13 +504,11 @@ ggplot(Facility_Program_otherDistricts) +
         legend.position = "bottom")
 ```
 
-In Figure2.3.1 we can see that There are 27 facilities with program scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
-
 ### 3 SafeGraph Data Analysis
 
-This practicum aims to use SafeGraph's Pattern dataset to analyze if PPR programmings achieve their goals of meeting citizens' needs and serving them well. Further, SafeGraph data can be used to suggest PPR's future programming strategies in Philadelphia.
+This project aims to use SafeGraph's Pattern dataset to analyze whether PPR programmings achieve their goals of meeting citizens' demands and serving them well. Further, SafeGraph data can be used to suggest PPR's future programming strategies in Philadelphia.
 
-SafeGraph's Patterns dataset includes visitor and demographic aggregations for points of interest (POIs) in the US. This contains aggregated raw counts of visits to POIs from a panel of mobile devices, answering how often people visit, how long they stay, where they came from, where else they go, and more. [More Information](https://docs.safegraph.com/docs/monthly-patterns#:~:text=Patterns%20is%20a%20dataset%20of,in%20Canada%2C%20see%20Weekly%20Patterns.)
+SafeGraph's Patterns dataset includes visitor and visit aggregations for points of interest (POIs) in the US. This contains aggregated raw counts of visits to POIs from a panel of mobile devices, answering how often people visit, how long they stay (dwelling time), where they came from (origin), where else they go (departure), and more. [More Information](https://docs.safegraph.com/docs/monthly-patterns#:~:text=Patterns%20is%20a%20dataset%20of,in%20Canada%2C%20see%20Weekly%20Patterns.)
 
 ```{r read SafeGraph Data and filter SafeGraph Data,warning=FALSE,message=FALSE, results='hide'}
 # brand_info <- vroom("data/safegraph/Philadelphia-Camden-WilmingtonPA-NJ-DE-MDMSA-CORE_POI-2021_11-2021-12-17/brand_info.csv")
@@ -567,7 +563,7 @@ PPRmoves <- safeGraph.geo %>%
   filter(placekey %in% as.list(parks$placekey))
 ```
 
-In the above wrangling, we first combine all 11 month pattern data from SafeGraph, attaching them with geometry information. Further, we filter the data into Pennsylvania region and into Practicum-related POIs using [NAICS code](https://www.naics.com/code-search/?naicstrms=park). The NAICS codes we chose are as follow.
+In the above data wrangling, we first combine all 11-month pattern data from SafeGraph dataset, attaching them with geometry information. Further, we filter the data into Pennsylvania region and Project-related POIs using [NAICS code](https://www.naics.com/code-search/?naicstrms=park). The NAICS codes we chose are as follow.
 
 712190: Nature Parks and Other Similar Institutions; <br> 713990: All Other Amusement and Recreation Industries; <br> 713940: Fitness and Recreational Sports Centers；<br> 711310：Promoters of Performing Arts, Sports, and Similar Events
 
@@ -597,12 +593,14 @@ program2021.joinWithPlaceKey <-
 ```
 
 <center>
+
 ```{r update property and program data with placekey 2, echo=FALSE, fig.align='center', fig.height=5, message=FALSE, warning=FALSE, out.width='75%'}
 mapview(property,layer.name = c("All PPR Facilities"))+mapview(st_centroid(propertyWithPlaceKey),col.regions = "green",layer.name = c("Sucessfully Joined Facilities"))
 ```
+
 </center>
 
-Through above wrangling, the filtered SafeGraph POIs were linked with PPR facilities and PPR programmings&permits, using spatial join. So far we have successfully bridged the channel of communicating among these three main datasets. In the above map, the purple polygons are the all properties of PPR, the green dots are the successfully joined properties with placekey. From the map we can believe the join is sucessfully, it covers all most all PPR properties.
+Through data wrangling, we use spatial join to link the filtered SafeGraph POIs with PPR facilities and PPR programmings & permits. So far we have successfully bridged the channel of communicating among these three main datasets. In the above map, the purple polygons are the all properties of PPR, the green dots are the successfully joined properties with placekey. The map shows most of the PPR facilities are joined successfully.
 
 ```{r unnest safegraph data, message=FALSE, warning=FALSE, results='hide'}
 # unnest visit Count data
@@ -745,15 +743,13 @@ relatedBrand <- st_read("data/output/relatedBrand.GeoJSON",crs=crs)
 visitWeekday <- st_read("data/output/visitWeekday.GeoJSON",crs=crs)
 ```
 
-Because SafeGraph data is nested within the dataframe. To further use this data into analyses, we have to unsent them into respective dataframes. Through above wrangling, we obtain information like number of visits to these facilities by day, the number of visits to these facilities by hour, the number of visits to these facilities by weekday, the census block groups of these visitors' home, the census block groups of these visitors' departure places, the distribution of these visits' dwelling time etc.
+Because SafeGraph data is nested within the dataframe. To use this data in further analyses, we have to release them into respective dataframes. Through the above data wrangling, we obtain information like number of visits to these facilities by day, the number of visits to these facilities by hour, the number of visits to these facilities by weekday, the census block groups of these visitors' home, the census block groups of these visitors' departure places, the distribution of these visits' dwelling time etc.
 
-Notably, the visits here refer to the visits in SafeGraph Mobile Device Panel instead of the true visits to these facilities. Even though there might be some [biases](https://www.safegraph.com/blog/what-about-bias-in-the-safegraph-dataset) in the representatives, we still believe this data can give us insights about the pattern of actual visits. However, some data rectifications are still deployed in the following to make it more reliable.
+Notably, the **visits** here refer to the visits in **SafeGraph Mobile Device Panel instead of the true visits** to these facilities, considering that these data have been filtered and privacy-screened. Even though there might be some [biases](https://www.safegraph.com/blog/what-about-bias-in-the-safegraph-dataset) in the representatives, we still believe this data can give us insights about the pattern of actual visits. However, some data rectifications are still deployed in the following to make it more reliable.
 
 #### 3.1 Bias Analysis and Data Rectification
 
-Sometimes, SafeGraph will count "Residents" or "passer-bys" of the position in "visits", which will result in huge bias and mislead the analysis. So, to conclude **typical position types of SafeGraph data bias**, we choose ***midnight visits***and ***dwelling time*** as factors for **cluster analysis**. We also apply principal component analysis here to assist in understanding characteristics of clusters.
-
-Taking results of cluster analysis , most locations, **1094** out of 1117, belong to **cluster 3** with **reliable** data. **Cluster 2** includes **14** places with extremely **more night visits and long visits** that are more than 2 hours. **Cluster 1** consists of **9** locations with **many transitory visits** that are less than 10 minutes.
+Sometimes, SafeGraph will count "Residents" or "passer-bys" as "visitors", which will result in huge bias and mislead the analysis. So, to conclude **typical position types of SafeGraph data bias**, we choose ***midnight visits***and ***dwelling time*** as factors for **cluster analysis**. We also apply principal component analysis here to assist in understanding characteristics of clusters.
 
 ```{r integrate safegraph data with their characteristic, eval=FALSE}
 # calculate midnight visit
@@ -856,7 +852,7 @@ pairs(visitIntegrated %>%
 
 ```
 
-We can visualize these clusters more simply with the help of principal component analysis. It can be seen that cluster 3, normal data, has a large number and is concentrated, while the problematic clusters 2 and 3 have a smaller number and a larger distribution range.
+Taking results of cluster analysis, most locations, **1094** out of 1117, belong to **cluster 3** with **reliable** data. According to Figure3.1.1, **Cluster 2** includes **14** places with extremely **more night visits and long visits** that are more than 2 hours. **Cluster 1** consists of **9** locations with **many transitory visits** that are less than 10 minutes.
 
 ```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.1.2 Cluster Plot with Main Component'}
 x <- clusplot(visitIntegrated.scale, 
@@ -864,7 +860,7 @@ x <- clusplot(visitIntegrated.scale,
          labels=5, lines=0, stand=TRUE, col.txt=palette5[1:3], col.clus=palette5[1:3], col.p=palette5[5])
 ```
 
-Here's how two components are made up. Basically, the visit amount during the midnight or last more than 20 minutes heavily contribute to component 1 (**overestimate short visits**), while short visits that are less than 10 minutes more contribute to component 2 (**miscount resident as visitors**). So many analysis in this report has grouped dwell time into 3 span, \<10min 11-120 min, and \>120min.
+We can visualize these clusters more simply with the help of principal component analysis (Figure3.1.2 ). It can be seen that cluster 3, normal data, has a large number and is concentrated, while the problematic clusters 2 and 3 have a smaller number and a larger distribution range.
 
 ```{r component analysis1,message = FALSE, warning = FALSE}
 # decide component number - 2 (only run once)
@@ -882,7 +878,7 @@ kable(t(cluster1_pca$Structure[1:8,1:2]),align = 'c',caption = '<center>Table 3.
 
 ```
 
-Based on the bias analysis above, we **rectify SafeGraph data** depending on its cluster / type. First, all visit counts with dwell time that is **less than 5 minutes** are removed. Also, for **cluster 1,** visit counts with dwell time that is **between 5 and 10 minutes** will be reduced referring to the related proportion in the normal cluster 3. On top of that, long visits that are **longer than 2 hours** in **Cluster 2** will be trimmed into the appropriate ratio according to midnight visitors which can be treated as "residents".
+Table 3.1.1 shows how two components are made up. Basically, the visit amount during the midnight or last more than 20 minutes heavily contribute to component 1 (**miscount resident as visitors**), while short visits that are less than 10 minutes more contribute to component 2 (**overestimate short visits**). So many analysis in this report has **grouped dwell time into 3 span,** \<10min 11-120 min, and \>120min.
 
 ```{r rectify sg data,message=FALSE,warning=FALSE,results='hide'}
 # cluster info
@@ -1022,9 +1018,11 @@ visitCount <- visitCount %>%
   mutate(visits = round(visits,0))
 ```
 
+Based on the bias analysis above, we **rectify SafeGraph data** depending on its cluster / type. First, all visit counts with dwell time that is **less than 5 minutes** are removed. Also, for **cluster 1,** visit counts with dwell time that is **between 5 and 10 minutes** will be reduced referring to the related proportion in the normal cluster 3. On top of that, long visits that are **longer than 2 hours** in **Cluster 2** will be trimmed into the appropriate ratio according to midnight visitors which can be treated as "residents".
+
 #### 3.2 Overall SafeGraph Patterns
 
-Through above complicated analysis and rectification, we finally obtain more reliable SafeGraph data. In the following section, we attempt to draw insights from the SafeGraph data in 5 aspects: visit counts in device panel, origins of visits in device panel, departure of visits in device panel, weekday pattern of device panel visits, dwelling time of device panel visits, and related brands of device panel visits at the same day.
+Through the above complicated analysis and rectification, we finally obtain **more reliable SafeGraph data**. In the following section, we attempt to draw insights from the SafeGraph data in 5 aspects: visit counts in device panel, origins of visits in device panel, departure of visits in device panel, weekday pattern of device panel visits, dwelling time of device panel visits, and related brands of device panel visits at the same day.
 
 ##### Visit Counts in Device Panel
 
@@ -1045,7 +1043,7 @@ ggplot(sumVisit)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-From the Figure3.2.1 we can see that people frequently visit facilities in the city center where have dense PPR facilities. For those facilities, visit counts are small because citizens are spread into other facilities. However, the large visit counts happen at the outskirt of Philadelphia where have less facilities
+From the Figure 3.2.1 we can see that people **frequently** visit facilities in the **Center City** where locate dense PPR facilities. For those facilities, **visit counts are small** because citizens dispersed into many facilities. However, the **large visit counts** happen at the **outskirt** of Philadelphia where have less facilities
 
 ```{r visit Count distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.2 Map of total device visits'}
 sumVisitServiceArea <- pprServiceArea %>%
@@ -1068,7 +1066,7 @@ ggplot(sumVisitServiceArea)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-If we aggregate the visits into service area level, we can correspond the findings above based on Figure3.2.2 Overall, service areas in the city center where has dense facilities will have larger visit counts. Notably, 'Junod Area' service area also has high total device visits which may attribute to the Walton Run Park and the Poquessing Valley Park.
+We aggregate the visits into service area level on Figure3.2.2. Overall, service areas in the Center City where locates dense facilities will attract larger visits. Notably, 'Junod Area' service area also has high total device visits which may attribute to the Walton Run Park and the Poquessing Valley Park.
 
 ##### Origins of Visits in Device Panel
 
@@ -1144,9 +1142,9 @@ ggplot(data = orgCountPlotHF) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-In the Figure3.2.3, we plot the origin of visits in device panel while in the Figure3.2.4, we filter routes have more than 5000 device visits in 2021 and plot it. The map is interesting because people from this census block group (421010177011), which are located at the Kensington Ave  are more likely to go to PPR facilities compared to the people in other census block group. 
+In the Figure 3.2.3, we plot the **origins/homes of visitors** for each PPR site while we filter routes have more than 5000 device visits in 2021 and plot it in the Figure3.2.4. Then we find interesting result because people from this census block group (421010177011), which are located at the **Kensington Ave**, are more likely to go to PPR facilities compared to the people in other census block group.
 
-One possible cause maybe that vulnerable groups have a stronger need for public resources. These public resources may make up their unsatisfying living environment. They can have social connections, taken part in the training program and even have free food there. 
+One possible cause maybe that special groups have a stronger need for public resources. These public resources may make up their unsatisfying living environment. They can have social connections, taken part in the training program and even have free food there.
 
 ##### Departure of visits in device panel
 
@@ -1215,8 +1213,7 @@ ggplot(data = depaCountPlotHF) +
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-Figure3.2.5 and Figure3.2.6 are the maps of the departure of visits in device panel. In Figure3.2.6 we can see that the PPR facility has largest visits based on safegraph device panel is the charles playgroud. And people are mainly coming from these three census block groups (421010241001, 421010177011, 421010160005). 
-
+Figure 3.2.5 and Figure 3.2.6 are the maps of the **departure block group of visitors** for each PPR site. In Figure3.2.6 we can see that the PPR facility has largest visits based on safegraph device panel is the **Charles playgroud**. And people who like to go there are mainly from these three census block groups (421010241001, 421010177011, 421010160005).
 
 ##### Weekday Pattern of Device Panel Visits
 
@@ -1243,7 +1240,7 @@ VisitWeekdaybyServiceArea%>%
         strip.text.x = element_text( size = 5))
 ```
 
-In Figure3.2.7, we group the data by weekday to see their weekday distribution pattern. Apart from their own difference in total visit counts, there are three types of distribution. One is that all seven days in a week have similar total visit counts in device panel. Second is that the peak appears in the weekend. And the third is that the peak happens during the week.
+In Figure 3.2.7, we group the data by weekday to see their weekday distribution pattern. Apart from their own difference in total visit counts, there are three types of distribution. One is that **similar** total visit counts in device panel occur on every day of a week. The second is that the **peak appears on weekend**. And the third is that the **peak happens during weekdays**.
 
 ##### Hour Pattern of Device Panel Visits
 
@@ -1265,7 +1262,7 @@ VisitHourbyServiceArea%>%
   theme(axis.text = element_text( size=5),strip.text = element_text( size=5),strip.text.x = element_text( size = 5))
 ```
 
-After the rectification above, we finally obtain the commonsensible hour pattern. In the Figure3.2.8, we group the data by hour to see their hour distribution pattern. Apart from their own difference in total visit counts, there are two types of distribution. One is that there is no obvious hourly pattern during the day. Another one has obvious peak time happening at the mid-day. 
+After the rectification above, we finally obtain the common sensible hour pattern. In the Figure3.2.8, we group the data by hour to see their hour distribution pattern. Apart from their own difference in total visit counts, there are two types of distribution. One is that there is **no obvious hourly pattern** during the day. The other one has obvious **peak time happening at the mid-day**.
 
 ##### Dwelling Time of Device Panel Visits
 
@@ -1300,7 +1297,7 @@ ggplot(dwellTimeForPlot)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-In Figure3.2.9, we calculate the average dwelling time for every facility. From the map, we can find out that the longest dwelling time happes at the placekey(223-222\@628-pm9-wkz) Independent Square Region.
+In Figure 3.2.9, we calculate the average dwelling time for each facility. From the map, we can find out that the **longest dwelling** time happes at the placekey (223-222\@628-pm9-wkz), the **Independent Square Region**.
 
 ```{r dwell time distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.10 Map of average dwelling time'}
 dwellTImePlotServiceArea <- pprServiceArea %>%
@@ -1322,19 +1319,19 @@ ggplot(dwellTImePlotServiceArea)+
         legend.key.height  = unit(0.2, 'cm'))
 ```
 
-If we aggregate them into the service area level, individual facility's characteristics are erased, we can see that long dwelling time happens are more likely happening at the residential regions, which have more higher population densities. And facilities in this area are more likely visited by chance.
+If we aggregate them into the service area level, individual facility's characteristics are erased, we can see that **long dwelling** times are more likely to happen at the **residential regions**, which have more higher population densities. And facilities in this area are more likely visited by chance.
 
 #### 3.3 Case Analysis
 
 ##### Conflicts between Mobility Data and Position Usage
 
-To think over how might we help to program and allocate staff differently, we divided all locations into 3 categories based on their visit data and activity applications (permits). 
+In terms of helping allocate programs and resources, we **divided all locations into 3 categories** based on their **visit data** and **activity scheduled with permits**. (The number of facilities with both of program scheduled and safegraph data available is limited, only 14 facilities, so we use facilities with permit to do analyses below). Refer to Table 3.3 and Figure3.3.1.
 
-Supportive facilities, pink points, have huge amount of visitors who will stay longer than normal, but only a few activity permits here, which means they have great potential, PPR may set more programs in the future. 
+***Potential facilities***: They are shown as **blue** points where **huge amount of visitors** who will **stay longer** than normal, but only **relatively few activity permits** here, which means there is great **potential** to develop activities, and PPR may set more programs in the future. 
 
-Normal facilities, orange points, are normal positions with appropriate foot traffic and activity numbers.
+***Normal facilities***: **Orange** points are **normal** positions with foot traffic that is **consistent** with the quantity of activities.
 
-Potential facilities, purple points, have many group activity but few foot traffic, since they are usually function center who support the community events.
+***Supportive facilities***: They are shown as **pink** points where **many permits** but **few foot traffic**, since they are usually **community centers** who support **group events**.
 
 ```{r integrate safegraph data with permit,warning=FALSE,message=FALSE, results='hide'}
 # calculate mean dwell time
@@ -1417,7 +1414,8 @@ cluster2_mean <- aggregate(sgIntegrated_byMonth %>%
               summarize(size = n()),
             by="cluster")
 
-kable(cluster2_mean,align = 'c',caption = '<center>Table 3. Mean values of clusters for conflicts <center/>') %>%
+kable(cluster2_mean %>% 
+        mutate(color=c("pink","orange","blue"),.before = 2),align = 'c',caption = '<center>Table 3.3 Mean values of clusters for conflicts <center/>') %>%
   kable_classic(full_width = F)%>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
@@ -1449,7 +1447,7 @@ pairs(sgIntegrated_byMonth %>%
 
 ```
 
-Here are how these three types of facilities are spatially distributed in District 7,8,9. There are many supportive facilities in south Philadelphia.
+The Figure 3.3.2 shows how these three types of facilities are spatially distributed in District 7,8,9. There are many supportive facilities in the south Philadelphia.
 
 ```{r spatially distribution of sg bias clusters,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.3.2 Map of Bias Type of SafeGraph Data'}
 
@@ -1487,21 +1485,17 @@ sgIntegrated_byMonth %>%
   scroll_box(width = "100%", height = "400px")
 ```
 
-**cluster2** : Comparatively normal positions.
+##### Special Cases1: Thomas B. Smith Recreation Center
 
-**cluster 1** : Normal performance on sg data (dwell and visits), but with many permit plans
+Thomas B. Smith Recreation Center is a case of these potential center with low demand but high activity supply (pwemits) in District 9. There are several sport courts, the Smith playground, and a spray park surrounding the B. Smith Recreation Center. According to scheduled program, more activities of athletic, education, and after school take place here.
 
-**cluster3:** Perform well in sg data (dwell and visits), but not more permit plans
-
-#####  Special Cases1: Thomas B. Smith Recreation Center
-
-Thomas B. Smith Recreation Center, located in District 9, is a representative facility with certain number of permits, but as low as 100-300 times of visits per month and short average dwell time around one hour. There are several sport courts, the Smith playground, and a spray park surrounding the B. Smith Recreation Center. According to scheduled program, more activities of athletic, education, and after school take place here.
+With a certain number of permits, the visit counts there is as low as 100-300 visits per month (average devices value:426) and the short average dwell time is around one hour.
 
 ```{r Thomas B. Smith Recreation Center img, echo=FALSE,fig.height = 1,out.width = '70%',fig.align = 'center'}
 knitr::include_graphics("resources/imgaes/Thomas B. Smith Recreation Center combined1.png")
 ```
 
-Much feedback from the Google review represent it is a great place for the community residents to use, but a three-year old kid gets bored in 10 minutes due to the limited equipment in playground. More equipment, renovations and better management and maintenance are needed to improve this facility.
+Much feedback from the Google review represent it is a good location for the community residents to use, but a three-year old kid will get bored in 10 minutes due to the limited equipment in playground. More equipment, renovations, better management and maintenance are needed to improve this facility.
 
 ```{r Thomas B. Smith Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='65%',fig.align = 'center',fig.cap = 'Figure3.3.3 Smith Rec Center Activity with Total'}
 
@@ -1528,7 +1522,8 @@ SmithSum %>%
         legend.position = "bottom")
 ```
 
-Thomas B. Smith Recreation Center is a case of these supportive center with low demand but high supply. Record from the PPR shows various types of activities are hold in this place. The multi-purpose interior space services for after school, cultural, and educational activities, with a computer lab, a kitchen and several tables and seats. There are several sport courts (tennis courts, basketball courts and a football field) surrounded to hold athletic activities. 
+Records from the PPR shows various types of programs are hold in this place. The multi-purpose interior space with a computer lab, a kitchen and several tables and seats provide services
+for after school, cultural, and educational activities. There are several sport courts (tennis courts, basketball courts and a football field) surrounded to hold athletic activities.
 
 ```{r Thomas B. Smith Recreation Center dwell time2 ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%', fig.align = 'center',fig.cap = 'Figure3.3.4 Dwelling time and time distribution of Smith Rec Center Activity with Total'}
 sumVisit <- dwellTime %>% 
@@ -1577,17 +1572,17 @@ visitCount %>%
 
 ```
 
-According to the time trend of visits. all the visit peak here respond to some big sport events, like basketball events with group size of 50. Most visits come and go from morning to evening of a day, but average dwell time is less than an hour. It presents more people stop by this recreation center but leave quickly, which means the facilities or activities are not attractive to keep them stay. So, the PPR should consider to improve the equipment and enrich the functions of this place to incorporate activities schedule.
+According to the time trend of visits, **all the visit peaks here respond to some big sport events**, like basketball events with group size of 50. Most visits come and go from morning to evening of a day, but average dwell time is less than an hour. It presents more people stop by this recreation center but leave quickly, which means the facilities or activities are not attractive to keep them stay. So, the PPR should consider to improve the equipment and enrich the functions of this place to incorporate activities schedule.
 
 ##### Special Cases2:Girard Estates Park
 
-Girard Estates Park is a representative case of non-normal facility with low permits, high visits and long dwell time. According to permit records, yoga is the only activity applied for permit 13:00-14:00 every Sunday from April to September. No other programs are scheduled by the PPR. However, it is a super active facility and important open space for local community to use. [More Information](https://www.girardestateneighbors.org/events-committee)
+**Girard Estates Park** is a representative case of **potential** facilities with low permits, high visits and long dwelling time. According to permit records, yoga is the only activity applied for permit 13:00-14:00 every Sunday from April to September. No other programs are scheduled by the PPR. However, it is a super active facility and important open space for local community to use. [Click for more Information](https://www.girardestateneighbors.org/events-committee)
 
 ```{r GEP img, echo=FALSE,fig.height = 1,out.width = '70%',fig.align = 'center'}
 knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined3.png"))
 ```
 
-The Girard Estate Neighbors Association, a volunteer neighborhood organization, engage residents and plan social, recreational, and educational events. They meet once a month and as needed for each event.
+The Girard Estate Neighbors Association, a volunteer neighborhood organization, engages residents and plans social, recreational, and educational events. They meet once a month and as needed for each event.
 
 ```{r GEP temperal pattern by day ,fig.height = 2.5,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.6 Distribution of Girard Estates Park visits in 2021'}
 
@@ -1603,7 +1598,7 @@ visitCount %>%
 
 ```
 
-The three peaks of visits on the figure above may respond to events for celebrating major festivals, like Easter Egg Hunt, Halloween and Christmas carriage rides. The spring, summer and fall children concerts also take place in May, June and September. Compared to limited PPR program/ permit records, Safegraph data can reflect better using conditions of high visits in the park.
+The three peaks of visits in Figure3.3.6 above may respond to events for celebrating major festivals, like Easter Egg Hunt, Halloween and Christmas carriage rides. The spring, summer and fall children concerts also take place in May, June and September. Compared to limited PPR program/ permit records, Safegraph data can reflect better using conditions of high visits in the park.
 
 ```{r GEP img3, echo=FALSE,fig.height = 1,out.width = '70%',fig.align = 'center'}
 knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined.png"))
@@ -1641,7 +1636,7 @@ plot2 <- ggplot(data=sumVisit3, aes(dwellTimes,visitors)) +
 grid.arrange(plot1,plot2,ncol=2,top="")
 ```
 
-According to the figures above, most activities, like live concert, educational class take place during the day with long dwell time. It seems 11 am to 3 pm is the most time period with the most aggregated visits.
+According to the Figure3.3.7 above, people usually dwell longer (\>240min) here, because most activities, like live concert, educational class take place during the day are long. It seems 11 am to 3 pm is the most time period with the most aggregated visits.
 
 ```{r GEP img4, echo=FALSE,fig.height = 1,out.width = '70%',fig.align = 'center'}
 knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined2.png"))
@@ -1649,12 +1644,12 @@ knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined2.png")
 
 ### 4 Use Case
 
-Our goal for this project is to help the PPR better understand the usage of their facilities and provide new recommendations about how staff members should be allocated within their service areas and what programs they should hold.
+Our goal for this project is to help the PPR to analyze if their programming meet citizens' demands and to better assign their program resources with SafeGraph's Pattern dataset. The prediction outcome of market area can be used to suggest PPR's future programming strategies in Philadelphia.
 
-The eventually userinterface will be the [Dashboard]((https://ppr-dashboard-xfw9y.ondigitalocean.app/)). That will help to convey the PPR related information, useful exploratory analysis, and the outcome of the huff model in the end. This dashboard will help PPR better understand the situation of their programs and permits, each facility, service area, and district. Doing so to help PPR make better decision in the future programming.
+The eventually user interface will be the [Dashboard]((https://ppr-dashboard-xfw9y.ondigitalocean.app/)). That will convey the PPR related information, useful exploratory analysis, and the outcome of market area from the huff model in the end. This dashboard will provide data visualization of their existing programs, permits and status quo of visits in each facility, service area, and district, as well as display proposed activities to visitors in the future.
 
 ### 5 Next Stage Plan
 
-In this stage, we have successfully understand the data from PPR and SafeGraph. And we also try to draw exploratory analysis by PPR service area level based on SafeGraph pattern data. For the outcome, we have gained many interesting insights shown above. These insights will not be obtianed without SafeGraph pattern data. Besides, we have the outline of the dashboard, which in the end will help us communicate the information of this Practicum with PPR and help them do better programming.
+In this stage, we have successfully understood the data from PPR and SafeGraph and **finished the exploratory data analysis** by PPR service area level with SafeGraph pattern data. We have gained many interesting insights shown above as outcome. Besides, we **have the wire frame of the dashboard**, which in the end will help us communicate the information of this Practicum with PPR and help them do better programming.
 
-In the next stage of the Practicum, we will focus on the modeling with Huff model in District 7,8,9, and try to define and construct the attractiveness metric of facility. This attractiveness metric will be used in the huff model to obtain the market area for each facility. Finally we will compare the market area with SafeGraph pattern area to see whether PPR current programmings have achieve their goals, serving the target residents.
+In the next stage, we will focus on **creating the Huff model in District 7,8,9**, and try to define and construct the attractiveness metric of facility. This attractiveness metric will be used in the huff model to predict the probability of visitors will stop by each facility. Finally we will compare the current program distribution with the visit probabilities and market areas of each position to suggest the PPR allocating programmings and serving target residents.
