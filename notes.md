@@ -276,3 +276,13 @@ Will do
 3. - [x] Service Area Level Analysis
 4. Decide how to properly modify and use safegraph data into our model
 4. Model Building
+
+# Feb 28th
+
+Limitation for specific huff model practice
+
+#### Limitations
+
+One of the key limitations in the app is a lack of specificity in models. Buffer sizes and store square footage areas are abstracted out of the app for simplicity, but this results in a lack of quantitative feedback. The Huff Model also uses Euclidean distance rather than drive time which ignores the road network and alternative means of transit like subway or foot traffic. The Huff Model also uses census tract centroids, which can lead to counter intuitive results in large census tracts. The sales forecasting aspect of the Huff Model tab makes large assumptions on the amount of many spent by each household on goods, and is impacted by edge effects of both stores and customers that may fall outside of the Toronto CMA. The drive time buffers also fully rely on the road network (rather than incorporating transit) and are limited by an upper bounded travel time of 60 minutes from the Mapbox Isochrone API.
+
+#### Travel Time
