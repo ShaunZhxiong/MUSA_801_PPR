@@ -1,0 +1,46 @@
+---
+title: "Huff Model"
+author: "Shaun"
+date: "3/11/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(sf)
+```
+
+# "Trip Construction"
+
+[Link]('https://mybinder.org/v2/gh/meilinshi/Socially-aware-Huff-model/HEAD') - Select 'Code' -> 'Trip Construction'
+
+The first file "Trip Construction" is not meaningful to us. Because we already have the trip counts.
+
+In the end it will create 'visit of origin and destination' matrix for the whole duration and for each month. And then calculate the probability.
+
+Calculate the probability: # of visits in specific od route / # of visits in Origin
+
+For these, we can easily do this without the procedure in the "Trip Construction"
+
+## Numb of Trips for Whole Year
+
+```{r sampleWholeDuration - count}
+countWhole = st_read("data/demoHuffModel/fmatrix.csv")
+head(countWhole,n=3)
+```
+
+## Probabilities of Trips for January
+
+To get the matrix for each month, Just repeat the process above. And calculate the probability.
+
+Calculate the probability: # of visits in specific od route / # of visits in Origin
+
+```{r probabilityMatrix - January}
+pMatrixJan = st_read("data/demoHuffModel/acadia_NP_cluster_prob_matrix_1.csv")
+head(pMatrixJan,n=3)
+```
+
+
