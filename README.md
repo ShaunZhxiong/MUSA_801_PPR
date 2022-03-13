@@ -97,4 +97,4 @@ For our project
 > 1. The assumption of the huff model, is that the "Attractiveness - here is the number of program " always have positive or negative relationships with "Y - # of Visits". However, through the K-means clustering, we find out some outliers, which demands exceed supplies or vice versa. How to give specific suggestions like in which month the programs should be deleted, or what programs should be deleted.
 > 2. We can calculate the market area using huff model based on the assumption that (Attractiveness always have positive or negative relationships with # of visits). And then compare the huff model market area with service area to see the conflict zones.
 > 3. If the assumptions are correct then the outliers in the K-Means should have the biggest conflict zones. So we can according to the difference to draw the specific suggestions.
-> 4. Because our data is just for 2021, and we include the temporal term"Month", so we can not test the model. 
+> 4. Because our data is just for 2021, and we include the temporal term"Month", so we can not test the model. (if we do not include spatial fixed effect, then we can do the validation)

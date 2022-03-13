@@ -104,7 +104,7 @@ census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
 
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
 source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
-
+source("huffModelScripts.R")
 plotTheme <- function(base_size = 9, title_size = 10){
   theme(
     text = element_text( color = "black"),
