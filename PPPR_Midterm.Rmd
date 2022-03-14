@@ -595,7 +595,8 @@ program2021.joinWithPlaceKey <-
 <center>
 
 ```{r update property and program data with placekey 2, echo=FALSE, fig.align='center', fig.height=5, message=FALSE, warning=FALSE, out.width='75%'}
-mapview(property,layer.name = c("All PPR Facilities"))+mapview(st_centroid(propertyWithPlaceKey),col.regions = "green",layer.name = c("Sucessfully Joined Facilities"))
+propertyWithPlaceKeyJustToPlot = propertyWithPlaceKey %>% distinct(OBJECTID,.keep_all = TRUE)
+mapview(property,layer.name = c("All PPR Facilities"))+mapview(propertyWithPlaceKeyJustToPlot,col.regions = "green",layer.name = c("Sucessfully Joined Facilities"))+mapview(st_centroid(parks),col.regions = "red",layer.name = c("Safegraph Points"))
 ```
 
 </center>
@@ -603,6 +604,8 @@ mapview(property,layer.name = c("All PPR Facilities"))+mapview(st_centroid(prope
 Through data wrangling, we use spatial join to link the filtered SafeGraph POIs with PPR facilities and PPR programmings & permits. So far we have successfully bridged the channel of communicating among these three main datasets. In the above map, the purple polygons are the all properties of PPR, the green dots are the successfully joined properties with placekey. The map shows most of the PPR facilities are joined successfully.
 
 ```{r unnest safegraph data, message=FALSE, warning=FALSE, results='hide'}
+placeKeyNeeded = unique(propertyWithPlaceKey$placekey)
+PPRmoves <- PPRmoves %>% filter(placekey %in% placeKeyNeeded)
 # unnest visit Count data
 # visitCount <-
 #   PPRmoves %>%
@@ -619,8 +622,8 @@ Through data wrangling, we use spatial join to link the filtered SafeGraph POIs 
 #   })) %>%
 #   unnest(cols = c("visits_by_day"))
 # visitCount <- visitCount %>%
-#     rename(visitDay = date_range_start) %>% 
-#     mutate(visitDay = day+visitDay-1) %>% 
+#     rename(visitDay = date_range_start) %>%
+#     mutate(visitDay = day+visitDay-1) %>%
 #     mutate(month = month(visitDay))
 # st_write(visitCount,"data/output/visitCount.GeoJSON")
 visitCount <- st_read("data/output/visitCount.GeoJSON",crs=crs)
@@ -654,11 +657,11 @@ visitHour <- st_read("data/output/visitHour.GeoJSON",crs=crs)
 #   dplyr::select(-date_range_start) %>%
 #   mutate(visitor_home_cbgs = future_map(visitor_home_cbgs, function(x){
 #     jsonlite::fromJSON(x) %>%
-#       as_tibble() %>% 
+#       as_tibble() %>%
 #       dplyr::select(starts_with("4")) %>%
 #       gather()
 #   })) %>%
-#   unnest(visitor_home_cbgs) %>% 
+#   unnest(visitor_home_cbgs) %>%
 #   rename(origin =key ,visitors= value)
 # 
 # st_write(originCount,"data/output/originCount.GeoJSON")
@@ -787,7 +790,7 @@ visitIntegrated.scale <- scale(visitIntegrated %>%
                                  dplyr::select(-placekey) %>% 
                                  st_drop_geometry())
 
-set.seed(1234)
+set.seed(12)
 # decide cluster number (only run once)
 
 #nc <- NbClust(visitIntegrated.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
@@ -1086,11 +1089,11 @@ We aggregate the visits into service area level on Figure3.2.2. Overall, service
 #   dplyr::select(placekey) %>%
 #   group_by(placekey) %>% summarise()
 # 
-# orgCountPlot <- originCount %>% 
-#   st_drop_geometry() %>% 
+# orgCountPlot <- originCount %>%
+#   st_drop_geometry() %>%
 #   group_by(origin,placekey) %>%
-#   summarise(visitors=sum(visitors))%>% 
-#   left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
+#   summarise(visitors=sum(visitors))%>%
+#   left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>%
 #   rename("parkGeometry" = "geometry")%>%
 #   filter(startsWith(origin,"42101"))%>%
 #   left_join(CensusData,by=c("origin" = "GEOID"))%>%
@@ -1149,11 +1152,11 @@ One possible cause maybe that special groups have a stronger need for public res
 ##### Departure of visits in device panel
 
 ```{r deaprture plot, fig.height = 5,message = FALSE, warning = FALSE, results='hide', out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.5 Flow map of parks and departure points'}
-# depaCountPlot <- departCount %>% 
-#   st_drop_geometry() %>% 
+# depaCountPlot <- departCount %>%
+#   st_drop_geometry() %>%
 #   group_by(departure,placekey) %>%
-#   summarise(visitors=sum(visitors))%>% 
-#   left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>% 
+#   summarise(visitors=sum(visitors))%>%
+#   left_join(placekeyGeometry,by=c("placekey" = "placekey")) %>%
 #   rename("parkGeometry" = "geometry")%>%
 #   filter(startsWith(departure,"42101"))%>%
 #   left_join(CensusData,by=c("departure" = "GEOID"))%>%
