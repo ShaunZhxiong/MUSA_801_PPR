@@ -1532,8 +1532,7 @@ SmithSum %>%
         legend.position = "bottom")
 ```
 
-Records from the PPR shows various types of programs are hold in this place. The multi-purpose interior space with a computer lab, a kitchen and several tables and seats provide services
-for after school, cultural, and educational activities. There are several sport courts (tennis courts, basketball courts and a football field) surrounded to hold athletic activities.
+Records from the PPR shows various types of programs are hold in this place. The multi-purpose interior space with a computer lab, a kitchen and several tables and seats provide services for after school, cultural, and educational activities. There are several sport courts (tennis courts, basketball courts and a football field) surrounded to hold athletic activities.
 
 ```{r Thomas B. Smith Recreation Center dwell time2 ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%', fig.align = 'center',fig.cap = 'Figure3.3.4 Dwelling time and time distribution of Smith Rec Center Activity with Total'}
 sumVisit <- dwellTime %>% 
@@ -1663,3 +1662,35 @@ The eventually user interface will be the [Dashboard]((https://ppr-dashboard-xfw
 In this stage, we have successfully understood the data from PPR and SafeGraph and **finished the exploratory data analysis** by PPR service area level with SafeGraph pattern data. We have gained many interesting insights shown above as outcome. Besides, we **have the wire frame of the dashboard**, which in the end will help us communicate the information of this Practicum with PPR and help them do better programming.
 
 In the next stage, we will focus on **creating the Huff model in District 7,8,9**, and try to define and construct the attractiveness metric of facility. This attractiveness metric will be used in the huff model to predict the probability of visitors will stop by each facility. Finally we will compare the current program distribution with the visit probabilities and market areas of each position to suggest the PPR allocating programmings and serving target residents.
+
+### 6 Huff Model with Neighbor Effect
+
+```{r Wrangle property data for model}
+# this wranglling result is just for model building, not for real usage
+
+# aggregate originCount for the whole 11 month
+originCount_11m <- originCount %>% 
+  st_drop_geometry() %>% 
+  group_by(placekey, origin) %>% 
+  summarise(visitors = sum(visitors)) %>% 
+  ungroup()
+
+#When matching the placekey positions to PPR positions, some placekey  will spatial join to more than one PPR position. Here I filtered the join results into unnested PPR sites (However, in the real usage, nested sites should be a better choice)
+
+# choose area as atractiveness
+modelData <- left_join(originCount_11m, 
+                       propertyWithPlaceKey %>% 
+                         st_drop_geometry() %>% 
+                         filter(NESTED == "N") %>%
+                         dplyr::select(placekey, ACREAGE),
+                       by="placekey") %>% 
+  drop_na()
+
+# generate dummy distance
+modelData <- modelData %>% 
+  mutate(distance = sample(1:50, size=nrow(modelData), replace = T))
+```
+
+```{r huff model script}
+
+```
