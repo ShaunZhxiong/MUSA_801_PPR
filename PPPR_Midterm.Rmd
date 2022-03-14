@@ -1672,7 +1672,7 @@ originCount_11m <- originCount %>%
   st_drop_geometry() %>% 
   group_by(placekey, origin) %>% 
   summarise(visitors = sum(visitors)) %>% 
-  ungroup()
+  ungroup() 
 
 #When matching the placekey positions to PPR positions, some placekey  will spatial join to more than one PPR position. Here I filtered the join results into unnested PPR sites (However, in the real usage, nested sites should be a better choice)
 
@@ -1688,8 +1688,26 @@ modelData <- left_join(originCount_11m,
 # generate dummy distance
 modelData <- modelData %>% 
   mutate(distance = sample(1:50, size=nrow(modelData), replace = T))
+
+# get point geometry
+modelData <- modelData %>% 
+  left_join(parks %>% dplyr::select(placekey)) %>% 
+  st_sf() %>% 
+  st_transform(crs='EPSG:2272')
+
+modelData <- modelData %>% 
+  filter(!st_is_empty(modelData)) 
 ```
 
 ```{r huff model script}
+find_neighbor <- function(k, places){
+  library(FNN)
+  places_matrix <- as.matrix(places %>% 
+                               st_coordinates())
+  result_matrix <- get.knn(places_matrix, k)$nn.dist
+  result <- as.data.frame(result_matrix)
+  return(result)
+}
 
+data <- find_neighbor(2, modelData)
 ```
