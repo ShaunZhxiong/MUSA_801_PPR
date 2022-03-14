@@ -1665,7 +1665,7 @@ In the next stage, we will focus on **creating the Huff model in District 7,8,9*
 
 ### 6 Huff Model with Neighbor Effect
 
-```{r Wrangle property data for model}
+```{r Wrangle sg and property data for model}
 # this wranglling result is just for model building, not for real usage
 
 # aggregate originCount for the whole 11 month
@@ -1676,8 +1676,6 @@ originCount_11m <- originCount %>%
   ungroup() 
 
 #When matching the placekey positions to PPR positions, some placekey  will spatial join to more than one PPR position. Here I filtered the join results into unnested PPR sites (However, in the real usage, nested sites should be a better choice)
-
-# choose area as atractiveness
 modelData <- left_join(originCount_11m, 
                        propertyWithPlaceKey %>% 
                          st_drop_geometry() %>% 
@@ -1686,29 +1684,78 @@ modelData <- left_join(originCount_11m,
                        by="placekey") %>% 
   drop_na()
 
+# choose area as atractiveness
+modelData.attr <- modelData %>% 
+  group_by(placekey) %>% 
+  summarize(attractiveness = mean(ACREAGE))
+
+# calculate probability 
+modelData.prob <- modelData %>% 
+  group_by(origin) %>% 
+  summarise(total = sum(visitors)) %>% 
+  right_join(modelData, by="origin") %>% 
+  mutate(probability = visitors/total) %>% 
+  dplyr::select(placekey, origin, probability)
+
 # generate dummy distance
-modelData <- modelData %>% 
+modelData.dis <- modelData %>% 
+  dplyr::select(-ACREAGE) %>% 
   mutate(distance = sample(1:50, size=nrow(modelData), replace = T))
 
-# get point geometry
-modelData <- modelData %>% 
-  left_join(parks %>% dplyr::select(placekey)) %>% 
-  st_sf() %>% 
-  st_transform(crs='EPSG:2272')
+# obtain places stdf
+modelPlaces_list <- unique(modelData$placekey)
 
-modelData <- modelData %>% 
-  filter(!st_is_empty(modelData)) 
+modelPlaces <- parks %>% 
+  filter(placekey %in% modelPlaces_list) %>% 
+  drop_na()
+
 ```
 
 ```{r huff model script}
-find_neighbor <- function(k, places){
-  library(FNN)
+library(FNN)
+library(foreach)
+# destination: a string, indicating the id of the target place
+# attr_df: a df, at least including a column of unique id and a column of attractiveness
+# places: a st dataframe, including all places
+# id_column: a string, indicating which column is the id 
+# attr_column:a string, indicating a column representing attractiveness as a number
+# k: a integer, indicating the nunber of the neighbor
+find_neighbor <- function(places, destination, id_column, k){
+  places_n <- places %>% st_drop_geometry()
   places_matrix <- as.matrix(places %>% 
+                               filter(places_n[id_column] != destination) %>% 
                                st_coordinates())
-  result_matrix <- get.knn(places_matrix, k)$nn.dist
-  result <- as.data.frame(result_matrix)
+  detination_matrix <- as.matrix(places %>% 
+                                   filter(places_n[id_column] == destination) %>% 
+                                   st_coordinates())
+  fit <- get.knnx(places_matrix, detination_matrix, k)
+  rank_matrix <- fit$nn.index
+  dist_matrix <- fit$nn.dist
+  result = data.frame(id_column=c(), distance=c())
+  foreach (index = rank_matrix, dist = dist_matrix) %do% {
+    result <- rbind(result, 
+                    data.frame(id_column=places_n[index,id_column],
+                               distance=dist))
+  }
   return(result)
 }
 
-data <- find_neighbor(2, modelData)
+
+centraity <- function(destination, attr_df, places, id_column, attr_column, k) {
+  neighbor_df = find_neighbor(places, destination, id_column, k)
+  c = 0
+  dist = 0
+  foreach (p = neighbor_df$id_column, d = neighbor_df$distance) %do% {
+    attr <-  attr_df %>% 
+      filter(attr_df[,id_column] == p)
+    attr <-  as.numeric(attr[,attr_column])
+    c = c + attr/d
+    dist = dist + d
+    c = c/dist
+  }
+  return(c)
+}
+
+data <- centraity( "222-222@628-pg9-2hq", modelData.attr, modelPlaces,
+                       id_column="placekey", attr_column="attractiveness", k=3)
 ```
