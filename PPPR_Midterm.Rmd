@@ -569,7 +569,8 @@ In the above data wrangling, we first combine all 11-month pattern data from Saf
 
 ```{r update property and program data with placekey,message = FALSE, warning = FALSE}
 # join filtered safeGraph place with ppr property
-propertyWithPlaceKey <- st_join(property %>% st_buffer(10),parks %>% dplyr::select(placekey, geometry),left=FALSE) %>%
+propertyWithPlaceKey <- st_join(property %>% st_transform(crs=32118),
+                                st_buffer(parks %>% dplyr::select(placekey, geometry) %>% st_transform(crs=32118),10),left=FALSE) %>%
   st_drop_geometry() %>% 
   left_join(property %>% dplyr::select(OBJECTID),by=('OBJECTID'='OBJECTID')) %>% 
   st_sf() %>% 
