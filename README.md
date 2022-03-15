@@ -89,7 +89,7 @@ Huff Model Understanding
 
 The limitation of Current Huff Model
 
-> 1. The original model didn't take temporal and spatial fixed effects into account, therefore we need to change the model. Just like we did in the simple OLS model.
+> 1. The original model didn't take temporal into account, therefore we need to change the model. Just like we did in the simple OLS model.
 > 2. The original model just takes one attractiveness into account, but there should be more.
 
 For our project
