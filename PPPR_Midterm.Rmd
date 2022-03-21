@@ -177,6 +177,9 @@ pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b960
 pprServiceArea <- read_sf(dsn="data/FromPPR/PPR_Service_Areas_2021/PPR_Service_Areas_2021.shp")%>%
   st_transform(crs = crs)
 
+#save as geojson for app
+# st_write(pprServiceArea,"pprServiceArea.GEOJSON")
+
 base_map <- get_map(location = unname(st_bbox(ll(st_buffer(st_union(pprDistrict),5000)))),maptype = "terrian")
 
 ggmap(base_map) + 
@@ -206,6 +209,10 @@ property <- st_join(st_centroid(pprProperties),pprServiceArea,left=TRUE) %>%
   st_transform(crs = crs) %>% 
   dplyr::select(-Shape__Length,-Shape__Area,-Shape_Leng,-Shape_Area) %>% 
   rename('ServiceAreaID' = 'INFO')
+
+#Export to Geojson
+
+#st_write(property,"property.GEOJSON")
 
 ggplot() + 
   geom_sf(data=property,color=palette1_main,fill = palette1_main)+
@@ -293,6 +300,8 @@ Facility_Program <- program2021.join %>%
                            month(AttendanceWeekDate)==11 ~ "Nov",
                            month(AttendanceWeekDate)==12 ~ "Dec")) %>% 
   distinct(.keep_all = FALSE)
+# Facility_Program to Geoson
+#st_write(Facility_Program,"Facility_Program.GEOJSON")
 
 Facility_Program_otherDistricts <- program2021.otherDIstrict %>%
   select(Facility,ActvityTypeCategory,ActivityType,
@@ -316,6 +325,12 @@ Facility_Program_otherDistricts <- program2021.otherDIstrict %>%
 # Aggregate weekly visites
 WeekVisit <- aggregate(
   RegisteredIndividualsCount ~ AttendanceWeekDate + ActvityTypeCategory + PPR_DISTRICT, data = Facility_Program, FUN = sum)
+
+# save permit2021.join to geojson
+#st_write(permit2021.join,"permit2021.join.GEOJSON")
+
+# save program2021.join to geojson
+#st_write(program2021.join,"program2021.join.GEOJSON")
 ```
 
 Through the data wrangling above, we obtain information like the duration of the events, the attendance of the events etc., recorded by the PPR. Furthermore, we linked program and permit datasets to their based properties and their Program Service Area (which is shown in the following map).
@@ -355,7 +370,7 @@ ggplot()+
 ```{r SA7_Events,fig.height = 4,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.3 Categories of Events in District7'}
 plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
-  scale_fill_manual(values = palette5)+
+  scale_fill_manual(values = palette5)+ 
   labs(y = "Program Frequency", fill="Category", title = "")+
   plotTheme()+
   theme(legend.position = "bottom",
@@ -388,6 +403,9 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
        x = "Week of the Year",
        y = "Visitor Counts")+
   plotTheme()
+
+# save WeekVisit to geojson
+#st_write(WeekVisit,"WeekVisit.GEOJSON")
 ```
 
 In the Figure 2.2.4, we can see that **Athletic** activities were hold from **March to November** while **cultural** and **after school** activities mostly took place in **fall**.
@@ -858,9 +876,9 @@ pairs(visitIntegrated %>%
 Taking results of cluster analysis, most locations, **1094** out of 1117, belong to **cluster 3** with **reliable** data. According to Figure3.1.1, **Cluster 2** includes **14** places with extremely **more night visits and long visits** that are more than 2 hours. **Cluster 1** consists of **9** locations with **many transitory visits** that are less than 10 minutes.
 
 ```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.1.2 Cluster Plot with Main Component'}
-x <- clusplot(visitIntegrated.scale, 
-         cluster1$cluster, color=TRUE, shade=TRUE, main = "",
-         labels=5, lines=0, stand=TRUE, col.txt=palette5[1:3], col.clus=palette5[1:3], col.p=palette5[5])
+# x <- clusplot(visitIntegrated.scale, 
+#          cluster1$cluster, color=TRUE, shade=TRUE, main = "",
+#          labels=5, lines=0, stand=TRUE, col.txt=palette5[1:3], col.clus=palette5[1:3], col.p=palette5[5])
 ```
 
 We can visualize these clusters more simply with the help of principal component analysis (Figure3.1.2 ). It can be seen that cluster 3, normal data, has a large number and is concentrated, while the problematic clusters 2 and 3 have a smaller number and a larger distribution range.
