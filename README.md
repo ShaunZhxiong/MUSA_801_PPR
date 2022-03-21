@@ -98,3 +98,9 @@ For our project
 > 2. We can calculate the market area using huff model based on the assumption that (Attractiveness always have positive or negative relationships with # of visits). And then compare the huff model market area with service area to see the conflict zones.
 > 3. If the assumptions are correct then the outliers in the K-Means should have the biggest conflict zones. So we can according to the difference to draw the specific suggestions.
 > 4. Because our data is just for 2021, and we include the temporal term"Month", so we can not test the model. (if we do not include spatial fixed effect, then we can do the validation)
+
+#### Week10
+
+Distance Matrix
+
+Options to build Attractiveness Matrix

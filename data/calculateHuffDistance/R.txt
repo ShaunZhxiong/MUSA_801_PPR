@@ -1,0 +1,13 @@
+docker run -t -v "%cd%:/data" osrm/osrm-backend osrm-partition /data/us-northeast-latest.osrm
+
+wget http://download.geofabrik.de/north-america/us/pennsylvania-latest.osm.pbf
+
+docker run -t -v "%cd%:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /data/pennsylvania-latest.osm.pbf
+
+docker run -t -v "%cd%:/data" osrm/osrm-backend osrm-partition /data/pennsylvania-latest.osrm
+docker run -t -v "%cd%:/data" osrm/osrm-backend osrm-customize /data/pennsylvania-latest.osrm
+
+docker run -t -i -p 5000:5000 -v "%cd%:/data" osrm/osrm-backend osrm-routed --algorithm mld /data/pennsylvania-latest.osrm
+
+
+curl "http://127.0.0.1:5000/route/v1/driving/39.981,-75.178;39.955,-75.167?steps=true"

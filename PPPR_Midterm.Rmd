@@ -580,11 +580,25 @@ propertyWithPlaceKey <- st_join(property %>% st_transform(crs=32118),
 program2021.joinWithPlaceKey <- 
   st_join(program2021.join %>%
             st_sf() %>% 
-            st_transform(crs=crs) %>%
+            st_transform(crs=32118) %>%
             st_buffer(10),
-          parks %>% dplyr::select(placekey, geometry),left=FALSE) %>%
+          parks %>% st_transform(crs=32118) %>% dplyr::select(placekey, geometry),left=FALSE) %>%
   st_drop_geometry() %>%  
   merge.data.frame(program2021.join %>%
+                     dplyr::select(geometry),
+                   by='row.names')%>%
+  dplyr::select(-Row.names) %>% 
+  st_sf() %>% 
+  st_transform(crs=crs)
+
+permit2021.joinWithPlaceKey <- 
+  st_join(permit2021.join %>%
+            st_sf() %>% 
+            st_transform(crs=32118) %>%
+            st_buffer(10),
+          parks %>% st_transform(crs=32118) %>% dplyr::select(placekey, geometry),left=FALSE) %>%
+  st_drop_geometry() %>%  
+  merge.data.frame(permit2021.join %>%
                      dplyr::select(geometry),
                    by='row.names')%>%
   dplyr::select(-Row.names) %>% 
