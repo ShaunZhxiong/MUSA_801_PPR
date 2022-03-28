@@ -191,3 +191,23 @@ attractivenssData <- attractivenssData %>% mutate(acativityCapacity = programCap
 # # the number of surrounding business (Types) with 1 km
 # attractivenssData <- attractivenssData %>% mutate(surroundBusiness = NA)
 
+# st_write(attractivenssData,"data/output/attractivenssDataOutput.GEOJSON")
+attractivenssDataOutput <- st_read("data/output/attractivenssDataOutput.GEOJSON")
+
+attractivenssDataOutput %>%
+  st_drop_geometry() %>%
+  pivot_longer(!c(placekey,location_name), names_to = "attractivenessCatog", values_to = "value") %>% 
+  filter(value != 0) %>% 
+  left_join(attracGEO,by="placekey") %>% 
+  st_sf() %>% 
+  st_transform(crs=crs) %>% 
+  ggplot()+
+  geom_sf(data=pprServiceArea,color='black',size=0.25,fill= "transparent")+
+  geom_sf(data=pprDistrict,color='black',size=0.35,fill='transparent')+
+  geom_sf(size = 0.5,color=palette1_main)+
+  facet_wrap(~attractivenessCatog, ncol = 3)+
+  plotTheme(5,5)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.text = element_text( size=5),
+        axis.text = element_text( size=5),
+        strip.text.x = element_text( size = 5))

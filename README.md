@@ -104,3 +104,5 @@ For our project
 Distance Matrix
 
 Options to build Attractiveness Matrix
+
+![image-20220321213645366](https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/img/image-20220321213645366.png)
