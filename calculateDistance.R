@@ -55,11 +55,7 @@ CensusData2 <- CensusData %>% mutate(bgLat = latCensus)%>% mutate(bgLng = lngCen
 # st_write(CensusData2,"data/output/CensusData2.csv")
 CensusData2 <- st_read("data/output/CensusData2.csv")
 
-
-resultsDistance = gmapsdistance("39.981442+-75.178765", "39.955165+-75.167341", mode="driving", shape="long")
-
 #openstreetmap
-# setwd("D:/")
 options(osrm.server = "http://127.0.0.1:5000/")
 options(digits=8)
 
@@ -81,3 +77,5 @@ theDistanceMatrix2 <- theDistanceMatrix
 daFrame <- as.data.frame(matrix(unlist(theDistanceMatrix2), nrow=length(theDistanceMatrix2), byrow=TRUE))
 #st_write(daFrame,"data/output/theDistanceMatrixWhole.csv")
 theDistanceMatrixWhole <- st_read("data/output/theDistanceMatrixWhole.csv")
+theDistanceMatrixWhole <- setNames(theDistanceMatrixWhole, modelPlaces2$placekey)
+theDistanceMatrixWhole <- merge(theDistanceMatrixWhole, CensusData2 %>% dplyr::select(GEOID), by = "row.names") %>% dplyr::select(-Row.names)

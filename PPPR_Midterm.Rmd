@@ -1719,6 +1719,7 @@ modelData <- left_join(originCount_11m,
 modelData.attr <- modelData %>% 
   group_by(placekey) %>% 
   summarize(attractiveness = mean(ACREAGE))
+# should be replaced by calculateAttractiveness.R
 
 # calculate probability 
 modelData.prob <- modelData %>% 
@@ -1732,6 +1733,7 @@ modelData.prob <- modelData %>%
 modelData.dis <- modelData %>% 
   dplyr::select(-ACREAGE) %>% 
   mutate(distance = sample(1:50, size=nrow(modelData), replace = T))
+# should be replaced by calculateDistance.R
 
 # obtain places stdf
 modelPlaces_list <- unique(modelData$placekey)

@@ -95,10 +95,11 @@ pprHydrationStations <- st_read('https://opendata.arcgis.com/datasets/cc35dc9818
 attractivenssData <- attractivenssData %>%left_join(pprHydrationStations, by="placekey")
 attractivenssData$hydrationNum[is.na(attractivenssData$hydrationNum)] <- 0
 
-attractivenssData <- 
-  attractivenssData %>% 
-  mutate(waterNum = spraygroundNum + hydrationNum) %>% 
-  dplyr::select(-spraygroundNum,-hydrationNum)
+# attractivenssData <- 
+#   attractivenssData %>% 
+#   mutate(waterNum = spraygroundNum + hydrationNum) %>% 
+#   dplyr::select(-spraygroundNum,-hydrationNum)
+
 # Tennis Court
 pprTennisCourt <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_tennis_courts&filename=ppr_tennis_courts&format=geojson&skipfields=cartodb_id')%>%
   st_transform(crs=32118) %>% 
@@ -125,10 +126,11 @@ pprPlaygrounds <- st_read('https://opendata.arcgis.com/datasets/899c807e20524427
 attractivenssData <- attractivenssData %>%left_join(pprPlaygrounds, by="placekey")
 attractivenssData$playgroundNum[is.na(attractivenssData$playgroundNum)] <- 0
 
-attractivenssData <- 
-  attractivenssData %>%
-  mutate(totalExerciseNum = exerciseNum + swimmingPoolNum + playgroundNum + tennisCourtNum) %>% 
-  dplyr::select(-exerciseNum,-swimmingPoolNum,-playgroundNum, -tennisCourtNum)
+# attractivenssData <- 
+#   attractivenssData %>%
+#   mutate(totalExerciseNum = exerciseNum + swimmingPoolNum + playgroundNum + tennisCourtNum) %>% 
+#   dplyr::select(-exerciseNum,-swimmingPoolNum,-playgroundNum, -tennisCourtNum)
+
 # Tree Area
 query <- paste("SELECT objectid, avg_height, shape_area",
                "FROM ppr_tree_canopy_outlines_2015",
@@ -165,12 +167,9 @@ attractivenssData <-
               st_drop_geometry(),by="placekey")
 attractivenssData$programNum[is.na(attractivenssData$programNum)] <- 0
 attractivenssData$permitNum[is.na(attractivenssData$permitNum)] <- 0
-attractivenssData <- attractivenssData %>% mutate(totalActivityNum = programNum + permitNum)
+# attractivenssData <- attractivenssData %>% mutate(totalActivityNum = programNum + permitNum)
 
-hist(attractivenssData$totalActivityNum,breaks=100)
-table(permit2021.joinWithPlaceKey$ExpectedGroupSizeMin)
 # the total audience capacity
-attractivenssData <- attractivenssData %>% mutate(acativityCapacity = NA)
 attractivenssData <- 
   attractivenssData %>% 
   left_join(program2021.joinWithPlaceKey %>% 
@@ -183,13 +182,11 @@ attractivenssData <-
               st_drop_geometry(),by="placekey")
 attractivenssData$programCap[is.na(attractivenssData$programCap)] <- 0
 attractivenssData$permitCap[is.na(attractivenssData$permitCap)] <- 0
-attractivenssData <- attractivenssData %>% mutate(acativityCapacity = programCap + permitCap)
+# attractivenssData <- attractivenssData %>% mutate(acativityCapacity = programCap + permitCap)
 
 # hist(attractivenssData$totalActivityNum,breaks=100)
 # table(permit2021.joinWithPlaceKey$ExpectedGroupSizeMin)
-# 
-# # the number of surrounding business (Types) with 1 km
-# attractivenssData <- attractivenssData %>% mutate(surroundBusiness = NA)
+
 
 # st_write(attractivenssData,"data/output/attractivenssDataOutput.GEOJSON")
 attractivenssDataOutput <- st_read("data/output/attractivenssDataOutput.GEOJSON")
@@ -211,3 +208,49 @@ attractivenssDataOutput %>%
         strip.text = element_text( size=5),
         axis.text = element_text( size=5),
         strip.text.x = element_text( size = 5))
+
+#------------------------------------------- The following is to construct proper parameters to represent the above variables through PCA
+
+# filter to get district 7,8,9
+attracGEO789 <- 
+  st_join(attractivenssDataOutput, 
+          pprDistrict %>% filter(DISTRICTID %in% c(7,8,9)) %>% dplyr::select(DISTRICTID),
+          left=TRUE) %>% 
+  filter(!is.na(DISTRICTID))
+                        
+# correlation matric among predictors to see if some of them are highly correlated
+attracGEO789.cor = cor(attracGEO789 %>% dplyr::select(-placekey,-location_name, -DISTRICTID) %>% st_drop_geometry())
+library(corrplot)
+corrplot(attracGEO789.cor,method="number", tl.cex = 0.25, type = "upper")
+
+# apply pca
+attracGEO789VISIT <- st_read("data/output/sumVisit.GEOJSON") %>% 
+  st_drop_geometry() %>% 
+  inner_join(attracGEO789 ,by="placekey")
+
+pcaDF <- attracGEO789VISIT %>% dplyr::select(-visits,-placekey,-location_name, -DISTRICTID, -geometry)
+pca = prcomp(pcaDF, center = TRUE, scale. = TRUE)  
+names(pca)
+
+# decide the number of components
+components = 1:ncol(pcaDF)
+plot(pca$sdev ~ components, ylab = "PCA Standard Deviation", xlab = "Component", pch = 19, type = "b")
+abline(v = 5, col = "red")
+
+pca$rotation <- -1*pca$rotation
+pca$x <- -1*pca$x
+
+corrplot(t(pca$rotation[,1:5]), is.corr=FALSE)
+# PC1: self-condition
+# PC2: official attention
+# PC3: residents' vibrancy
+# PC4: outdoor characters
+# PC5: accessibility
+
+# construct attractiveness matrix
+returnValue <- as.data.frame(pca$x)
+selectedPCA <- returnValue %>% dplyr::select(PC1,PC2,PC3,PC4,PC5)
+selectedPCA <- cbind(selectedPCA, attracGEO789 %>% dplyr::select(placekey,location_name)) %>% st_sf()
+
+# st_write(selectedPCA,"data/output/attractiveness789Final.GEOJSON")
+selectedPCA <- st_read("data/output/attractiveness789Final.GEOJSON")
