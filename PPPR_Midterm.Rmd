@@ -1695,53 +1695,20 @@ In the next stage, we will focus on **creating the Huff model in District 7,8,9*
 
 ### 6 Huff Model with Neighbor Effect
 
-```{r Wrangle sg and property data for model}
-# this wranglling result is just for model building, not for real usage
-
-# aggregate originCount for the whole 11 month
-originCount_11m <- originCount %>% 
-  st_drop_geometry() %>% 
-  group_by(placekey, origin) %>% 
-  summarise(visitors = sum(visitors)) %>% 
-  ungroup() 
-
-#When matching the placekey positions to PPR positions, some placekey  will spatial join to more than one PPR position. Here I filtered the join results into unnested PPR sites (However, in the real usage, nested sites should be a better choice)
-modelData <- left_join(originCount_11m, 
-                       propertyWithPlaceKey %>% 
-                         st_drop_geometry() %>% 
-                         filter(NESTED == "N") %>%
-                         dplyr::select(placekey, ACREAGE),
-                       by="placekey") %>% 
-  drop_na() %>% 
-  rename(c("attr" = "ACREAGE"))
-
-# calculate probability 
-modelData.prob <- modelData %>% 
-  group_by(origin) %>% 
-  summarise(total = sum(visitors)) %>% 
-  right_join(modelData, by="origin") %>% 
-  mutate(probability = visitors/total) %>% 
-  dplyr::select(placekey, origin, probability)
-
-modelData <- left_join(modelData, modelData.prob,
-                       by=c("placekey", "origin"))
-
-# generate dummy distance
-modelData <- modelData %>% 
-  mutate(distance = sample(1:50, size=nrow(modelData), replace = T))
-# should be replaced by calculateDistance.R
-
-# obtain places stdf
-modelPlaces_list <- unique(modelData$placekey)
-
-modelPlaces <- parks %>% 
-  filter(placekey %in% modelPlaces_list) %>% 
-  drop_na()
-
-```
 
 ```{r huff model fit parameter}
+modelPlaces <- st_read("data/output/modelPlaces.GeoJSON")
 
-parameter <- fit_parameter(data = modelData, places=modelPlaces, id_column="placekey", attr_column="attr", distance_column="distance", probability_column="probability",origin_column = "origin", k=3)
+parameter <- fit_parameter(data = modelData %>% filter(placekey!="zzw-222@628-pj6-9pv"), 
+                           places = modelPlaces, 
+                           neighbor_data = modelPlaces,
+                           neighbor_id_column="placekey", 
+                           neighbor_attr_column ="attr",
+                           id_column="placekey", 
+                           attr_column ="attr", 
+                           distance_column="distance", 
+                           probability_column="probability",
+                           origin_column = "origin", 
+                           k=3)
 
 ```

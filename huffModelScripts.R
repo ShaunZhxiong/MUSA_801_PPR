@@ -1,39 +1,49 @@
 library(FNN)
 library(foreach)
+
 ########################################################################################################
-                                                                                                       #
+#
 # destination: a string, indicating the id of the target place                                         #
 # data: a df where observations is the all available combination of origins and destinations           #
-# places: a st dataframe, including all places                                                         # 
+# neighbor_data: a st dataframe, including all places                                                         # 
 # id_column: a string, indicating which column is the id                                               # 
 # attr_column:a string, indicating a column representing attractiveness as a number                    #
 # distance_column,                                                                                     #
 # probability_column,                                                                                  #
 # origin_column                                                                                        #
 # k: a integer, indicating the number of the neighbor                                                  #
-                                                                                                       #
+#
 ########################################################################################################
 
 
 #########################################################################################################################
 #                               Function to find k nearest neighbor and distance for one destination                    #
 #########################################################################################################################
-find_neighbor <- function(places, destination, k){
-  places_n <- places %>% 
+find_neighbor <- function(places, neighbor_data, destination, k, id_column){
+  # rename id column in neighbor_data
+  if (id_column != "id") {
+    neighbor_data <- rename(neighbor_data, c("id"=id_column))
+  }
+  # rename id column in places
+  if (id_column != "id") {
+    places <- rename(places, c("id"=id_column))
+  }
+  
+  neighbor_data_n <- neighbor_data %>% 
     st_drop_geometry()
-  places_matrix <- as.matrix(places %>% 
+  neighbor_data_matrix <- as.matrix(neighbor_data %>% 
                                filter(id != destination) %>% 
                                st_coordinates())
   detination_matrix <- as.matrix(places %>% 
                                    filter(id == destination) %>% 
                                    st_coordinates())
-  fit <- get.knnx(places_matrix, detination_matrix, k)
+  fit <- get.knnx(neighbor_data_matrix, detination_matrix, k)
   rank_matrix <- fit$nn.index
   dist_matrix <- fit$nn.dist
-  result = data.frame(id=c(), distance=c())
+  result <-  data.frame(id=c(), distance=c())
   foreach (index = rank_matrix, dist = dist_matrix) %do% {
     result <- rbind(result, 
-                    data.frame(id=places_n[index,'id'],
+                    data.frame(id=neighbor_data_n[index,'id'],
                                distance=dist))
   }
   return(result)
@@ -42,12 +52,35 @@ find_neighbor <- function(places, destination, k){
 #########################################################################################################################
 #                                        Function to calculate centrality for one destination                           #
 #########################################################################################################################
-centrality <- function(destination, data, places, attr_column, k) {
-  neighbor_df = find_neighbor(places, destination, k)
+centrality <- function(destination, data, places, neighbor_data, neighbor_attr_column, id_column, attr_column, k) {
+  # rename id column in neighbor_data
+  if (id_column != "id") {
+    neighbor_data <- rename(neighbor_data, c("id"=id_column))
+  }
+  # rename id column in data
+  if (id_column != "id") {
+    data <- rename(data, c("id"=id_column))
+  }
+  # rename id column in places
+  if (id_column != "id") {
+    places <- rename(places, c("id"=id_column))
+  }
+  
+  # rename attractiveness column
+  if (attr_column != "attr") {
+    data <- rename(data, c("attr"=attr_column))
+  }
+  # rename attractiveness column in neighbor_data
+  if (neighbor_attr_column != "attr") {
+    neighbor_data <- rename(neighbor_data, c("attr"=neighbor_attr_column))
+  }
+  
+  neighbor_df = find_neighbor(places, neighbor_data, destination, k, "id")
   c = 0
   dist = 0
   foreach (p = neighbor_df$id, d = neighbor_df$distance) %do% {
-    a <-  data %>% 
+    a <-  neighbor_data %>% 
+      st_drop_geometry() %>% 
       filter(id == p) %>% 
       select(attr) %>% 
       unique() %>% 
@@ -61,12 +94,30 @@ centrality <- function(destination, data, places, attr_column, k) {
 #########################################################################################################################
 #                                    Function to add centrality into the integrated dataframe                          #
 #########################################################################################################################
-centrality_to_df <- function(data, places, id_column, attr_column, k) {
+centrality_to_df <- function(data, places, neighbor_data, neighbor_attr_column, id_column, attr_column, k) {
+  # rename id column in neighbor_data
+  if (id_column != "id") {
+    neighbor_data <- rename(neighbor_data, c("id"=id_column))
+  }
+  # rename id column in data
+  if (id_column != "id") {
+    data <- rename(data, c("id"=id_column))
+  }
+  # rename id column in places
+  if (id_column != "id") {
+    places <- rename(places, c("id"=id_column))
+  }
+  
+  # rename attractiveness column
+  if (attr_column != "attr") {
+    data <- rename(data, c("attr"=attr_column))
+  }
+  
   # calculate centrality  for each destination
-    # Here not iterate for the whole 'data' but just distinct destinations to save computing time
-  cen_data <- map_dbl(.x=places$id, ~centrality(.x, data, places, attr_column, k)) 
+  # Here not iterate for the whole 'data' but just distinct destinations to save computing time
+  cen_data <- map_dbl(.x=neighbor_data$id, ~centrality(.x, data, places, neighbor_data, neighbor_attr_column, "id", "attr", k)) 
   cen_data <- data.frame(centrality = cen_data) %>% 
-    cbind(places['id']) %>% 
+    cbind(neighbor_data['id']) %>% 
     dplyr::select(-geometry)
   data <- left_join(data, cen_data,by="id")
   return(data)
@@ -75,11 +126,18 @@ centrality_to_df <- function(data, places, id_column, attr_column, k) {
 #########################################################################################################################
 #                                Function to fit the parameters for one destination                                     #
 #########################################################################################################################
-fit_parameter <- function(data, places, id_column, attr_column, distance_column, probability_column,origin_column, k) {
+
+########################################### Check arguments ###########################################################
+fit_parameter <- function(data, places, neighbor_data, neighbor_attr_column, id_column, attr_column, distance_column, probability_column,origin_column, k) {
+  # rename id column in neighbor_data
+  if (id_column != "id") {
+    neighbor_data <- rename(neighbor_data, c("id"=id_column))
+  }
   # rename id column in places
   if (id_column != "id") {
     places <- rename(places, c("id"=id_column))
   }
+  
   # rename attractiveness column
   if (attr_column != "attr") {
     data <- rename(data, c("attr"=attr_column))
@@ -104,8 +162,9 @@ fit_parameter <- function(data, places, id_column, attr_column, distance_column,
       rename(., c("origin"=origin_column))
   }
   
+  ############################################### Functions ############################################################# 
   # calculate and add centrality to data
-  data <- centrality_to_df(data, places, id_column, attr_column, k)
+  data <- centrality_to_df(data, places, neighbor_data, neighbor_attr_column, "id", "attr", k)
   
   # mean over destination
   mean_total <- data %>% 
@@ -150,6 +209,25 @@ fit_parameter <- function(data, places, id_column, attr_column, distance_column,
   return(result)
   # return(fit)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
