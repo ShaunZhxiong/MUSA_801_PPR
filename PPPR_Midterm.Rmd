@@ -1729,6 +1729,7 @@ modelData <- left_join(modelData, modelData.prob,
 # generate dummy distance
 modelData <- modelData %>% 
   mutate(distance = sample(1:50, size=nrow(modelData), replace = T))
+# should be replaced by calculateDistance.R
 
 # obtain places stdf
 modelPlaces_list <- unique(modelData$placekey)
