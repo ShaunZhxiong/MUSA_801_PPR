@@ -194,7 +194,7 @@ ggmap(base_map) +
   mapTheme()
 ```
 
-The city is divided into 10 districts. Each district contains several Program Service Areas. PPR allocates staff members to run programs at facilities and parks within a Program Service Area. Besides macro analyses, this practicum focuses on the Districts 7, 8 and 9 per PPR’s request. These Districts are part of a pilot that begins in spring 2022. In the Figure1.1.1, the areas highlighted by pink lines are the services areas in District 7,8 and 9.
+The city is divided into 10 districts. Each district contains several Program Service Areas. PPR allocates staff members to run programs at facilities and parks within a Program Service Area. Besides macro analyses, this practicum focuses on the Districts 7, 8 and 9 per PPR's request. These Districts are part of a pilot that begins in spring 2022. In the Figure1.1.1, the areas highlighted by pink lines are the services areas in District 7,8 and 9.
 
 #### 1.2 Properties
 
@@ -225,7 +225,7 @@ ggplot() +
   mapTheme()
 ```
 
-Figure 1.2.1 shows the locations of more than 500 PPR property boundaries in Philadelphia. Notably, some larger parks contain several “child” properties, located wholly inside the “parent” property. For example, ‘Wissahickon Valley Park’ includes 16 “child-properties (‘Wissahickon Valley Park’, ‘Wissahickon Environmental Center’, ‘Salvatore Pachella Memorial Field’, ‘David P Montgomery Field’, ‘John F Boyce Memorial Field’, ‘Arrow Field’, ‘Walnut Lane Golf Club’, ‘Samuel F Houston Playground’, ‘Carpenters Woods’, ‘Dodge Tract’, ‘Historic Rittenhouse Town’, ‘Clifford Park’, ‘Blue Bell Park’, ‘Saul High School Farm’, ‘Andorra Natural Area’, and ‘Saylors Grove’).
+Figure 1.2.1 shows the locations of more than 500 PPR property boundaries in Philadelphia. Notably, some larger parks contain several "child" properties, located wholly inside the "parent" property. For example, 'Wissahickon Valley Park' includes 16 "child-properties ('Wissahickon Valley Park', 'Wissahickon Environmental Center', 'Salvatore Pachella Memorial Field', 'David P Montgomery Field', 'John F Boyce Memorial Field', 'Arrow Field', 'Walnut Lane Golf Club', 'Samuel F Houston Playground', 'Carpenters Woods', 'Dodge Tract', 'Historic Rittenhouse Town', 'Clifford Park', 'Blue Bell Park', 'Saul High School Farm', 'Andorra Natural Area', and 'Saylors Grove').
 
 ### 2 Program & Permits Analysis
 
@@ -349,7 +349,6 @@ ggplot()+
 ```
 
 In Figure 2.1.1 above, red legends show the locations of facilities with program schedules while orange legends show the distributions of facilities with permit records. Certain amount of permits covering facilities indicates the demand of self-proposed activities and there is a potential to enrich the programming schedules in those areas. Since no information of attendance is recorded in permit, we only analyze program frequency and visitor counts in the program data in Chapter 2.
-
 
 #### 2.2 District 7,8,9
 
@@ -1713,12 +1712,8 @@ modelData <- left_join(originCount_11m,
                          filter(NESTED == "N") %>%
                          dplyr::select(placekey, ACREAGE),
                        by="placekey") %>% 
-  drop_na()
-
-# choose area as atractiveness
-modelData.attr <- modelData %>% 
-  group_by(placekey) %>% 
-  summarize(attractiveness = mean(ACREAGE))
+  drop_na() %>% 
+  rename(c("attr" = "ACREAGE"))
 
 # calculate probability 
 modelData.prob <- modelData %>% 
@@ -1728,9 +1723,11 @@ modelData.prob <- modelData %>%
   mutate(probability = visitors/total) %>% 
   dplyr::select(placekey, origin, probability)
 
+modelData <- left_join(modelData, modelData.prob,
+                       by=c("placekey", "origin"))
+
 # generate dummy distance
-modelData.dis <- modelData %>% 
-  dplyr::select(-ACREAGE) %>% 
+modelData <- modelData %>% 
   mutate(distance = sample(1:50, size=nrow(modelData), replace = T))
 
 # obtain places stdf
@@ -1742,51 +1739,8 @@ modelPlaces <- parks %>%
 
 ```
 
-```{r huff model script}
-library(FNN)
-library(foreach)
-# destination: a string, indicating the id of the target place
-# attr_df: a df, at least including a column of unique id and a column of attractiveness
-# places: a st dataframe, including all places
-# id_column: a string, indicating which column is the id 
-# attr_column:a string, indicating a column representing attractiveness as a number
-# k: a integer, indicating the nunber of the neighbor
-find_neighbor <- function(places, destination, id_column, k){
-  places_n <- places %>% st_drop_geometry()
-  places_matrix <- as.matrix(places %>% 
-                               filter(places_n[id_column] != destination) %>% 
-                               st_coordinates())
-  detination_matrix <- as.matrix(places %>% 
-                                   filter(places_n[id_column] == destination) %>% 
-                                   st_coordinates())
-  fit <- get.knnx(places_matrix, detination_matrix, k)
-  rank_matrix <- fit$nn.index
-  dist_matrix <- fit$nn.dist
-  result = data.frame(id_column=c(), distance=c())
-  foreach (index = rank_matrix, dist = dist_matrix) %do% {
-    result <- rbind(result, 
-                    data.frame(id_column=places_n[index,id_column],
-                               distance=dist))
-  }
-  return(result)
-}
+```{r huff model fit parameter}
 
+parameter <- fit_parameter(data = modelData, places=modelPlaces, id_column="placekey", attr_column="attr", distance_column="distance", probability_column="probability",origin_column = "origin", k=3)
 
-centraity <- function(destination, attr_df, places, id_column, attr_column, k) {
-  neighbor_df = find_neighbor(places, destination, id_column, k)
-  c = 0
-  dist = 0
-  foreach (p = neighbor_df$id_column, d = neighbor_df$distance) %do% {
-    attr <-  attr_df %>% 
-      filter(attr_df[,id_column] == p)
-    attr <-  as.numeric(attr[,attr_column])
-    c = c + attr/d
-    dist = dist + d
-    c = c/dist
-  }
-  return(c)
-}
-
-data <- centraity( "222-222@628-pg9-2hq", modelData.attr, modelPlaces,
-                       id_column="placekey", attr_column="attractiveness", k=3)
 ```
