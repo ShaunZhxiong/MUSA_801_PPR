@@ -1,11 +1,19 @@
 library(FNN)
 library(foreach)
-# destination: a string, indicating the id of the target place
-# attr_df: a df, at least including a column of unique id and a column of attractiveness
-# places: a st dataframe, including all places
-# id_column: a string, indicating which column is the id 
-# attr_column:a string, indicating a column representing attractiveness as a number
-# k: a integer, indicating the nunber of the neighbor
+########################################################################################################
+                                                                                                       #
+# destination: a string, indicating the id of the target place                                         #
+# data: a df where observations is the all available combination of origins and destinations           #
+# places: a st dataframe, including all places                                                         # 
+# id_column: a string, indicating which column is the id                                               # 
+# attr_column:a string, indicating a column representing attractiveness as a number                    #
+# distance_column,                                                                                     #
+# probability_column,                                                                                  #
+# origin_column                                                                                        #
+# k: a integer, indicating the number of the neighbor                                                  #
+                                                                                                       #
+########################################################################################################
+
 
 #########################################################################################################################
 #                               Function to find k nearest neighbor and distance for one destination                    #
