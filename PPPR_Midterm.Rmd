@@ -2053,7 +2053,7 @@ smallPCAAttTogo <- cbind(SmallPCA, attracGEO789 %>% dplyr::select(placekey)) %>%
 # #openstreetmap
 # st_write(modelPlacesFinal,"modelPlacesFinal.csv")
 # st_write(CensusData2,"CensusData2.csv")
-# modelPlacesFinal <- st_read("modelPlacesFinal.csv")
+modelPlacesFinal <- st_read("data/output/modelPlacesFinal.csv")
 # CensusData2 <- st_read("CensusData2.csv")
 # 
 # #query the distance
