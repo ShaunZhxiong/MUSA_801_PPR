@@ -19,10 +19,10 @@ library(foreach)
 #########################################################################################################################
 #                               Function to find k nearest neighbor and distance for one destination                    #
 #########################################################################################################################
-find_neighbor <- function(places, neighbor_data, destination, k, id_column){
+find_neighbor <- function(places, neighbor_data, neighbor_id_column, destination, k, id_column){
   # rename id column in neighbor_data
-  if (id_column != "id") {
-    neighbor_data <- rename(neighbor_data, c("id"=id_column))
+  if (neighbor_id_column != "id") {
+    neighbor_data <- rename(neighbor_data, c("id"=neighbor_id_column))
   }
   # rename id column in places
   if (id_column != "id") {
@@ -52,10 +52,10 @@ find_neighbor <- function(places, neighbor_data, destination, k, id_column){
 #########################################################################################################################
 #                                        Function to calculate centrality for one destination                           #
 #########################################################################################################################
-centrality <- function(destination, data, places, neighbor_data, neighbor_attr_column, id_column, attr_column, k) {
+centrality <- function(destination, data, places, neighbor_data, neighbor_id_column, neighbor_attr_column, id_column, attr_column, k) {
   # rename id column in neighbor_data
-  if (id_column != "id") {
-    neighbor_data <- rename(neighbor_data, c("id"=id_column))
+  if (neighbor_id_column != "id") {
+    neighbor_data <- rename(neighbor_data, c("id"=neighbor_id_column))
   }
   # rename id column in data
   if (id_column != "id") {
@@ -66,10 +66,6 @@ centrality <- function(destination, data, places, neighbor_data, neighbor_attr_c
     places <- rename(places, c("id"=id_column))
   }
   
-  # rename attractiveness column
-  if (attr_column != "attr") {
-    data <- rename(data, c("attr"=attr_column))
-  }
   # rename attractiveness column in neighbor_data
   if (neighbor_attr_column != "attr") {
     neighbor_data <- rename(neighbor_data, c("attr"=neighbor_attr_column))
@@ -94,10 +90,10 @@ centrality <- function(destination, data, places, neighbor_data, neighbor_attr_c
 #########################################################################################################################
 #                                    Function to add centrality into the integrated dataframe                          #
 #########################################################################################################################
-centrality_to_df <- function(data, places, neighbor_data, neighbor_attr_column, id_column, attr_column, k) {
+centrality_to_df <- function(data, places, neighbor_data, neighbor_id_column, neighbor_attr_column, id_column, k) {
   # rename id column in neighbor_data
-  if (id_column != "id") {
-    neighbor_data <- rename(neighbor_data, c("id"=id_column))
+  if (neighbor_id_column != "id") {
+    neighbor_data <- rename(neighbor_data, c("id"=neighbor_id_column))
   }
   # rename id column in data
   if (id_column != "id") {
@@ -107,11 +103,11 @@ centrality_to_df <- function(data, places, neighbor_data, neighbor_attr_column, 
   if (id_column != "id") {
     places <- rename(places, c("id"=id_column))
   }
-  
-  # rename attractiveness column
-  if (attr_column != "attr") {
-    data <- rename(data, c("attr"=attr_column))
+  # rename attractiveness column in neighbor_data
+  if (neighbor_attr_column != "attr") {
+    neighbor_data <- rename(neighbor_data, c("attr"=neighbor_attr_column))
   }
+  
   
   # calculate centrality  for each destination
   # Here not iterate for the whole 'data' but just distinct destinations to save computing time
@@ -128,10 +124,10 @@ centrality_to_df <- function(data, places, neighbor_data, neighbor_attr_column, 
 #########################################################################################################################
 
 ########################################### Check arguments ###########################################################
-fit_parameter <- function(data, places, neighbor_data, neighbor_attr_column, id_column, attr_column, distance_column, probability_column,origin_column, k) {
+fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neighbor_attr_column, id_column, attr_column, distance_column, probability_column,origin_column, k) {
   # rename id column in neighbor_data
-  if (id_column != "id") {
-    neighbor_data <- rename(neighbor_data, c("id"=id_column))
+  if (neighbor_id_column != "id") {
+    neighbor_data <- rename(neighbor_data, c("id"=neighbor_id_column))
   }
   # rename id column in places
   if (id_column != "id") {
@@ -206,7 +202,7 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_attr_column, id_
     result <- data.frame(origin=unique(fit_data$origin) ,alpha, beta, theta, r2) %>% 
       rbind(result)
   }
-  return(result)
+  return(result, data)
   # return(fit)
 }
 
