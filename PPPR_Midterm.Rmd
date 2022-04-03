@@ -2223,6 +2223,7 @@ rbind(restSurroundEffect %>% mutate(label="restaurant") %>% dplyr::select(-visit
 
 ```{r huff model fit parameter}
 modelPlaces <- st_read("data/output/modelPlaces.GeoJSON")
+modelData <- st_read("data/output/modelData.csv")
 
 parameter <- fit_parameter(data = modelData %>% filter(placekey!="zzw-222@628-pj6-9pv"), 
                            places = modelPlaces, 
