@@ -52,7 +52,7 @@ find_neighbor <- function(places, neighbor_data, neighbor_id_column, destination
 #########################################################################################################################
 #                                        Function to calculate centrality for one destination                           #
 #########################################################################################################################
-centrality <- function(destination, data, places, neighbor_data, neighbor_id_column, neighbor_attr_column, id_column, attr_column, k) {
+centrality <- function(destination, data, places, neighbor_data, neighbor_id_column, neighbor_attr_column, id_column, k) {
   # rename id column in neighbor_data
   if (neighbor_id_column != "id") {
     neighbor_data <- rename(neighbor_data, c("id"=neighbor_id_column))
@@ -71,9 +71,10 @@ centrality <- function(destination, data, places, neighbor_data, neighbor_id_col
     neighbor_data <- rename(neighbor_data, c("attr"=neighbor_attr_column))
   }
   
-  neighbor_df = find_neighbor(places, neighbor_data, destination, k, "id")
+  neighbor_df = find_neighbor(places, neighbor_data, "id", destination, k, "id")
   c = 0
-  dist = 0
+  x = 0
+  y = 0
   foreach (p = neighbor_df$id, d = neighbor_df$distance) %do% {
     a <-  neighbor_data %>% 
       st_drop_geometry() %>% 
@@ -81,10 +82,10 @@ centrality <- function(destination, data, places, neighbor_data, neighbor_id_col
       select(attr) %>% 
       unique() %>% 
       as.numeric()
-    c = c + a/d
-    dist = dist + d
-    c = c/dist
+    x = x + a/d
+    y = y + 1/d
   }
+  c = x/y
   return(c)
 }
 #########################################################################################################################
@@ -111,10 +112,11 @@ centrality_to_df <- function(data, places, neighbor_data, neighbor_id_column, ne
   
   # calculate centrality  for each destination
   # Here not iterate for the whole 'data' but just distinct destinations to save computing time
-  cen_data <- map_dbl(.x=neighbor_data$id, ~centrality(.x, data, places, neighbor_data, neighbor_attr_column, "id", "attr", k)) 
+  cen_data <- map_dbl(.x=places$id, ~centrality(.x, data, places, neighbor_data, "id", "attr", "id", k)) 
   cen_data <- data.frame(centrality = cen_data) %>% 
-    cbind(neighbor_data['id']) %>% 
-    dplyr::select(-geometry)
+    cbind(places %>% 
+            st_drop_geometry() %>% 
+            dplyr::select(id))
   data <- left_join(data, cen_data,by="id")
   return(data)
 }
@@ -128,6 +130,10 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
   # rename id column in neighbor_data
   if (neighbor_id_column != "id") {
     neighbor_data <- rename(neighbor_data, c("id"=neighbor_id_column))
+  }
+  # rename attractiveness column in neighbor_data
+  if (neighbor_attr_column != "attr") {
+    neighbor_data <- rename(neighbor_data, c("attr"=neighbor_attr_column))
   }
   # rename id column in places
   if (id_column != "id") {
@@ -160,7 +166,7 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
   
   ############################################### Functions ############################################################# 
   # calculate and add centrality to data
-  data <- centrality_to_df(data, places, neighbor_data, neighbor_attr_column, "id", "attr", k)
+  data <- centrality_to_df(data, places, neighbor_data, "id", "attr", "id", k)
   
   # mean over destination
   mean_total <- data %>% 
@@ -184,9 +190,12 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
   ###########################################################
   
   # fit parameter for each origin
-  result <- data.frame(origin = c(), alpha = c(),
-                       beta = c(), 
-                       theta = c(), r2 = c())
+  
+  #create result data frame with 0 rows and 5 columns
+  result <- data.frame(matrix(ncol = 5, nrow = 0))
+  #provide column names
+  colnames(result) <- c('origin', 'alpha', 'beta', 'theta', 'r2')
+  
   for (orig_place in unique(new_data$origin)) {
     # filter data into fit data with origin
     fit_data <- new_data %>% 
@@ -199,10 +208,10 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
     theta <- as.numeric(fit$coefficients["x3"])
     # if(!is.na(fit$coefficients["x3"])) {theta_p <- as.numeric(summary(fit)$coefficients["x1",4])}
     r2 <- as.numeric(summary(fit)$r.square)
-    result <- data.frame(origin=unique(fit_data$origin) ,alpha, beta, theta, r2) %>% 
+    result <- data.frame(origin=orig_place ,alpha, beta, theta, r2) %>% 
       rbind(result)
   }
-  return(result, data)
+  return(result)
   # return(fit)
 }
 

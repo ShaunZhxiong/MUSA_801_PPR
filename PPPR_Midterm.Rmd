@@ -2222,14 +2222,38 @@ rbind(restSurroundEffect %>% mutate(label="restaurant") %>% dplyr::select(-visit
 
 
 ```{r huff model fit parameter}
+##### Prepare data
+source("huffModelScripts.R")
+## park geometry
 modelPlaces <- st_read("data/output/modelPlaces.GeoJSON")
-modelData <- st_read("data/output/modelData.csv")
+modelPlaces <- modelPlaces %>% 
+  mutate(attr = sample(1:50, size=nrow(modelPlaces), replace = T))
+## park info
+modelData <- st_read("data/output/modelData.csv") 
+CensusData <-
+  get_acs(geography = "block group",
+          variables = c("B01003_001E"),
+          year=2019, state="PA", county="Philadelphia", geometry=T, output="wide") %>%
+  st_transform(crs=4326) %>%
+  dplyr::select(-NAME,-starts_with('B')) %>%
+  st_centroid() %>%
+  as.data.frame() %>%
+  rename("originGeometry" = "geometry")
+modelData <- modelData %>% 
+  filter(origin %in% as.list(CensusData$GEOID))%>% 
+  mutate(attr = as.numeric(attr),
+         probability = as.numeric(probability),
+         distance = as.numeric(distance))
+## neighbor attr and geometry - Here is convenient stores
+convenientSurroundEffect <- st_read("data/output/convenientSurroundEffect.GeoJSON")
 
+
+### Model Function
 parameter <- fit_parameter(data = modelData %>% filter(placekey!="zzw-222@628-pj6-9pv"), 
                            places = modelPlaces, 
-                           neighbor_data = modelPlaces,
+                           neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey", 
-                           neighbor_attr_column ="attr",
+                           neighbor_attr_column ="visits",
                            id_column="placekey", 
                            attr_column ="attr", 
                            distance_column="distance", 
@@ -2237,4 +2261,25 @@ parameter <- fit_parameter(data = modelData %>% filter(placekey!="zzw-222@628-pj
                            origin_column = "origin", 
                            k=3)
 
+
+
+
+
+
+# x <- centrality(destination="222-222@628-pg9-2hq",
+#                 data = modelData %>% filter(placekey!="zzw-222@628-pj6-9pv"), 
+#                            places = modelPlaces, 
+#                            neighbor_data = modelPlaces,
+#                            neighbor_id_column="placekey", 
+#                            neighbor_attr_column ="attr",
+#                            id_column="placekey", 
+#                            k=3)
+# 
+# x <- centrality_to_df(data = modelData %>% filter(placekey!="zzw-222@628-pj6-9pv"), 
+#                            places = modelPlaces, 
+#                            neighbor_data = modelPlaces,
+#                            neighbor_id_column="placekey", 
+#                            neighbor_attr_column ="attr",
+#                            id_column="placekey", 
+#                            k=3)
 ```
