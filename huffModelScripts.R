@@ -79,7 +79,7 @@ centrality <- function(destination, data, places, neighbor_data, neighbor_id_col
     a <-  neighbor_data %>% 
       st_drop_geometry() %>% 
       filter(id == p) %>% 
-      select(attr) %>% 
+      dplyr::select(attr) %>% 
       unique() %>% 
       as.numeric()
     x = x + a/d
@@ -211,6 +211,11 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
     result <- data.frame(origin=orig_place ,alpha, beta, theta, r2) %>% 
       rbind(result)
   }
+  result <- tibble(result) %>% 
+    nest %>% 
+    rename(parameter=data) %>% 
+    cbind(tibble(data) %>% nest)
+  
   return(result)
   # return(fit)
 }

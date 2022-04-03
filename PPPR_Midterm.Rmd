@@ -2249,7 +2249,7 @@ convenientSurroundEffect <- st_read("data/output/convenientSurroundEffect.GeoJSO
 
 
 ### Model Function
-parameter <- fit_parameter(data = modelData %>% filter(placekey!="zzw-222@628-pj6-9pv"), 
+fit <- fit_parameter(data = modelData %>% filter(placekey!="zzw-222@628-pj6-9pv"), 
                            places = modelPlaces, 
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey", 
@@ -2261,6 +2261,13 @@ parameter <- fit_parameter(data = modelData %>% filter(placekey!="zzw-222@628-pj
                            origin_column = "origin", 
                            k=3)
 
+parameter <- fit %>% 
+  dplyr::select(parameter) %>% 
+  unnest(cols="parameter")
+
+data <- fit %>% 
+  dplyr::select(data) %>% 
+  unnest(cols="data")
 
 
 
