@@ -140,10 +140,6 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
     places <- rename(places, c("id"=id_column))
   }
   
-  # rename attractiveness column
-  if (attr_column != "attr") {
-    data <- rename(data, c("attr"=attr_column))
-  }
   # rename id column in data
   if (id_column != "id") {
     data <- rename(data, c("id"=id_column))
@@ -168,11 +164,19 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
   # calculate and add centrality to data
   data <- centrality_to_df(data, places, neighbor_data, "id", "attr", "id", k)
   
-  # mean over destination
+  # mean of centrality
   mean_total <- data %>% 
-    summarise(attr_m = mean(attr), 
-              centrality_m = mean(centrality))
+    summarise(centrality_m = mean(centrality))
+  # mean of attractiveness
+  foreach (attr=attr_column, i = (1:length(attr_column))) %do% {
+    mean_value <- mean(data[[attr]])
+    mean_part <- data.frame(x = mean_value)
+    colnames(mean_part) <- c(paste0("attr_m_",i))
+    mean_total <- cbind(mean_total, mean_part)
+  }
+
   
+  # mean over origin - distance & probability
   mean_origin <- data %>% 
     group_by(origin) %>% 
     summarise(distance_m = mean(distance),
@@ -180,42 +184,68 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
   
   # join mean df, transform var for fitting
   new_data <- left_join(data, mean_origin, by=c("origin")) %>% 
-    mutate(x1 = log(1+attr/mean_total$attr_m),
-           x2 = log(1+distance/distance_m),
-           x3 = log(1+centrality/mean_total$centrality_m),
-           y = log(1+prob/prob_m)) %>% 
-    dplyr::select(origin, x1, x2, x3, y)
+    mutate(x1 = log(1+distance/distance_m),
+           x2 = log(1+centrality/mean_total$centrality_m),
+           y = log(1+prob/prob_m))
+  
+  col_list <- vector()
+  foreach (attr=attr_column, i = (1:length(attr_column))) %do% {
+    a <- new_data[attr] %>% as.vector()
+    mean_a <- mean_total[paste0("attr_m_",i)] %>% as.numeric()
+    mean_a <- rep(c(mean_a),each=nrow(a))
+    value <-  log(1 + a/mean_a)
+    new_data_part <- as.data.frame(value)
+    colnames(new_data_part) <- c(paste0("x",2+i))
+    new_data <- cbind(new_data, new_data_part, deparse.level = 1)
+    col_list <- append(col_list, paste0("x",2+i))
+  }
+  
+  new_data <- new_data %>% 
+    dplyr::select(origin, x1, x2, y, col_list)
   ###########################################################
   #      change into sth like nan_to_num in the future      #
   ###########################################################
-  
+
   # fit parameter for each origin
-  
+
   #create result data frame with 0 rows and 5 columns
-  result <- data.frame(matrix(ncol = 5, nrow = 0))
+  result <- data.frame(matrix(ncol = 4+length(attr_column), nrow = 0))
   #provide column names
-  colnames(result) <- c('origin', 'alpha', 'beta', 'theta', 'r2')
-  
+  result_attr_cols <- vector()
+  for (i in (1:length(attr_column))) {
+    result_attr_cols <- append(result_attr_cols, paste0("alpha",i))
+  }
+  colnames(result) <- c('origin', 'beta', 'theta', 'r2', result_attr_cols)
+
   for (orig_place in unique(new_data$origin)) {
     # filter data into fit data with origin
-    fit_data <- new_data %>% 
-      filter(origin == orig_place) 
+    fit_data <- new_data %>%
+      filter(origin == orig_place)
     fit <- lm(y ~ ., data=fit_data %>% dplyr::select(-origin))
-    alpha <-  as.numeric(fit$coefficients["x1"])
+
+    alpha <- data.frame(matrix(ncol = 0, nrow = 1))
+    for (i in (1:length(attr_column))) {
+      alpha_value <- as.numeric(fit$coefficients[paste0("x",2+i)])
+      alpha_part <- data.frame(x = alpha_value)
+      colnames(alpha_part) <- c(paste0("alpha", i))
+      alpha <- cbind(alpha, alpha_part)
+    }
     # if(!is.na(fit$coefficients["x1"])) {alpha_p <- as.numeric(summary(fit)$coefficients["x1",4])}
-    beta <- as.numeric(fit$coefficients["x2"])
+    beta <- as.numeric(fit$coefficients["x1"])
     # if(!is.na(fit$coefficients["x2"])) {beta_p <- as.numeric(summary(fit)$coefficients["x1",4])}
-    theta <- as.numeric(fit$coefficients["x3"])
+    theta <- as.numeric(fit$coefficients["x2"])
     # if(!is.na(fit$coefficients["x3"])) {theta_p <- as.numeric(summary(fit)$coefficients["x1",4])}
     r2 <- as.numeric(summary(fit)$r.square)
-    result <- data.frame(origin=orig_place ,alpha, beta, theta, r2) %>% 
+    result <- data.frame(origin=orig_place, beta, theta, r2) %>%
+      cbind(alpha) %>%
       rbind(result)
   }
-  result <- tibble(result) %>% 
-    nest %>% 
-    rename(parameter=data) %>% 
-    cbind(tibble(data) %>% nest)
-  
+  result <- tibble(result) %>%
+    nest(data = everything()) %>%
+    rename(parameter=data) %>%
+    cbind(tibble(data) %>%
+          nest(data = everything()))
+
   return(result)
   # return(fit)
 }
