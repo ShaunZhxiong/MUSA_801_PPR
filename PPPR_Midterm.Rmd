@@ -107,7 +107,7 @@ census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
 
 root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
 source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
-source("huffModelScripts.R")
+
 plotTheme <- function(base_size = 9, title_size = 10){
   theme(
     text = element_text( color = "black"),
@@ -2226,6 +2226,8 @@ rbind(restSurroundEffect %>% mutate(label="restaurant") %>% dplyr::select(-visit
 ```{r huff model fit parameter}
 ##### Prepare data
 source("huffModelScripts.R")
+################# for Shaun ##############
+#source("huffModelScripts2.R")
 
 ## park info
 RealModelData <- st_read("data/output/RealModelData.csv") %>% 
