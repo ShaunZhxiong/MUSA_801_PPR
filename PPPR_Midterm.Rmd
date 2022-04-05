@@ -2115,6 +2115,7 @@ huffWithSmallAttract <-
   huffData %>% 
   left_join(smallPCAAttTogo %>% st_drop_geometry(),by="placekey") %>% 
   drop_na()
+# st_write(huffWithSmallAttract, "data/output/RealModelData.csv")
 ```
 
 
@@ -2275,7 +2276,6 @@ parameter <- fit %>%
 
 data <- fit %>% 
   dplyr::select(data) %>% 
-  unnest(cols="data")
 
 
 
