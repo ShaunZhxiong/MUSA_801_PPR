@@ -232,10 +232,10 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
       colnames(alpha_part) <- c(paste0("alpha", i))
       alpha <- cbind(alpha, alpha_part)
       
-      alpha_p_value <- as.numeric(summary(fit)$coefficients[paste0("x",2+i),4])
-      alpha_p_part <- data.frame(x = alpha_p_value)
-      colnames(alpha_p_part) <- c(paste0("alpha_p", i))
-      alpha_p <- cbind(alpha_p, alpha_p_part)
+      # alpha_p_value <- as.numeric(summary(fit)$coefficients[paste0("x",2+i),4])
+      # alpha_p_part <- data.frame(x = alpha_p_value)
+      # colnames(alpha_p_part) <- c(paste0("alpha_p", i))
+      # alpha_p <- cbind(alpha_p, alpha_p_part)
     }
     beta <- as.numeric(fit$coefficients["x1"])
     if(!is.na(fit$coefficients["x1"])) {beta_p <- as.numeric(summary(fit)$coefficients["x1",4])}
