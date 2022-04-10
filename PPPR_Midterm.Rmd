@@ -1,6 +1,8 @@
 ---
 title: "PPR-Midterm"
-author: "Shaun Zheng, Lan Xiao, Tian Hui, Jeff Stern"
+author: "Shaun Zheng, Lan Xiao, Hui Tian, Jeff Stern"
+header-includes:
+  - \usepackage[font={large,it}, labelfont={bf}]{caption}
 output:
   html_document: 
     toc: yes
@@ -172,7 +174,7 @@ palette1_assist <- '#F9B294'
 
 #### 1.1 District & Service Area
 
-```{r openData_pprDistrictAndServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure1.1.1. Locations of PPR Districts and Service Areas'}
+```{r openData_pprDistrictAndServiceArea,fig.height = 10,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure1.1.1. Locations of PPR Districts and Service Areas'}
 
 pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
   st_transform(crs)
@@ -184,6 +186,7 @@ pprServiceArea <- read_sf(dsn="data/FromPPR/PPR_Service_Areas_2021/PPR_Service_A
 # st_write(pprServiceArea,"pprServiceArea.GEOJSON")
 
 base_map <- get_map(location = unname(st_bbox(ll(st_buffer(st_union(pprDistrict),5000)))),maptype = "terrian")
+
 
 ggmap(base_map) + 
   geom_sf(data=ll(st_union(pprDistrict)),color="black",size=1,fill = "transparent",inherit.aes = FALSE)+
@@ -201,7 +204,7 @@ The city is divided into 10 districts. Each district contains several Program Se
 
 #### 1.2 Properties
 
-```{r openData_pprProperty,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure1.2.1 Locations of PPR Properties'}
+```{r openData_pprProperty,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure1.2.1 Locations of PPR Properties'}
 pprProperties <- st_read('https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson')%>%
   st_transform(crs)
 
@@ -338,7 +341,7 @@ WeekVisit <- aggregate(
 
 Through the data wrangling above, we obtain information like the duration of the events, the attendance of the events etc., recorded by the PPR. Furthermore, we linked program and permit datasets to their based properties and their Program Service Area (which is shown in the following map).
 
-```{r programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure2.1.1 Facilities w/ Programmed (red) & Permited (orange) Activities in Disdrict 7,8 & 9'}
+```{r programNpermit,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.1.1 Facilities w/ Programmed (red) & Permited (orange) Activities in Disdrict 7,8 & 9'}
 
 ggplot()+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.25,linetype ="dashed", fill= "transparent")+
@@ -359,7 +362,7 @@ In Figure 2.1.1 above, red legends show the locations of facilities with program
 
 There are three facilities with programs scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. Orange legends of facilities with permit are not discussed in Chapter 2.
 
-```{r SA7_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.2 Facilities w/ Programed (red) & Permitted (orange) Activities in District 7'}
+```{r SA7_programNpermit,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.2 Facilities w/ Programed (red) & Permitted (orange) Activities in District 7'}
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==7),color="black",linetype ="dashed",size=1,fill = "transparent")+
@@ -369,15 +372,15 @@ ggplot()+
   mapTheme()
 ```
 
-```{r SA7_Events,fig.height = 4,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.3 Categories of Events in District7'}
+```{r SA7_Events,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.3 Categories of Events in District7'}
 plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette5)+ 
   labs(y = "Program Frequency", fill="Category", title = "")+
   plotTheme()+
   theme(legend.position = "bottom",
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.text = element_text( colour = "black", face = "italic", size = 4))
+        axis.text.x = element_text(angle = 45, hjust = 1,size = 8),
+        legend.text = element_text( colour = "black", face = "italic", size = 8))
 
 plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) + 
   geom_bar(aes(x= Facility, fill = ActivityType),position="stack")+
@@ -385,15 +388,15 @@ plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
   labs(y = "Program Frequency", fill="sub-Category", title = "")+ 
   plotTheme()+
   theme(legend.position = "bottom",
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.text = element_text( colour = "black", face = "italic", size = 4))
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        legend.text = element_text( colour = "black", face = "italic", size = 8))
 
 grid.arrange(plot1, plot2,ncol=2,top = "")
 ```
 
 In Figure 2.2.3, we can see that **Marian Anderson Recreation Center** held more activities in the **athletic** category, like soccer and baseball. **The other two** facilities hold more **cultural** activities, like art and music.
 
-```{r SA7_Events 2,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.4 Visitor Counts by Week and Activity Categories in District 7'}
+```{r SA7_Events 2,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.4 Visitor Counts by Week and Activity Categories in District 7'}
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
   geom_line(size=0.5,aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory)) +
   geom_point(aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory, size = RegisteredIndividualsCount)) +
@@ -404,7 +407,10 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
        size="Visitor Counts",
        x = "Week of the Year",
        y = "Visitor Counts")+
-  plotTheme()
+  plotTheme()+
+    theme(axis.text.x = element_text( hjust = 1, size = 8),
+        axis.text.y = element_text( hjust = 1, size = 8),
+        legend.text = element_text( colour = "black", size = 8))
 
 # save WeekVisit to geojson
 #st_write(WeekVisit,"WeekVisit.GEOJSON")
@@ -416,7 +422,7 @@ In the Figure 2.2.4, we can see that **Athletic** activities were hold from **Ma
 
 There are five facilities with programs scheduled in District 8: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center. Orange legends of facilities with permits are not discussed in Chapter 2.
 
-```{r SA8_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.5 Facilities w/ Programed (red) & Permitted (orange) Activities in District 8'}
+```{r SA8_programNpermit,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.5 Facilities w/ Programed (red) & Permitted (orange) Activities in District 8'}
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==8),color="black",linetype ="dashed",size=1,fill = "transparent")+
@@ -426,31 +432,31 @@ ggplot()+
   mapTheme()
 ```
 
-```{r SA8_Events,fig.height = 4,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.6 Categories of Events in District8'}
+```{r SA8_Events,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.2.6 Categories of Events in District8'}
 plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette5)+
   labs(y = "Program Frequency", fill="Category", title = "")+
   plotTheme()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
-        legend.text = element_text( colour = "black", face = "italic", size = 4))
+        legend.text = element_text( colour = "black", face = "italic", size = 8))
 
 plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) + 
   geom_bar(aes(x= Facility, fill = ActivityType),position="stack")+
   scale_fill_manual(values = palette9)+
   labs(y = "Program Frequency", fill="sub-Category", title = "")+ 
   plotTheme()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
-        legend.text = element_text( colour = "black", face = "italic", size = 4))
+        legend.text = element_text( colour = "black", face = "italic", size = 8))
 
 grid.arrange(plot1, plot2,ncol=2,top = "")
 ```
 
 In Figure 2.2.6 we can see that **Laura Sims Skate House** held hockey and **ice skating** activities, while **Morris Recreation Center** hosted more **cultural** activities like dance as well as **athletic** activities of gymnastics, tumbling and basketball.
 
-```{r SA8_Events 2,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.7 Visitor Counts by Week and Activity Categories in District 8'}
+```{r SA8_Events 2,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.7 Visitor Counts by Week and Activity Categories in District 8'}
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
   geom_point(aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory, size = RegisteredIndividualsCount)) +
   geom_line(size=0.5,aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory)) +
@@ -461,7 +467,10 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
        size="Visitor Counts",
        x = "Week of the Year",
        y = "Visitor Counts")+
-  plotTheme()
+  plotTheme()+
+  theme(axis.text.x = element_text( hjust = 1, size = 8),
+        axis.text.y = element_text( hjust = 1, size = 8),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 In Figure 2.2.7 we can see that **Hockey and ice skating** activities take place in **fall, winter and spring**, while **cultural and after school** activities are mainly held in **fall**.
@@ -470,7 +479,7 @@ In Figure 2.2.7 we can see that **Hockey and ice skating** activities take place
 
 There are 7 facilities with programs scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. Orange legends of facilities with permit are not discussed in Chapter 2.
 
-```{r SA9_programNpermit,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '60%',fig.align = 'center',fig.cap = 'Figure2.2.8 Facilities w/ Programed (red) & Permitted (orange) Activities in Disdrict 9'}
+```{r SA9_programNpermit,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.8 Facilities w/ Programed (red) & Permitted (orange) Activities in Disdrict 9'}
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==9),color="black",linetype ="dashed",size=1,fill = "transparent")+
@@ -482,17 +491,18 @@ ggplot()+
 
 In Figure 2.2.9 we can see that Athletic activities of basketball and aquatics mostly took place in Barry Playground and Pool and East Passyunk Community Center. Eastwick Regional Playground, and Thomas B. Smith Recreation Center are the two most popular facilities with activities of athletic, after school, cultural, educational, and other categories.
 
-```{r SA9_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.9 Facility & Program Categories in District 9'}
+```{r SA9_Events,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.9 Facility & Program Categories in District 9'}
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette7[2:7])+
   labs(y = "Program Frequency", fill="Category", title = "")+
   plotTheme()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom")
+  theme(axis.text.x = element_text(angle = 45, hjust = 1,size = 8),
+        legend.position = "bottom",
+        legend.text = element_text( colour = "black", face = "italic", size = 8))
 ```
 
-```{r SA9_Events 2,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '65%',fig.align = 'center',fig.cap = 'Figure2.2.10 Visitor Counts by Week and Activity Categories in District 9'}
+```{r SA9_Events 2,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.10 Visitor Counts by Week and Activity Categories in District 9'}
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
   geom_point(aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory, size = RegisteredIndividualsCount)) +
   geom_line(size=0.5,aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory)) +
@@ -503,7 +513,10 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
        size="Visitor Counts",
        x = "Week of the Year",
        y = "Visitor Counts")+
-  plotTheme()
+  plotTheme()+
+    theme(axis.text.x = element_text( hjust = 1, size = 8),
+        axis.text.y = element_text( hjust = 1, size = 8),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 In Figure 2.2.10 indicates that **Athletic** activities took place throughout the **whole year**, while other categories of activities, like older adults and mentoring, were held in the 2nd half of the year. **Cultural** activities, like art, dance, music, **usually suspended in summer.**
@@ -512,15 +525,16 @@ In Figure 2.2.10 indicates that **Athletic** activities took place throughout th
 
 In Figure2.3.1 there are 27 facilities with programs scheduled in other districts of PPR serving areas. We will have further analysis after PPR provide specific sorting information.
 
-```{r SAOthers_Events,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure2.3.1 Facility & Program Categories in other Districts'}
+```{r SAOthers_Events,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '100%',fig.align = 'center',fig.cap = 'Figure2.3.1 Facility & Program Categories in other Districts'}
 
 ggplot(Facility_Program_otherDistricts) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette7)+
   labs(y = "Program Frequency", fill="Program Category", title = "")+
   plotTheme()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom")
+  theme(axis.text.x = element_text(angle = 45, hjust = 1,size = 8),
+        legend.position = "bottom",
+        legend.text = element_text( colour = "black", face = "italic", size = 8))
 ```
 
 ### 3 SafeGraph Data Analysis
@@ -628,7 +642,7 @@ permit2021.joinWithPlaceKey <-
 
 <center>
 
-```{r update property and program data with placekey 2, echo=FALSE, fig.align='center', fig.height=5, message=FALSE, warning=FALSE, out.width='75%'}
+```{r update property and program data with placekey 2, echo=FALSE, fig.align='center', fig.height=8, message=FALSE, warning=FALSE, out.width='100%'}
 propertyWithPlaceKeyJustToPlot = propertyWithPlaceKey %>% distinct(OBJECTID,.keep_all = TRUE)
 mapview(property,layer.name = c("All PPR Facilities"))+mapview(propertyWithPlaceKeyJustToPlot,col.regions = "green",layer.name = c("Sucessfully Joined Facilities"))+mapview(st_centroid(parks),col.regions = "red",layer.name = c("Safegraph Points"))
 ```
@@ -857,12 +871,12 @@ cluster1_mean <- aggregate(visitIntegrated %>%
 
 kable(cluster1_mean,align = 'c',caption = '<center>Table 1. Mean values of clusters for SafeGraph data <center/>') %>%
   kable_classic(full_width = F)%>%
-  kable_styling(position = "center")%>%
+  kable_styling(position = "center", font_size = 8)%>%
   scroll_box(width = "100%", height = "400px")
 
 ```
 
-```{r correlation matrix for cluster1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.1.1 Correlation Matrix of SafeGraph Bias'}
+```{r correlation matrix for cluster1, fig.height = 8,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.1.1 Correlation Matrix of SafeGraph Bias'}
 ## put histograms on the diagonal
 panel.hist <- function(x, ...)
 {
@@ -891,8 +905,8 @@ pairs(visitIntegrated %>%
 
 Taking results of cluster analysis, most locations, **1094** out of 1117, belong to **cluster 3** with **reliable** data. According to Figure3.1.1, **Cluster 2** includes **14** places with extremely **more night visits and long visits** that are more than 2 hours. **Cluster 1** consists of **9** locations with **many transitory visits** that are less than 10 minutes.
 
-```{r clusplot1, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.1.2 Cluster Plot with Main Component'}
-# x <- clusplot(visitIntegrated.scale, 
+```{r clusplot1, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.1.2 Cluster Plot with Main Component'}
+# x <- clusplot(visitIntegrated.scale,
 #          cluster1$cluster, color=TRUE, shade=TRUE, main = "",
 #          labels=5, lines=0, stand=TRUE, col.txt=palette5[1:3], col.clus=palette5[1:3], col.p=palette5[5])
 ```
@@ -1063,7 +1077,7 @@ Through the above complicated analysis and rectification, we finally obtain **mo
 
 ##### Visit Counts in Device Panel
 
-```{r visit Count map,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.1 Map of Visit Counts in Device Panel'}
+```{r visit Count map,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.1 Map of Visit Counts in Device Panel'}
 sumVisit <- visitCount %>%
   dplyr::select(-visitDay,-day,-month) %>% 
   group_by(placekey) %>%
@@ -1077,12 +1091,13 @@ ggplot(sumVisit)+
   mapTheme()+
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
-        legend.key.height  = unit(0.2, 'cm'))
+        legend.key.height  = unit(0.2, 'cm'),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 From the Figure 3.2.1 we can see that people **frequently** visit facilities in the **Center City** where locate dense PPR facilities. For those facilities, **visit counts are small** because citizens dispersed into many facilities. However, the **large visit counts** happen at the **outskirt** of Philadelphia where have less facilities
 
-```{r visit Count distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.2 Map of total device visits'}
+```{r visit Count distribution,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.2 Map of total device visits'}
 sumVisitServiceArea <- pprServiceArea %>%
   st_join(sumVisit,left =TRUE) %>% 
   drop_na(INFO) %>% 
@@ -1100,14 +1115,15 @@ ggplot(sumVisitServiceArea)+
   mapTheme()+
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
-        legend.key.height  = unit(0.2, 'cm'))
+        legend.key.height  = unit(0.2, 'cm'),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 We aggregate the visits into service area level on Figure3.2.2. Overall, service areas in the Center City where locates dense facilities will attract larger visits. Notably, 'Junod Area' service area also has high total device visits which may attribute to the Walton Run Park and the Poquessing Valley Park.
 
 ##### Origins of Visits in Device Panel
 
-```{r origine Count plot, fig.height = 5,message = FALSE, warning = FALSE, results='hide', out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.3 Flow map of parks and origins'}
+```{r origine Count plot, fig.height = 8,message = FALSE, warning = FALSE, results='hide', out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.3 Flow map of parks and origins'}
 CensusData <-
   get_acs(geography = "block group",
           variables = c("B01003_001E"),
@@ -1161,10 +1177,11 @@ ggplot(data = orgCountPlot2) +
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
         legend.key.width = unit(0.5, 'cm'),
-        legend.key.height  = unit(0.2, 'cm'))
+        legend.key.height  = unit(0.2, 'cm'),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
-```{r HF origine Count plot, fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.4 Flow map of parks and origins - routes have more than 5000 device visits in 2021'}
+```{r HF origine Count plot, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.4 Flow map of parks and origins - routes have more than 5000 device visits in 2021'}
 ggplot(data = orgCountPlotHF) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
   geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
@@ -1176,7 +1193,8 @@ ggplot(data = orgCountPlotHF) +
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
         legend.key.width = unit(0.5, 'cm'),
-        legend.key.height  = unit(0.2, 'cm'))
+        legend.key.height  = unit(0.2, 'cm'),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 In the Figure 3.2.3, we plot the **origins/homes of visitors** for each PPR site while we filter routes have more than 5000 device visits in 2021 and plot it in the Figure3.2.4. Then we find interesting result because people from this census block group (421010177011), which are located at the **Kensington Ave**, are more likely to go to PPR facilities compared to the people in other census block group.
@@ -1185,7 +1203,7 @@ One possible cause maybe that special groups have a stronger need for public res
 
 ##### Departure of visits in device panel
 
-```{r deaprture plot, fig.height = 5,message = FALSE, warning = FALSE, results='hide', out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.5 Flow map of parks and departure points'}
+```{r deaprture plot, fig.height = 8,message = FALSE, warning = FALSE, results='hide', out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.5 Flow map of parks and departure points'}
 # depaCountPlot <- departCount %>%
 #   st_drop_geometry() %>%
 #   group_by(departure,placekey) %>%
@@ -1218,10 +1236,11 @@ ggplot(data = depaCountPlot2) +
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
         legend.key.width = unit(0.5, 'cm'),
-        legend.key.height  = unit(0.2, 'cm'))
+        legend.key.height  = unit(0.2, 'cm'),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
-```{r HF deaprture plot,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.6 Flow map of most popular parks and its departure'}
+```{r HF deaprture plot,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.6 Flow map of most popular parks and its departure'}
 
 depaCountPlotMostPopular <- depaCountPlot%>%
   st_drop_geometry() %>% 
@@ -1247,14 +1266,15 @@ ggplot(data = depaCountPlotHF) +
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
         legend.key.width = unit(0.5, 'cm'),
-        legend.key.height  = unit(0.2, 'cm'))
+        legend.key.height  = unit(0.2, 'cm'),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 Figure 3.2.5 and Figure 3.2.6 are the maps of the **departure block group of visitors** for each PPR site. In Figure3.2.6 we can see that the PPR facility has largest visits based on safegraph device panel is the **Charles playgroud**. And people who like to go there are mainly from these three census block groups (421010241001, 421010177011, 421010160005).
 
 ##### Weekday Pattern of Device Panel Visits
 
-```{r temperal pattern by weekday,fig.height = 5,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.2.7 Distribution of weekday pattern by service area level'}
+```{r temperal pattern by weekday,fig.height =8,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.2.7 Distribution of weekday pattern by service area level'}
 VisitWeekdaybyServiceArea <- pprServiceArea %>% 
   st_join(visitWeekday) %>% 
   st_drop_geometry() %>%  
@@ -1274,14 +1294,15 @@ VisitWeekdaybyServiceArea%>%
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         strip.text = element_text( size=5),
         axis.text = element_text( size=5),
-        strip.text.x = element_text( size = 5))
+        strip.text.x = element_text( size = 5),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 In Figure 3.2.7, we group the data by weekday to see their weekday distribution pattern. Apart from their own difference in total visit counts, there are three types of distribution. One is that **similar** total visit counts in device panel occur on every day of a week. The second is that the **peak appears on weekend**. And the third is that the **peak happens during weekdays**.
 
 ##### Hour Pattern of Device Panel Visits
 
-```{r temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.2.8 Distribution of hour pattern by service area level'}
+```{r temperal pattern by hour,fig.height = 8,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.2.8 Distribution of hour pattern by service area level'}
 VisitHourbyServiceArea <- pprServiceArea %>% 
   st_join(visitHour) %>% 
   st_drop_geometry() %>%  
@@ -1296,14 +1317,15 @@ VisitHourbyServiceArea%>%
   labs(x="hour", y="Aggregated Visits in device panel") +
   facet_wrap(~NAME, ncol = 8, scales = "fixed")+
   plotTheme(5,5)+
-  theme(axis.text = element_text( size=5),strip.text = element_text( size=5),strip.text.x = element_text( size = 5))
+  theme(axis.text = element_text( size=5),strip.text = element_text( size=5),strip.text.x = element_text( size = 5),
+  legend.text = element_text( colour = "black", size = 8))
 ```
 
 After the rectification above, we finally obtain the common sensible hour pattern. In the Figure3.2.8, we group the data by hour to see their hour distribution pattern. Apart from their own difference in total visit counts, there are two types of distribution. One is that there is **no obvious hourly pattern** during the day. The other one has obvious **peak time happening at the mid-day**.
 
 ##### Dwelling Time of Device Panel Visits
 
-```{r dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.9 Map of dwelling time'}
+```{r dwell time ,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.9 Map of dwelling time'}
 dwellTimeForPlot <- dwellTime %>% 
   mutate(dwellTimes = recode(dwellTimes,
                              "<5" = 2.5,
@@ -1331,12 +1353,13 @@ ggplot(dwellTimeForPlot)+
   mapTheme()+
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
-        legend.key.height  = unit(0.2, 'cm'))
+        legend.key.height  = unit(0.2, 'cm'),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 In Figure 3.2.9, we calculate the average dwelling time for each facility. From the map, we can find out that the **longest dwelling** time happes at the placekey (223-222\@628-pm9-wkz), the **Independent Square Region**.
 
-```{r dwell time distribution,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.2.10 Map of average dwelling time'}
+```{r dwell time distribution,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.10 Map of average dwelling time'}
 dwellTImePlotServiceArea <- pprServiceArea %>%
   st_join(dwellTimeForPlot,left =TRUE) %>% 
   drop_na(INFO) %>% 
@@ -1353,7 +1376,8 @@ ggplot(dwellTImePlotServiceArea)+
   mapTheme()+
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
-        legend.key.height  = unit(0.2, 'cm'))
+        legend.key.height  = unit(0.2, 'cm'),
+        legend.text = element_text( colour = "black", size = 8))
 ```
 
 If we aggregate them into the service area level, individual facility's characteristics are erased, we can see that **long dwelling** times are more likely to happen at the **residential regions**, which have more higher population densities. And facilities in this area are more likely visited by chance.
@@ -1421,6 +1445,8 @@ sgIntegrated_byMonth.scale <- scale(sgIntegrated_byMonth %>%
 
 set.seed(1234)
 
+#install.packages("factoextra")
+#library(factoextra)
 # decide cluster number (only run once)
 
 # nc <- NbClust(sgIntegrated_byMonth.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
@@ -1458,7 +1484,7 @@ kable(cluster2_mean %>%
         mutate(color=c("pink","orange","blue"),.before = 2) %>% 
         mutate(group=c("supportive","normal","potential"),.before = 2),align = 'c',caption = '<center>Table 3.3 Mean values of clusters for conflicts <center/>') %>%
   kable_classic(full_width = F)%>%
-  kable_styling(position = "center")%>%
+  kable_styling(position = "center", font_size = 8)%>%
   scroll_box(width = "100%", height = "400px")
 ```
 
@@ -1511,7 +1537,7 @@ sgIntegrated_byMonth %>%
   scroll_box(width = "100%", height = "400px")
 ```
 
-```{r spatially distribution of sg bias clusters,fig.height = 5,message = FALSE, warning = FALSE,out.width ='75%',fig.align = 'center',fig.cap = 'Figure3.3.2 Map of Bias Type of SafeGraph Data'}
+```{r spatially distribution of sg bias clusters,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.3.2 Map of Bias Type of SafeGraph Data'}
 
 ggplot() + 
   geom_sf(data=sgIntegrated_byMonth %>%
@@ -1534,13 +1560,13 @@ Thomas B. Smith Recreation Center is a case of these potential center with low d
 
 With a certain number of permits, the visit counts there is as low as 100-300 visits per month (average devices value:426) and the short average dwell time is around one hour.
 
-```{r Thomas B. Smith Recreation Center img, echo=FALSE,fig.height = 1,out.width = '70%',fig.align = 'center'}
+```{r Thomas B. Smith Recreation Center img, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
 knitr::include_graphics("resources/imgaes/Thomas B. Smith Recreation Center combined1.png")
 ```
 
 Much feedback from the Google review represent it is a good location for the community residents to use, but a three-year old kid will get bored in 10 minutes due to the limited equipment in playground. More equipment, renovations, better management and maintenance are needed to improve this facility.
 
-```{r Thomas B. Smith Recreation Center dwell time ,fig.height = 5,message = FALSE, warning = FALSE,out.width ='65%',fig.align = 'center',fig.cap = 'Figure3.3.3 Smith Rec Center Activity with Total'}
+```{r Thomas B. Smith Recreation Center dwell time ,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.3.3 Smith Rec Center Activity with Total'}
 
 Smith <- program2021.join %>% 
   filter(FacilityID == "{13600B8B-AB62-4A39-95CF-5F31C6942010}")
@@ -1561,13 +1587,13 @@ SmithSum %>%
   geom_bar(position ="dodge",stat="identity",fill=palette1_main) +
   labs(y = "Visitor Count", fill=palette1_main, title = " ")+
   plotTheme()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom")
 ```
 
 Records from the PPR shows various types of programs are hold in this place. The multi-purpose interior space with a computer lab, a kitchen and several tables and seats provide services for after school, cultural, and educational activities. There are several sport courts (tennis courts, basketball courts and a football field) surrounded to hold athletic activities.
 
-```{r Thomas B. Smith Recreation Center dwell time2 ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%', fig.align = 'center',fig.cap = 'Figure3.3.4 Dwelling time and time distribution of Smith Rec Center Activity with Total'}
+```{r Thomas B. Smith Recreation Center dwell time2 ,fig.height = 4,message = FALSE, warning = FALSE,out.width ='100%', fig.align = 'center',fig.cap = 'Figure3.3.4 Dwelling time and time distribution of Smith Rec Center Activity with Total'}
 sumVisit <- dwellTime %>% 
   filter(placekey=='zzw-222@628-pm7-rtv') %>% 
   dplyr::select(-month) %>% 
@@ -1582,7 +1608,10 @@ plot1 <- sumVisit%>%
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="Dwell Time", y="Aggregated Visitors",
        title ='') +
-  plotTheme()
+  plotTheme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        legend.position = "bottom",
+        legend.text = element_text( colour = "black", face = "italic", size = 8))
 
 sumVisit <- visitHour %>% 
   filter(placekey=='zzw-222@628-pm7-rtv') %>% 
@@ -1594,9 +1623,12 @@ sumVisit <- visitHour %>%
 plot2 <- sumVisit%>%
   ggplot(aes(hour,visits)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
-  labs(x="hour", y="Aggregated Visits",
+  labs(x="Hour", y="Aggregated Visits",
        title ='') +
-  plotTheme()
+  plotTheme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        legend.position = "bottom",
+        legend.text = element_text( colour = "black", face = "italic", size = 8))
 
 grid.arrange(plot1, plot2,ncol=2,top = "")
 ```
@@ -1626,7 +1658,7 @@ knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined3.png")
 
 The Girard Estate Neighbors Association, a volunteer neighborhood organization, engages residents and plans social, recreational, and educational events. They meet once a month and as needed for each event.
 
-```{r GEP temperal pattern by day ,fig.height = 2.5,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.6 Distribution of Girard Estates Park visits in 2021'}
+```{r GEP temperal pattern by day ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.6 Distribution of Girard Estates Park visits in 2021'}
 
 visitCount %>% 
   filter(placekey=='zzz-222@628-pm9-jn5') %>% 
@@ -1636,17 +1668,19 @@ visitCount %>%
   geom_line(color=palette1_main,size=0.75)+
   labs(title = '',x="Visit Date",y="Safegraph Visit")+
   plotTheme(10,20)+
-  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1),
+        axis.text.x = element_text(size = 8))
+
 
 ```
 
 The three peaks of visits in Figure3.3.6 above may respond to events for celebrating major festivals, like Easter Egg Hunt, Halloween and Christmas carriage rides. The spring, summer and fall children concerts also take place in May, June and September. Compared to limited PPR program/ permit records, Safegraph data can reflect better using conditions of high visits in the park.
 
-```{r GEP img3, echo=FALSE,fig.height = 1,out.width = '70%',fig.align = 'center'}
+```{r GEP img3, echo=FALSE,fig.height = 3,out.width = '80%',fig.align = 'center'}
 knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined.png"))
 ```
 
-```{r GEP temperal pattern by hour,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.7 Temperal Vistis Pattern By Hour & Vistis Dwelling Time'}
+```{r GEP temperal pattern by hour,fig.height = 8,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.7 Temperal Vistis Pattern By Hour & Vistis Dwelling Time'}
 sumVisit <- visitHour %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
@@ -1656,9 +1690,10 @@ sumVisit <- visitHour %>%
 
 plot1 <- ggplot(data=sumVisit, aes(hour,visits)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
-  labs(x="hour", y="Aggregated Visits",
+  labs(x="Hour", y="Aggregated Visits",
        title ='') +
-  plotTheme()
+  plotTheme()+
+  theme(axis.text.x = element_text(size = 8))
 
 sumVisit3 <- dwellTime %>% 
   filter(placekey=='zzz-222@628-pm9-jn5') %>% 
@@ -1673,14 +1708,15 @@ plot2 <- ggplot(data=sumVisit3, aes(dwellTimes,visitors)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="Dwell Time", y="Aggregated Visitors",
        title ='') +
-  plotTheme()
+  plotTheme()+
+  theme(axis.text.x = element_text(size = 8))
 
 grid.arrange(plot1,plot2,ncol=2,top="")
 ```
 
 According to the Figure3.3.7 above, people usually dwell longer (\>240min) here, because most activities, like live concert, educational class take place during the day are long. It seems 11 am to 3 pm is the most time period with the most aggregated visits.
 
-```{r GEP img4, echo=FALSE,fig.height = 1,out.width = '70%',fig.align = 'center'}
+```{r GEP img4, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
 knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined2.png"))
 ```
 
