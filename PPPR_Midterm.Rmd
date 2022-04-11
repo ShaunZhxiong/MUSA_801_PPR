@@ -1745,8 +1745,8 @@ excepListog <- st_read("data/FromPPR/exceptionListPPR_Properties.csv")
 excepList <- excepListog %>% filter(Exclude=="Yes")
 excepList$OBJECTID <- as.numeric(excepList$OBJECTID)
 excepList <- excepList %>%
-  dplyr::select(OBJECTID) %>% 
-  left_join(propertyWithPlaceKey %>% st_drop_geometry() %>%  dplyr::select(OBJECTID,placekey),by="OBJECTID") %>% 
+  dplyr::select(OBJECTID) %>%
+  left_join(propertyWithPlaceKey %>% st_drop_geometry() %>%  dplyr::select(OBJECTID,placekey),by="OBJECTID") %>%
   drop_na()
 
 originCount_11m <- originCount %>% 
@@ -2249,7 +2249,7 @@ relatedBrandWithNaics%>%
     strip.text.x = element_text( size = 10))
 ```
 
-```{r Centrality2, fig.height = 6,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.1.6 Overlay Map of Parks, Restaurants and Convinient Stores'}
+```{r Centrality2, fig.height = 6,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.1.6 Overlay Map of Parks(red), Restaurants(purple) and Convinient Stores(orange)'}
 
 # use the same naics code to get the safegraph poi data to construct naics code's location
 # 445120 - Convenience Stores
@@ -2300,13 +2300,13 @@ convenientSurroundDot <- convenientSurroundEffect %>% mutate(label="convinient s
 
 parksSurroundDot <- parksSurroundEffect %>% mutate(label="park")
 
-# visualized three types of obejects in one map
+# visualized three types of objects in one map
 ggplot() +
   geom_sf(data=pprServiceArea,color='black',size=0.35,fill= "transparent")+
   geom_sf(data=pprDistrict,color='black',size=0.5,fill= "transparent")+
   geom_sf(data=restSurroundDot,aes(geometry=geometry),color = palette3[3],fill = palette3[3],alpha = 0.5,size = 1) +
   geom_sf(data=convenientSurroundDot,aes(geometry=geometry),color = palette3[1],fill = palette3[1],alpha = 0.5,size = 1) +
-  geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = palette3[2],fill = palette3[2],alpha = 1, size = 2) +
+  geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = palette3[2],fill = palette3[2],alpha = 1, size = 1) +
   # facet_wrap(~label)+
   mapTheme()+
   theme(legend.position = "bottom",
