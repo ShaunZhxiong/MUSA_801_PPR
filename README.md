@@ -106,3 +106,49 @@ Distance Matrix
 Options to build Attractiveness Matrix
 
 ![image-20220321213645366](https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/img/image-20220321213645366.png)
+
+#### April 4.11
+
+```
+[1] "spring"
+[1] "Rsquare: Mean is:  0.501378951400955"
+[1] "Rsquare: Minimum is:  0"
+[1] "Rsquare: Maximum is:  1"
+[1] "Rsquare: Minimum is:  0"
+[1] "# of lost origins is:  539"
+```
+
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409203723981.png" width=40%>
+
+```
+[1] "summer"
+[1] "Rsquare: Mean is:  0.482639361880493"
+[1] "Rsquare: Minimum is:  0"
+[1] "Rsquare: Maximum is:  1"
+[1] "Rsquare: Minimum is:  0"
+[1] "# of lost origins is:  539"
+```
+
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409203926216.png" width=40%>
+
+```
+[1] "autumn"
+[1] "Rsquare: Mean is:  0.502063617579828"
+[1] "Rsquare: Minimum is:  0"
+[1] "Rsquare: Maximum is:  1"
+[1] "Rsquare: Minimum is:  0"
+[1] "# of lost origins is:  539"
+```
+
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409204046675.png" width=40%>
+
+```
+[1] "winter"
+[1] "Rsquare: Mean is:  0.615269471313406"
+[1] "Rsquare: Minimum is:  0"
+[1] "Rsquare: Maximum is:  1"
+[1] "Rsquare: Minimum is:  0"
+[1] "# of lost origins is:  539"
+```
+
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409204154885.png" width=40%>

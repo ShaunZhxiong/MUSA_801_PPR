@@ -238,11 +238,12 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
       # alpha_p <- cbind(alpha_p, alpha_p_part)
     }
     beta <- as.numeric(fit$coefficients["x1"])
-    if(!is.na(fit$coefficients["x1"])) {beta_p <- as.numeric(summary(fit)$coefficients["x1",4])}
+    # if(!is.na(fit$coefficients["x1"])) {beta_p <- as.numeric(summary(fit)$coefficients["x1",4])}
     theta <- as.numeric(fit$coefficients["x2"])
-    if(!is.na(fit$coefficients["x2"])) {theta_p <- as.numeric(summary(fit)$coefficients["x1",4])}
+    # if(!is.na(fit$coefficients["x2"])) {theta_p <- as.numeric(summary(fit)$coefficients["x1",4])}
     r2 <- as.numeric(summary(fit)$r.square)
-    result <- data.frame(origin=orig_place, beta, beta_p, theta, theta_p, r2) %>%
+    # result <- data.frame(origin=orig_place, beta, beta_p, theta, theta_p, r2) %>%
+    result <- data.frame(origin=orig_place, beta, theta, r2) %>%
       cbind(alpha) %>%
       cbind(alpha_p) %>% 
       rbind(result)
