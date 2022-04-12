@@ -1703,6 +1703,7 @@ In the next stage, we will focus on **creating the Huff model in District 7,8,9*
 
 #### 6.1 Normalized data
 
+
 ```{r exceptionProperty}
 excepListog <- st_read("data/FromPPR/exceptionListPPR_Properties.csv")
 excepList <- excepListog %>% filter(Exclude=="Yes")
