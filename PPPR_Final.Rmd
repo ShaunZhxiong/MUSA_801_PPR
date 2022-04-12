@@ -1,6 +1,6 @@
 ---
 title: "PPR-Midterm"
-author: "Shaun Zheng, Lan Xiao, Tian Hui, Jeff Stern"
+author: "Shaun Zheng, Lan Xiao, Hui Tian, Jeff Stern"
 output:
   html_document: 
     toc: yes
@@ -175,7 +175,7 @@ palette1_assist <- '#F9B294'
 
 #### 1.1 District & Service Area
 
-```{r openData_pprDistrictAndServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure1.1.1. Locations of PPR Districts and Service Areas'}
+```{r openData_pprDistrictAndServiceArea, fig.align='center', fig.cap=, fig.height=5, message=FALSE, warning=FALSE, out.width='75%', results='hide'}
 
 pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
   st_transform(crs)
@@ -1703,6 +1703,8 @@ In the next stage, we will focus on **creating the Huff model in District 7,8,9*
 
 #### 6.1 Normalized data
 
+The number of device residing from the SafeGraph data is a sample of device users tracked by app carriers, which cannot be considered as all the visitors to certain park facilities from a census block group. We normalized the number of devices residing by multiplying a parameter of total census block group (CBG) population divided by average device residing in this CBG. In that case, the outcome can estimate all the visitors from a CBG to certain park facilities. Since the PPR didn’t schedule programs in some facilities, we excluded them (168 out of 524 facilities) on the exception list in our further analysis. 
+
 ```{r exceptionProperty}
 excepListog <- st_read("data/FromPPR/exceptionListPPR_Properties.csv")
 excepList <- excepListog %>% filter(Exclude=="Yes")
@@ -2159,7 +2161,12 @@ prob <- modelData %>%
   mutate(probability = visitors/total) %>% 
   dplyr::select(placekey, origin, probability)
 
-prob.na <- prob %>% filter(is.na(prob$probability))
+prob.na <- modelData %>% 
+  group_by(origin) %>% 
+  summarise(total = sum(visitors)) %>% 
+  left_join(modelData, by="origin") %>% 
+  mutate(probability = visitors/total) %>% 
+  filter(is.na(prob$probability))
 
 CensusPoly <-
   get_acs(geography = "block group",
@@ -2358,7 +2365,6 @@ outcomeAnalysis(parameterDrop,"sCENARIO 1: Drop NA probability and use large PCA
 
 ```
 
-
 ```{r}
 # sCENARIO 2: Drop NA probability and use small PCA
 RealModelData <- huffDataDropNaSmallAttract
@@ -2385,7 +2391,6 @@ hist(parameterDrop$r2,breaks=40)
 
 outcomeAnalysis(parameterDrop,"sCENARIO 2: Drop NA probability and use small PCA")
 ```
-
 
 ```{r}
 # sCENARIO 3: Drop NA probability and use no PCA
@@ -2442,6 +2447,7 @@ outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large 
 ```
 
 #### 6.7 Temperoal Model
+
 ```{r}
 # temperature data
 weather.Data <-
@@ -2539,13 +2545,21 @@ huffDataDropNaSeasonal <-
   left_join(LargePCAAttTogo %>% st_drop_geometry(),by="placekey")
 ```
 
-
 ```{r}
 # seperatly get 4 season data
 springModelData <- huffDataDropNaSeasonal %>% filter(season=="spring") %>% dplyr::select(-season)
 summerModelData <- huffDataDropNaSeasonal %>% filter(season=="summer") %>% dplyr::select(-season)
 autumnModelData <- huffDataDropNaSeasonal %>% filter(season=="autumn") %>% dplyr::select(-season)
 winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
+
+outcomeAnalysis <- function(df,scenario){
+  print(scenario)
+  dfnoNA <- df %>% drop_na()
+  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
+  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
+  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
+  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
+}
 
 modelEnsemble <- function(df,season){
   fit <- fit_parameter(data = df,
@@ -2568,13 +2582,30 @@ modelEnsemble <- function(df,season){
 
   hist(parameterDrop$r2,breaks=40)
 
-  outcomeAnalysis(parameterDrop,season)
+  outcomeAnalysis(parameter,season)
+  
+  attempt <- 
+  parameterDrop %>% 
+  dplyr::select(origin,r2) %>% 
+  left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
+  st_sf()
+
+  ggplot() + 
+    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
+    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
+    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
+    mapTheme()+
+    theme(legend.position = "bottom")
 }
 
 modelEnsemble(springModelData,"spring")
+
+
 modelEnsemble(summerModelData,"summer")
 modelEnsemble(autumnModelData,"autumn")
 modelEnsemble(winterModelData,"winter")
+modelEnsemble(huffDataDropNaLargeAttract,"Drop Na & Large Attractiveness")
+
 ```
 
 #### 6.8 Train and Test in SCENARIO 3
