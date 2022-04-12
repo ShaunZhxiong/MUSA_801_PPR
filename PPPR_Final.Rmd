@@ -2159,7 +2159,12 @@ prob <- modelData %>%
   mutate(probability = visitors/total) %>% 
   dplyr::select(placekey, origin, probability)
 
-prob.na <- prob %>% filter(is.na(prob$probability))
+prob.na <- modelData %>% 
+  group_by(origin) %>% 
+  summarise(total = sum(visitors)) %>% 
+  left_join(modelData, by="origin") %>% 
+  mutate(probability = visitors/total) %>% 
+  filter(is.na(prob$probability))
 
 CensusPoly <-
   get_acs(geography = "block group",
@@ -2358,7 +2363,6 @@ outcomeAnalysis(parameterDrop,"sCENARIO 1: Drop NA probability and use large PCA
 
 ```
 
-
 ```{r}
 # sCENARIO 2: Drop NA probability and use small PCA
 RealModelData <- huffDataDropNaSmallAttract
@@ -2385,7 +2389,6 @@ hist(parameterDrop$r2,breaks=40)
 
 outcomeAnalysis(parameterDrop,"sCENARIO 2: Drop NA probability and use small PCA")
 ```
-
 
 ```{r}
 # sCENARIO 3: Drop NA probability and use no PCA
@@ -2442,6 +2445,7 @@ outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large 
 ```
 
 #### 6.7 Temperoal Model
+
 ```{r}
 # temperature data
 weather.Data <-
@@ -2539,13 +2543,21 @@ huffDataDropNaSeasonal <-
   left_join(LargePCAAttTogo %>% st_drop_geometry(),by="placekey")
 ```
 
-
 ```{r}
 # seperatly get 4 season data
 springModelData <- huffDataDropNaSeasonal %>% filter(season=="spring") %>% dplyr::select(-season)
 summerModelData <- huffDataDropNaSeasonal %>% filter(season=="summer") %>% dplyr::select(-season)
 autumnModelData <- huffDataDropNaSeasonal %>% filter(season=="autumn") %>% dplyr::select(-season)
 winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
+
+outcomeAnalysis <- function(df,scenario){
+  print(scenario)
+  dfnoNA <- df %>% drop_na()
+  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
+  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
+  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
+  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
+}
 
 modelEnsemble <- function(df,season){
   fit <- fit_parameter(data = df,
@@ -2568,11 +2580,28 @@ modelEnsemble <- function(df,season){
 
   hist(parameterDrop$r2,breaks=40)
 
-  outcomeAnalysis(parameterDrop,season)
+  outcomeAnalysis(parameter,season)
+  
+  attempt <- 
+  parameterDrop %>% 
+  dplyr::select(origin,r2) %>% 
+  left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
+  st_sf()
+
+  ggplot() + 
+    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
+    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
+    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
+    mapTheme()+
+    theme(legend.position = "bottom")
 }
 
 modelEnsemble(springModelData,"spring")
+
+
 modelEnsemble(summerModelData,"summer")
 modelEnsemble(autumnModelData,"autumn")
 modelEnsemble(winterModelData,"winter")
+modelEnsemble(huffDataDropNaLargeAttract,"Drop Na & Large Attractiveness")
+
 ```
