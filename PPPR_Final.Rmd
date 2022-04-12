@@ -1,6 +1,6 @@
 ---
 title: "PPR-Midterm"
-author: "Shaun Zheng, Lan Xiao, Tian Hui, Jeff Stern"
+author: "Shaun Zheng, Lan Xiao, Hui Tian, Jeff Stern"
 output:
   html_document: 
     toc: yes
@@ -175,7 +175,7 @@ palette1_assist <- '#F9B294'
 
 #### 1.1 District & Service Area
 
-```{r openData_pprDistrictAndServiceArea,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '75%',fig.align = 'center',fig.cap = 'Figure1.1.1. Locations of PPR Districts and Service Areas'}
+```{r openData_pprDistrictAndServiceArea, fig.align='center', fig.cap=, fig.height=5, message=FALSE, warning=FALSE, out.width='75%', results='hide'}
 
 pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
   st_transform(crs)
@@ -1702,6 +1702,8 @@ In the next stage, we will focus on **creating the Huff model in District 7,8,9*
 ### 6 Huff Model with Neighbor Effect
 
 #### 6.1 Normalized data
+
+The number of device residing from the SafeGraph data is a sample of device users tracked by app carriers, which cannot be considered as all the visitors to certain park facilities from a census block group. We normalized the number of devices residing by multiplying a parameter of total census block group (CBG) population divided by average device residing in this CBG. In that case, the outcome can estimate all the visitors from a CBG to certain park facilities. Since the PPR didn’t schedule programs in some facilities, we excluded them (168 out of 524 facilities) on the exception list in our further analysis. 
 
 ```{r exceptionProperty}
 excepListog <- st_read("data/FromPPR/exceptionListPPR_Properties.csv")
