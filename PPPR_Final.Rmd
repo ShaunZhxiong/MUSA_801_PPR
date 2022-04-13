@@ -2883,3 +2883,97 @@ modelEnsemble(winterModelData,"winter")
 modelEnsemble(huffDataDropNaLargeAttract,"Drop Na & Large Attractiveness")
 
 ```
+
+#### 6.8 Train and Test in SCENARIO 3
+```{r predict in sCENARIO 3}
+# sCENARIO 3: Drop NA probability and use no PCA
+RealModelData3 <- huffDataDropNaNOPCA 
+
+# records are not enough for (421010008033, 421010008034, 421010008042, 421010158004)
+RealModelData3 <- RealModelData3 %>% 
+  filter(!origin %in% c(421010008033, 421010008034, 421010008042, 421010158004))
+
+# Split data
+set.seed(3456)
+placeSet <- attracGEO %>% 
+  mutate(setID =sample(c("Train", "Test"),nrow(.), prob=c(0.8, 0.2), replace=TRUE))
+
+TrainList <- placeSet %>% 
+  st_drop_geometry() %>% 
+  filter(setID=="Train") %>% 
+  pull(placekey) 
+
+TestList <- placeSet %>% 
+  st_drop_geometry() %>% 
+  filter(setID=="Test") %>% 
+  pull(placekey) 
+
+# flter train data
+Train <- RealModelData3 %>% 
+  filter(placekey %in% TrainList)
+# flter test data
+Test <- RealModelData3 %>% 
+  filter(placekey %in% TestList)
+
+# fit on train test
+fit3 <- fit_parameter(data = Train,
+                           # remove some places
+                           places = placeSet %>% filter(setID=="Train"),
+                           neighbor_data = convenientSurroundEffect,
+                           neighbor_id_column="placekey",
+                           neighbor_attr_column ="visits",
+                           id_column="placekey",
+                           attr_column =colnames(huffDataDropNaNOPCA)[5:21],
+                           distance_column="distance",
+                           probability_column="probability",
+                           origin_column = "origin",
+                           k=3)
+
+parameter3 <- fit %>% 
+  dplyr::select(parameter) %>% 
+  unnest(cols="parameter")
+
+# replce na in parameter
+parameter3 <- parameter3 %>% 
+  mutate_all(funs(replace_na(.,0)))
+
+# join to same index with Test Set
+parameter_full3 <- left_join(Test, parameter3, by="origin") 
+
+# centrality
+Test <- centrality_to_df(data = Test, 
+                         places = placeSet %>% filter(setID=="Test"), 
+                         neighbor_data = convenientSurroundEffect, 
+                         neighbor_id_column="placekey",
+                         neighbor_attr_column ="visits",
+                         id_column="placekey",
+                         k = 3)
+
+# attr in test cannot be 0!!!! because 0^negative => NA 
+Test <- Test %>% 
+  mutate_if(is.numeric, funs(ifelse(.==0,0.0000001,.)))
+
+
+# predict
+huff_results <- huff_NE(destinations_name = Test$id, 
+                        destinations_attractiveness = Test[,5:21], 
+                        origins_name = Test$origin, 
+                        destinations_centrality = Test$centrality,
+                        distance = Test$distance,
+                        alpha = parameter_full3 %>% dplyr::select(starts_with("alpha")),
+                        beta = parameter_full3$beta,
+                        theta = parameter_full3$theta)
+
+# 0*Inf => NA
+
+# MAE
+MAE <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
+  mutate(AE = abs(huff_probability - probability)) %>% 
+  summarise(MAE = mean(AE,na.rm=T),
+            mean_prob = mean(probability,na.rm=T))
+
+MAE$MAE
+# MAPE
+MAE$MAE/MAE$mean_prob
+```
+

@@ -285,7 +285,7 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
 #########################################################################################################################
 #                                 Function to check the arguments of the huff function                                  #
 #########################################################################################################################
-check_huff <- function(destinations_name, destinations_attractiveness, origins_name, distance, alpha, beta){
+check_huff <- function(destinations_name, destinations_attractiveness, distance, destinations_centrality,alpha, beta){
   
   destinations_nr <- length(destinations_name)
   
@@ -297,9 +297,9 @@ check_huff <- function(destinations_name, destinations_attractiveness, origins_n
     stop("NA values were found in the attractiveness data")
   }
   
-  if (any(is.na(origins_name))){
-    stop("NA values were found in the origins names")
-  }
+  # if (any(is.na(origins_name))){
+  #   stop("NA values were found in the origins names")
+  # }
   
   if (any(is.na(distance))){
     stop("NA values were found the distance data")
@@ -318,10 +318,10 @@ check_huff <- function(destinations_name, destinations_attractiveness, origins_n
     stop("The destinations_attractiveness vector should be the same length as the destinations_name")
   }
   
-  if (length(origins_name) != destinations_nr){
-    stop("The origins_name vector should be the same length as the destinations_name")
-  }
-  
+  # if (length(origins_name) != destinations_nr){
+  #   stop("The origins_name vector should be the same length as the destinations_name")
+  # }
+  # 
   if (length(distance) != destinations_nr){
     stop("The distance vector should be the same length as the destinations_name")
   }
@@ -374,33 +374,52 @@ check_huff <- function(destinations_name, destinations_attractiveness, origins_n
   return(c(destinations_nr, alpha_flag, beta_flag, dist_flag))
 }
 
-# fit the parameter
-huff_NE <- function(destinations_name, destinations_attractiveness, origins_name, distance, alpha = 1, beta = 2){
+
+huff_NE <- function(destinations_name, destinations_attractiveness, origins_name, destinations_centrality, 
+                    distance, alpha, beta, theta){
   
   ############################################### Functions #############################################################
-  huff_numerator_basic <- function(destinations_attractiveness, alpha, distance, beta){
-    return((destinations_attractiveness ^ alpha) / (distance ^ beta))
+  huff_numerator_basic <- function(destinations_attractiveness, distance, destinations_centrality, alpha, beta, theta){
+    numerator <- (destinations_centrality ^ theta) * (distance ^ beta)
+    for (i in (1:length(alpha))) {
+      numerator <- numerator * (destinations_attractiveness[i] ^ alpha[i])
+    }
+    # for (i in (1:ncol(theta))) {
+    #   numerator <- numerator * (destinations_centrality[,i] ^ theta[,i])
+    # }
+    return(numerator)
   }
   
   ########################################### Check arguments ###########################################################
-  flags <- check_huff(destinations_name, destinations_attractiveness, origins_name, distance, alpha, beta)
-  # If we have distance values equal to zero replace with 0.001 
-  
-  if (flags[2]){
-    alpha <- rep(alpha, flags[1])
-  }
-  
-  if (flags[3]){
-    beta <- rep(beta, flags[1])
-  }
-  
-  if (flags[4]){
-    distance <- ifelse(distance < 0.001, 0.001, distance)
-  }
-  
+  # flags <- check_huff(destinations_name, destinations_attractiveness, origins_name, distance, alpha, beta)
+  # # If we have distance values equal to zero replace with 0.001 
+  # 
+  # if (flags[2]){
+  #   alpha <- rep(alpha, flags[1])
+  # }
+  # 
+  # if (flags[3]){
+  #   beta <- rep(beta, flags[1])
+  # }
+  # 
+  # if (flags[4]){
+  #   distance <- ifelse(distance < 0.001, 0.001, distance)
+  # }
+  # 
   ################################### Calculate Huff's (basic) algorithm ################################################
   # Numerator, calculated using the huff_numerator_basic function
-  huff <- mapply(huff_numerator_basic, destinations_attractiveness, alpha, distance, beta) 
+  huff <- vector()
+  
+  for (i in (1:length(distance))) {
+    destinations_attractivenessx <- destinations_attractiveness[i,] %>% as.numeric()
+    distancex <-  distance[i]
+    destinations_centralityx <- destinations_centrality[i]
+    alphax <- alpha[i,] %>% as.numeric()
+    betax <- beta[i]
+    thetax <- theta[i]
+    result <- huff_numerator_basic(destinations_attractivenessx, distancex, destinations_centralityx, alphax, betax, thetax)
+    huff <- append(huff, result)
+  }
   
   # Denominator of the basic huff algorithm
   sum_huff_location <- aggregate(huff, by = list(origins_name), sum)
