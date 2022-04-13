@@ -109,6 +109,46 @@ Options to build Attractiveness Matrix
 
 #### April 4.11
 
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121144061.png" width=40%>
+
+```
+[1] "Drop NA probability and use small PCA"
+[1] "Rsquare: Mean is:  0.368691627547928"
+[1] "Rsquare: Minimum is:  0.0234715185627968"
+[1] "Rsquare: Maximum is:  1"
+[1] "# of lost origins is:  0"
+```
+
+```
+[1] "Drop NA probability and no use PCA"
+[1] "Rsquare: Mean is:  0.445271042578286"
+[1] "Rsquare: Minimum is:  0.0962978360417454"
+[1] "Rsquare: Maximum is:  0.948240340493002"
+[1] "# of lost origins is:  0"
+```
+
+```
+[1] "Replace NA probability and use large PCA"
+[1] "Rsquare: Mean is:  0.137651934260834"
+[1] "Rsquare: Minimum is:  0.0090492210729412"
+[1] "Rsquare: Maximum is:  0.500526340048496"
+[1] "# of lost origins is:  0"
+```
+
+```
+[1] "Drop Na & Large Attractiveness"
+[1] "Rsquare: Mean is:  0.42837896018574"
+[1] "Rsquare: Minimum is:  0.0321102719050275"
+[1] "Rsquare: Maximum is:  1"
+[1] "# of lost origins is:  53"
+```
+
+
+
+<img src =https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412120037694.png width=40%>
+
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121049487.png" >
+
 ```
 [1] "spring"
 [1] "Rsquare: Mean is:  0.501378951400955"
@@ -120,37 +160,45 @@ Options to build Attractiveness Matrix
 
 <img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409203723981.png" width=40%>
 
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121736514.png" width=40%>
+
 ```
 [1] "summer"
-[1] "Rsquare: Mean is:  0.482639361880493"
+[1] "Rsquare: Mean is:  0.482639361880492"
 [1] "Rsquare: Minimum is:  0"
 [1] "Rsquare: Maximum is:  1"
-[1] "Rsquare: Minimum is:  0"
-[1] "# of lost origins is:  539"
+[1] "# of lost origins is:  481"
 ```
 
 <img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409203926216.png" width=40%>
 
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121804289.png" width=40%>
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 ```
 [1] "autumn"
-[1] "Rsquare: Mean is:  0.502063617579828"
+[1] "Rsquare: Mean is:  0.502063617579819"
 [1] "Rsquare: Minimum is:  0"
 [1] "Rsquare: Maximum is:  1"
-[1] "Rsquare: Minimum is:  0"
-[1] "# of lost origins is:  539"
+[1] "# of lost origins is:  524"
 ```
 
 <img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409204046675.png" width=40%>
 
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121904046.png" width=40%>
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 ```
 [1] "winter"
-[1] "Rsquare: Mean is:  0.615269471313406"
+[1] "Rsquare: Mean is:  0.615269471313428"
 [1] "Rsquare: Minimum is:  0"
 [1] "Rsquare: Maximum is:  1"
-[1] "Rsquare: Minimum is:  0"
-[1] "# of lost origins is:  539"
+[1] "# of lost origins is:  916"
 ```
 
 <img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409204154885.png" width=40%>
 
-![image-20220412112017845](https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412112017845.png)
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412115955286.png" width=40%>
