@@ -1730,17 +1730,25 @@ According to the Figure3.3.7 above, people usually dwell longer (\>240min) here,
 knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined2.png"))
 ```
 
-### 5 Plan in Next Phase
+### 5 Huff Model with Neighbor Effect
 
-In this stage, we have successfully understood the data from PPR and SafeGraph and **finished the exploratory data analysis** by PPR service area level with SafeGraph pattern data. We have gained many interesting insights shown above as outcome. Besides, we **have the wire frame of the dashboard**, which in the end will help us communicate the information of this Practicum with PPR and help them do better programming.
+The original Huff Model (Huff, 1964) is designed to estimate the probability of customers at each origin patronizing a given store among all stores as their destination choices. Two factors are taken into account: 1. Attractiveness 2. Distance. Attractiveness can be computed as a function of many attributes of a store, including the store size, number of parking spaces, customer reviews,
+etc.
 
-In the next phase, we will focus on **creating the Huff model in District 7,8,9**, and try to define and construct the attractiveness metric of facility. This attractiveness metric will be used in the huff model to predict the probability of visitors will stop by each facility. Finally we will compare the current program distribution with the visit probabilities and market areas of each position to suggest the PPR allocating programmings and serving target residents.
+We will use an advanced version of Huff model to predict  the probability of visitors at each census block group going to a given park facility. A socially aware Huff model include social factor and neighboring effect, based on the
+assumptions that: (1) People tend to choose more attractive travel destinations; (2) People tend to choose closer travel destinations; (3) People tend to choose travel destinations with more beneficial future choices. For example, a tourist at Origin O has two destination choices A and B, with equal distance to origin O. In this case, destination B should be preferred since it has more future choices in its neighborhood compared with destination A.
 
-### 6 Huff Model with Neighbor Effect
+*P*ijt represents the probability of a tourist at location *i* visiting attraction *j* at time *t*; *A*jt is the attractiveness of attraction *j* at time *t* (we will include several attractiveness in our model); *D*ij is the distance between origin *i* and attraction *j*; *C*jt is the term used to describe the neighboring effect of attraction *j* (we mainly consider convenient stores and restaurants in our model), relative to other attractions at time *t*; and *n* indicates the total number of attractions in the area. The parameters α, β and Ө are associated with the attractiveness, distance, and neighboring effect factors,respectively.
 
-#### 6.1 Normalized data
+```{r Huff Model Equation, echo=FALSE,fig.height = 2,out.width = '60%',fig.align = 'center'}
 
-The number of device residing from the SafeGraph data is a sample of device users tracked by app carriers, which cannot be considered as all the visitors to certain park facilities from a census block group. According to [SafeGraph's guidelines for normalizing Patterns data](https://colab.research.google.com/drive/1lTi8JXfX9rh2mnuFjgYgKsIcMcDI3EG_?usp=sharing#scrollTo=aHTXQFdA7A2y), we normalized the number of devices residing by multiplying a parameter of total census block group (CBG) population divided by average device residing in this CBG. In that case, the outcome can estimate all the visitors from a CBG to certain park facilities. Since the PPR doesn't schedule programs in some facilities, we exclud them (168 out of 524 facilities) on the exception list in our further analysis. 
+knitr::include_graphics("resources/imgaes/SA_HuffModel_Equation.jpg")
+
+```
+
+#### 5.1 Normalized data
+
+The number of device residing from the SafeGraph data is a sample of device users tracked by app carriers, which cannot be considered as all the visitors to certain park facilities from a census block group. According to [SafeGraph's guidelines for normalizing Patterns data](https://colab.research.google.com/drive/1lTi8JXfX9rh2mnuFjgYgKsIcMcDI3EG_?usp=sharing#scrollTo=aHTXQFdA7A2y), we normalized the number of devices residing by multiplying a parameter of total census block group (CBG) population divided by average device residing in this CBG. In that case, the outcome can estimate all the visitors from a CBG to certain park facilities. Since the PPR doesn't schedule programs in some facilities, we exclude them (168 out of 524 facilities) on the exception list in our further analysis. 
 
 ```{r exceptionProperty, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 excepListog <- st_read("data/FromPPR/exceptionListPPR_Properties.csv")
@@ -1808,11 +1816,11 @@ modelData <-
   rename(c("area" = "ACREAGE")) 
 ```
 
-#### 6.2 Attractiveness
+#### 5.2 Attractiveness
 
-We collected many features of facilities as attractiveness, including: area, facility number, facility area, trail miles, picnic table, exercise number, swimming pool number, spray ground number, hydration number, tennis court number, playground number, tree height, tree area, program number and capacity, and permit number and capacity. 
+Responding to the term *A*j in Huff model, we collected many features of facilities as attractiveness, including: area, facility number, facility area, trail miles, picnic table, exercise number, swimming pool number, spray ground number, hydration number, tennis court number, playground number, tree height, tree area, program number and capacity, and permit number and capacity. 
 
-```{r calculate attractiveness, message=FALSE, warning=FALSE, echo=FALSE, results='hide', fig.height = 12,out.width ='200%',fig.align = 'center',fig.cap = 'Figure6.2.1 Summary of Attractiveness' }
+```{r calculate attractiveness, message=FALSE, warning=FALSE, echo=FALSE, results='hide', fig.height = 12,out.width ='200%',fig.align = 'center',fig.cap = 'Figure5.2.1 Summary of Attractiveness' }
 attractivenssData <- 
   modelData %>% 
   dplyr::select(-origin,-visitors) %>% 
@@ -2014,8 +2022,9 @@ attractivenssDataOutput %>%
         strip.text.x = element_text( size = 5))
 ```
 
-With correlation analysis, we find facility area, facility number and trail miles are highly correlated. Then we will do Prominent Component Analysis(PCA) to reduce features' correlation.
-```{r calculate correlation, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.2 Correlation of Attractiveness'}
+In the correlation analysis, most predictors are not correlated except of facility number and facility area. We will do Prominent Component Analysis(PCA) to see it it can improve the prediction result.
+
+```{r calculate correlation, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.2.2 Correlation of Attractiveness'}
 attracGEO <- 
   st_join(attractivenssDataOutput, 
           pprDistrict %>% dplyr::select(DISTRICTID),
@@ -2107,9 +2116,9 @@ noPCATogo <- attracGEO %>% dplyr::select(-DISTRICTID) %>% st_sf()
 # st_write(smallPCAAttTogo,"data/output/smallPCAAttTogo.GEOJSON")
 ```
 
-#### 6.3 Distance
+#### 5.3 Distance
 
-OSRM (Open Source Routing Machine) is a C++ implementation of a high performance route search engine to obtain the shortest paths in a road network. We use it to calculate the shortest distance from origin places to destination facilities by mobile. 
+OSRM (Open Source Routing Machine) is a C++ implementation of a high performance route search engine to obtain the shortest paths in a road network. Responding to the term *D*ij in Huff model, we use it to calculate the shortest distance from origin places to destination facilities by mobile. 
 
 ```{r calculate distance,  message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # # parks
@@ -2201,11 +2210,11 @@ theDistanceMatrixWhole2 <-
   pivot_longer(!GEOID, names_to = "placekey", values_to = "distance")
 ```
 
-#### 6.4 Probability
+#### 5.4 Probability
 
-The observed probability that visitors from a census block group (CBG) choose a facility as destination can be calculated with normalized number of visitors to a facility divided by the CBG population. One limitation is some population data is missing in census data, so the probability of visitors from these CBG to a certain park will be NA (not available). The highlighted areas in figure 6.4.1 are census block groups with no population data.
+The observed probability that visitors from a census block group (CBG) choose a facility as destination can be calculated with normalized number of visitors to a facility divided by the CBG population. One limitation is that no population lives in some census data, so the probability of visitors from these CBG to a certain park will be NA (not available). The highlighted areas in figure 6.4.1 are census block groups with no population data.
 
-```{r Wrangle sg and property data for model, fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure6.4.1 Census Block Group with Missing Data'}
+```{r Wrangle sg and property data for model, fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure5.4.1 Census Block Group with Missing Data'}
 # calculate probability 
 prob <- modelData %>% 
   group_by(origin) %>% 
@@ -2235,11 +2244,11 @@ ggplot() +
   mapTheme()
 ```
 
-#### 6.5 Centrality
+#### 5.5 Centrality
 
-Centrality is the term used to describe the neighboring effect of attraction. We ranked POIs with their NAICS codes and find the top two are convenience stores (445120) and restaurants (722513), then we will use them as two Centrality factors which affect visitors' choice the park facilities.
+Centrality is the term used to describe the neighboring effect of attraction, responding to the term *C*j in Huff model. We ranked POIs with their NAICS codes and find the top two are convenience stores (445120) and restaurants (722513), then we will use them as two Centrality factors which affect visitors' choice the park facilities.
 
-```{r centrality, fig.height = 3,message = FALSE, warning = FALSE, echo=FALSE, results='hide', out.width ='100%',fig.align = 'center',fig.cap = 'Figure6.5.1 Total Vistors of Related Brand With Naics'}
+```{r centrality, fig.height = 3,message = FALSE, warning = FALSE, echo=FALSE, results='hide', out.width ='100%',fig.align = 'center',fig.cap = 'Figure5.5.1 Total Vistors of Related Brand With Naics'}
 # find the naics code that has most smae-day visits
 
 # unnest the related_same_day_brand
@@ -2297,7 +2306,7 @@ relatedBrandWithNaics%>%
     strip.text.x = element_text( size = 10))
 ```
 
-```{r visualize centrality, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.5.2 Overlay Map of Parks(black), Restaurants(red) and Convinient Stores(orange)'}
+```{r visualize centrality, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.5.2 Overlay Map of Parks(black), Restaurants(red) and Convinient Stores(orange)'}
 # use the same naics code to get the safegraph poi data to construct naics code's location
 # 445120 - Convenience Stores
 # 722513 - 	Limited-Service Restaurants
@@ -2363,7 +2372,7 @@ ggplot() +
         legend.text = element_text( colour = "black", size = 8))
 ```
 
-#### 6.6 Test models
+#### 5.6 Test models
 
 We prepare 4 sets of data to test the Huff model: 
 
@@ -2428,7 +2437,7 @@ convenientSurroundEffect <- st_read("data/output/convenientSurroundEffect.GeoJSO
 
 **SCENARIO 1** Result (Drop NA probability and use large PCA)
 
-```{r model1 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.6.1 Histogram of data set1'}
+```{r model1 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.1 Histogram of data set1'}
 
 # sCENARIO 1: Drop NA probability and use large PCA
 RealModelData <- huffDataDropNaLargeAttract
@@ -2459,7 +2468,7 @@ outcomeAnalysis(parameterDrop,"sCENARIO 1: Drop NA probability and use large PCA
 
 **SCENARIO 2** Result (Drop NA probability and use small PCA)
 
-```{r, 2model fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.6.2 Histogram of data set2'}
+```{r, 2model fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.2 Histogram of data set2'}
 # sCENARIO 2: Drop NA probability and use small PCA
 RealModelData <- huffDataDropNaSmallAttract
 
@@ -2488,7 +2497,7 @@ outcomeAnalysis(parameterDrop,"sCENARIO 2: Drop NA probability and use small PCA
 
 **SCENARIO 3** Result (Drop NA probability and use no PCA)
 
-```{r huff model3 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.6.3 Histogram of data set3'}
+```{r huff model3 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.3 Histogram of data set3'}
 # sCENARIO 3: Drop NA probability and use no PCA
 RealModelData <- huffDataDropNaNOPCA
 
@@ -2517,7 +2526,7 @@ outcomeAnalysis(parameterDrop,"sCENARIO 3: Drop NA probability and no use PCA")
 
 **SCENARIO 4** Result (Replace NA probability and use large PCA)
 
-```{r model huff4 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.6.4 Histogram of data set4'}
+```{r model huff4 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.4 Histogram of data set4'}
 # sCENARIO 4: Replace NA probability and use large PCA
 RealModelData <- huffDataReplaceNaLargeAttract
 
@@ -2544,13 +2553,13 @@ hist(R_Square,breaks=40)
 outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large PCA")
 ```
 
-#### 6.7 Temperoal Model
+#### 5.7 Temperoal Model
 
-We divide the data based on record dates into four seasons and run individual model to predict the probability in each season. The red line represent temperature while the orange line represent number of visitors. Both number are exaggerate 500 times for visualization.
+We divide the data based on record dates into four seasons and run individual model to predict the probability in each season. The red line represent temperature while the orange line represent number of visitors. The numbers of temperature are exaggerate 500 times for visualization.
 
-With limited data pattern after assigning to four seasons, some Census Block Group shows blank areas in map in different season models. The situation is better when we aggregate results and run the Huff model for the whole year. We may consider to use warm-day model from April to October to improve the valid data. And we will discuss it with PPR staffing and see their demands of the use case. 
+With limited data pattern after assigning to four seasons, some Census Block Group shows blank areas in map in different season models. The situation is better when we aggregate results and run the Huff model for the whole year. We may consider to use warm-day model from April to October to improve the quantity of valid data. And we will discuss it with PPR staffing and see their demands of the use case. 
 
-```{r temporal chart, fig.height = 4,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure6.7.1 Temporal Chart of vistor and temperature'}
+```{r temporal chart, fig.height = 4,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure5.7.1 Temporal Chart of vistor and temperature'}
 # temperature data
 weather.Data <-
   riem_measures(station = "PHL", date_start = "2021-01-01",
@@ -2608,7 +2617,7 @@ modelDataSeasonal <-
   rename(c("area" = "ACREAGE")) 
 ```
 
-```{r missing data for model, fig.height = 6,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure6.7.2 Census Block Group with Missing Probability'}
+```{r missing data for model, fig.height = 6,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure5.7.2 Census Block Group with Missing Probability'}
 # calculate probability 
 probSeasonal <- modelDataSeasonal %>% 
   group_by(origin,season) %>% 
@@ -2647,12 +2656,11 @@ huffDataDropNaSeasonal <-
   left_join(LargePCAAttTogo %>% st_drop_geometry(),by="placekey")
 ```
 
-```{r probability map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.3 Probability Map with Missing Data'}
+**Spring Model** Predict probability of visitors at each census block group going to a given park facility from March to May. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
+
+```{r Spring R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.3 Fit R square in Spring Model Distribution Map'}
 # seperatly get 4 season data
 springModelData <- huffDataDropNaSeasonal %>% filter(season=="spring") %>% dplyr::select(-season)
-summerModelData <- huffDataDropNaSeasonal %>% filter(season=="summer") %>% dplyr::select(-season)
-autumnModelData <- huffDataDropNaSeasonal %>% filter(season=="autumn") %>% dplyr::select(-season)
-winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
 
 outcomeAnalysis <- function(df,scenario){
   print(scenario)
@@ -2701,11 +2709,177 @@ modelEnsemble <- function(df,season){
 }
 
 modelEnsemble(springModelData,"spring")
+```
+
+**Summer Model** Predict probability of visitors at each census block group going to a given park facility from June to August. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
+
+```{r Summer R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.4 Fit R square in Summer Model Distribution Map'}
+summerModelData <- huffDataDropNaSeasonal %>% filter(season=="summer") %>% dplyr::select(-season)
+
+outcomeAnalysis <- function(df,scenario){
+  print(scenario)
+  dfnoNA <- df %>% drop_na()
+  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
+  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
+  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
+  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
+}
+
+modelEnsemble <- function(df,season){
+  fit <- fit_parameter(data = df,
+                           places = attracGEO,
+                           neighbor_data = convenientSurroundEffect,
+                           neighbor_id_column="placekey",
+                           neighbor_attr_column ="visits",
+                           id_column="placekey",
+                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
+                           distance_column="distance",
+                           probability_column="probability",
+                           origin_column = "origin",
+                           k=3)
+
+  parameter <- fit %>% 
+    dplyr::select(parameter) %>% 
+    unnest(cols="parameter")
+
+  parameterDrop <- parameter %>% drop_na()
+  
+  outcomeAnalysis(parameter,season)
+
+  hist(parameterDrop$r2,breaks=40)
+
+  attempt <- 
+  parameterDrop %>% 
+  dplyr::select(origin,r2) %>% 
+  left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
+  st_sf()
+
+  ggplot() + 
+    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
+    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
+    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
+    mapTheme()+
+    theme(legend.position = "bottom")
+}
 
 
 modelEnsemble(summerModelData,"summer")
+```
+
+**Autumn Model** Predict probability of visitors at each census block group going to a given park facility from September to November. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
+
+```{r Autumn R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.5 Fit R square in Autumn Model Distribution Map'}
+autumnModelData <- huffDataDropNaSeasonal %>% filter(season=="autumn") %>% dplyr::select(-season)
+
+outcomeAnalysis <- function(df,scenario){
+  print(scenario)
+  dfnoNA <- df %>% drop_na()
+  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
+  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
+  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
+  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
+}
+
+modelEnsemble <- function(df,season){
+  fit <- fit_parameter(data = df,
+                           places = attracGEO,
+                           neighbor_data = convenientSurroundEffect,
+                           neighbor_id_column="placekey",
+                           neighbor_attr_column ="visits",
+                           id_column="placekey",
+                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
+                           distance_column="distance",
+                           probability_column="probability",
+                           origin_column = "origin",
+                           k=3)
+
+  parameter <- fit %>% 
+    dplyr::select(parameter) %>% 
+    unnest(cols="parameter")
+
+  parameterDrop <- parameter %>% drop_na()
+  
+  outcomeAnalysis(parameter,season)
+
+  hist(parameterDrop$r2,breaks=40)
+
+  attempt <- 
+  parameterDrop %>% 
+  dplyr::select(origin,r2) %>% 
+  left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
+  st_sf()
+
+  ggplot() + 
+    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
+    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
+    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
+    mapTheme()+
+    theme(legend.position = "bottom")
+}
+
+
 modelEnsemble(autumnModelData,"autumn")
+```
+
+**Winter Model** Predict probability of visitors at each census block group going to a given park facility from December to February. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
+
+```{r Winter R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.6 Fit R square in Winter Model Distribution Map'}
+winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
+
+outcomeAnalysis <- function(df,scenario){
+  print(scenario)
+  dfnoNA <- df %>% drop_na()
+  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
+  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
+  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
+  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
+}
+
+modelEnsemble <- function(df,season){
+  fit <- fit_parameter(data = df,
+                           places = attracGEO,
+                           neighbor_data = convenientSurroundEffect,
+                           neighbor_id_column="placekey",
+                           neighbor_attr_column ="visits",
+                           id_column="placekey",
+                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
+                           distance_column="distance",
+                           probability_column="probability",
+                           origin_column = "origin",
+                           k=3)
+
+  parameter <- fit %>% 
+    dplyr::select(parameter) %>% 
+    unnest(cols="parameter")
+
+  parameterDrop <- parameter %>% drop_na()
+  
+  outcomeAnalysis(parameter,season)
+
+  hist(parameterDrop$r2,breaks=40)
+
+  attempt <- 
+  parameterDrop %>% 
+  dplyr::select(origin,r2) %>% 
+  left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
+  st_sf()
+
+  ggplot() + 
+    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
+    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
+    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
+    mapTheme()+
+    theme(legend.position = "bottom")
+}
+
+
 modelEnsemble(winterModelData,"winter")
+```
+
+**Annual Model** Predict probability of visitors at each census block group going to a given park facility for whole year. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
+
+```{r annual R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.7 Fit R square in Annual Model Distribution Map'}
+
 modelEnsemble(huffDataDropNaLargeAttract,"Drop Na & Large Attractiveness")
 
 ```
