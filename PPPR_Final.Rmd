@@ -181,7 +181,7 @@ palette1_assist <- '#F9B294'
 
 #### 1.1 District & Service Area
 
-```{r openData_pprDistrictAndServiceArea, fig.align='center', fig.cap=, fig.height=8, message=FALSE, warning=FALSE, out.width='80%', results='hide'}
+```{r openData_pprDistrictAndServiceArea, fig.align='center', fig.cap='Location of PPR Districts and Pilot Service Areas', fig.height=8, message=FALSE, warning=FALSE, out.width='80%'}
 
 pprDistrict <- st_read('https://opendata.arcgis.com/datasets/0cdc4a1e86c6463b9600f9d9fca39875_0.geojson') %>%
   st_transform(crs)
@@ -321,24 +321,24 @@ Facility_Program <- program2021.join %>%
 # Facility_Program to Geoson
 #st_write(Facility_Program,"Facility_Program.GEOJSON")
 
-# Facility_Program_otherDistricts <- program2021.otherDIstrict %>%
-#   select(Facility,ActvityTypeCategory,ActivityType,
-#          AttendanceWeekDate,
-#          RegisteredIndividualsCount,
-#          PUBLIC_NAME, PARENT_NAME,geometry) %>%
-#   mutate(month = case_when(month(AttendanceWeekDate)==1 ~ "Jan",
-#                            month(AttendanceWeekDate)==2 ~ "Feb",
-#                            month(AttendanceWeekDate)==3 ~ "Mar",
-#                            month(AttendanceWeekDate)==4 ~ "Apr",
-#                            month(AttendanceWeekDate)==5 ~ "May",
-#                            month(AttendanceWeekDate)==6 ~ "Jun",
-#                            month(AttendanceWeekDate)==7 ~ "Jul",
-#                            month(AttendanceWeekDate)==8 ~ "Aug",
-#                            month(AttendanceWeekDate)==9 ~ "Sep",
-#                            month(AttendanceWeekDate)==10 ~ "Oct",
-#                            month(AttendanceWeekDate)==11 ~ "Nov",
-#                            month(AttendanceWeekDate)==12 ~ "Dec")) %>% 
-#   distinct(.keep_all = FALSE)
+Facility_Program_otherDistricts <- program2021.otherDIstrict %>%
+  select(Facility,ActvityTypeCategory,ActivityType,
+         AttendanceWeekDate,
+         RegisteredIndividualsCount,
+         PUBLIC_NAME, PARENT_NAME,geometry) %>%
+  mutate(month = case_when(month(AttendanceWeekDate)==1 ~ "Jan",
+                           month(AttendanceWeekDate)==2 ~ "Feb",
+                           month(AttendanceWeekDate)==3 ~ "Mar",
+                           month(AttendanceWeekDate)==4 ~ "Apr",
+                           month(AttendanceWeekDate)==5 ~ "May",
+                           month(AttendanceWeekDate)==6 ~ "Jun",
+                           month(AttendanceWeekDate)==7 ~ "Jul",
+                           month(AttendanceWeekDate)==8 ~ "Aug",
+                           month(AttendanceWeekDate)==9 ~ "Sep",
+                           month(AttendanceWeekDate)==10 ~ "Oct",
+                           month(AttendanceWeekDate)==11 ~ "Nov",
+                           month(AttendanceWeekDate)==12 ~ "Dec")) %>%
+  distinct(.keep_all = FALSE)
 
 # Aggregate weekly visites
 WeekVisit <- aggregate(
@@ -474,9 +474,7 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
        x = "Week of the Year",
        y = "Visitor Counts")+
   plotTheme()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-        legend.text = element_text( colour = "black", size = 8))
+  theme(legend.text = element_text( colour = "black", size = 8))
 ```
 
 In Figure 2.2.7 we can see that **Hockey and ice skating** activities take place in **fall, winter and spring**, while **cultural and after school** activities are mainly held in **fall**.
@@ -520,9 +518,7 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
        x = "Week of the Year",
        y = "Visitor Counts")+
   plotTheme()+
-    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-        legend.text = element_text( colour = "black", size = 8))
+    theme(legend.text = element_text( colour = "black", size = 8))
 ```
 
 In Figure 2.2.10 indicates that **Athletic** activities took place throughout the **whole year**, while other categories of activities, like older adults and mentoring, were held in the 2nd half of the year. **Cultural** activities, like art, dance, music, **usually suspended in summer.**
@@ -541,6 +537,16 @@ ggplot(Facility_Program_otherDistricts) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
         legend.text = element_text( colour = "black", size = 8))
+
+ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
+  geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
+  scale_fill_manual(values = palette7[2:7])+
+  labs(y = "Program Frequency", fill="Category", title = "")+
+  plotTheme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        legend.position = "bottom",
+        legend.text = element_text( colour = "black", size = 8))
+
 ```
 
 ### 3 SafeGraph Data Analysis
@@ -2035,7 +2041,7 @@ corrplot(attracGEO.cor,method="number", tl.cex = 0.75, type = "lower")
 ```
 We will do feature engineering with two methods.
 
-1.	Large group of attractiveness: all 17 attractiveness are included in PCA and 9 prominent components are extracted.
+1.	**Large group of attractiveness**: all 17 attractiveness are included in PCA and 9 prominent components are extracted.
 
 ```{r calculate Large attractiveness PCA, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.3 Primary Components of Large Attractiveness'}
 # -----------Large Attractiveness----------------
@@ -2053,7 +2059,7 @@ pca$x <- -1*pca$x
 corrplot(t(pca$rotation[,1:9]), is.corr=FALSE)
 ```
 
-2.	Small group of attractiveness: some important attractiveness, like area, trail miles, swimming PoolNum, spraygroundNum, tennisCourtNum, treeHeight, treeArea, programNum, and permitNum are included in the PCA. Then 6 prominent components are extracted.
+2.	**Small group of attractiveness**: some important attractiveness, like area, trail miles, swimming PoolNum, spraygroundNum, tennisCourtNum, treeHeight, treeArea, programNum, and permitNum are included in the PCA. Then 6 prominent components are extracted.
 
 ```{r calculate Small attractiveness PCA, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.3 Primary Components of Small Attractiveness'}
 # -----------Small Attractiveness--------------
@@ -2202,6 +2208,8 @@ theDistanceMatrixWhole2 <-
 
 #### 6.4 Probability
 
+The observed probability that visitors from a census block group (CBG) choose a facility as destination can be calculated with normalized number of visitors to a facility divided by the CBG population. One limitation is some population data is missing in census data, so the probability of visitors from these CBG to a certain park will be NA (not available). The highlighted areas in figure 6.4.1 are census block groups with no population data.
+
 ```{r Wrangle sg and property data for model, fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure6.4.1 Census Block Group with Missing Data'}
 # calculate probability 
 prob <- modelData %>% 
@@ -2233,6 +2241,8 @@ ggplot() +
 ```
 
 #### 6.5 Centrality
+
+Centrality is the term used to describe the neighboring effect of attraction. We ranked POIs with their NAICS codes and find the top two are convenience stores (445120) and restaurants (722513), then we will use them as two Centrality factors which affect visitors' choice the park facilities.
 
 ```{r centrality, fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure6.5.1 Total Vistors of Related Brand With Naics'}
 # find the naics code that has most smae-day visits
@@ -2360,7 +2370,15 @@ ggplot() +
 
 #### 6.6 Test models
 
-4 methods to do feature engineering
+We prepare 4 sets of data to test the Huff model: 
+
+1. Replace NA value of probability with minimum number(4.4e-5), responding to missing population data in some Census Block Group. Use PCA from large group of attractiveness as predictors; <br>
+
+2. Drop probability with NA value and use PCA from large group of attractiveness as predictors;<br> 
+
+3. Drop probability with NA value and use PCA from small group of attractiveness as predictors;<br>  
+
+4.  Drop probability with NA value and use all features as predictors with no PCA.
 
 ```{r combined three parameters, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # Based on the distance panel
@@ -2395,7 +2413,9 @@ huffDataDropNaNOPCA <-
   left_join(noPCATogo %>% st_drop_geometry(),by="placekey")
 ```
 
-```{r huff model fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Histogram of parameter set1'}
+**SCENARIO 1** Result (Drop NA probability and use large PCA)
+
+```{r model1 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.6.1 Histogram of data set1'}
 ##### Prepare data
 source("huffModelScripts.R")
 ################# for Shaun ##############
@@ -2431,14 +2451,16 @@ parameter <- fit %>%
   unnest(cols="parameter")
 
 parameterDrop <- parameter %>% drop_na()
-
-hist(parameterDrop$r2,breaks=40)
+R_Square <- parameterDrop$r2 
+hist(R_Square,breaks=40)
 
 outcomeAnalysis(parameterDrop,"sCENARIO 1: Drop NA probability and use large PCA")
 
 ```
 
-```{r, }
+**SCENARIO 2** Result (Drop NA probability and use small PCA)
+
+```{r, 2model fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.6.2 Histogram of data set1'}
 # sCENARIO 2: Drop NA probability and use small PCA
 RealModelData <- huffDataDropNaSmallAttract
 
@@ -2465,7 +2487,9 @@ hist(parameterDrop$r2,breaks=40)
 outcomeAnalysis(parameterDrop,"sCENARIO 2: Drop NA probability and use small PCA")
 ```
 
-```{r}
+**SCENARIO 3** Result (Drop NA probability and use no PCA)
+
+```{r huff model3 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.6.3 Histogram of data set3'}
 # sCENARIO 3: Drop NA probability and use no PCA
 RealModelData <- huffDataDropNaNOPCA
 
@@ -2492,7 +2516,9 @@ hist(parameterDrop$r2,breaks=40)
 outcomeAnalysis(parameterDrop,"sCENARIO 3: Drop NA probability and no use PCA")
 ```
 
-```{r}
+**SCENARIO 4** Result (Replace NA probability and use large PCA)
+
+```{r model huff4 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.6.4 Histogram of data set4'}
 # sCENARIO 4: Replace NA probability and use large PCA
 RealModelData <- huffDataReplaceNaLargeAttract
 
@@ -2521,7 +2547,9 @@ outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large 
 
 #### 6.7 Temperoal Model
 
-```{r}
+We divide the data based on record dates into four seasons and run individual model can predict the probability in each season. The red line represent temperature while the orange line represent number of visitors. Both number are exaggerate 500 times for visualization.
+
+```{r temporal chart, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.1 Temporal Chart of vistor and temperature'}
 # temperature data
 weather.Data <-
   riem_measures(station = "PHL", date_start = "2021-01-01",
@@ -2551,7 +2579,7 @@ ggplot(data = visitCountForPlot, aes(x=visitDay))+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 ```
 
-```{r}
+```{r allocate season, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # allocate the season
 originCountSeasonal <- originCount %>% 
   st_drop_geometry() %>% 
@@ -2579,7 +2607,7 @@ modelDataSeasonal <-
   rename(c("area" = "ACREAGE")) 
 ```
 
-```{r}
+```{r missing data for model, fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure6.7.2 Census Block Group with Missing Probability'}
 # calculate probability 
 probSeasonal <- modelDataSeasonal %>% 
   group_by(origin,season) %>% 
@@ -2604,7 +2632,7 @@ ggplot() +
   mapTheme()
 ```
 
-```{r}
+```{r distance panel, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # Based on the distance panel
 huffDataSeasonal <- 
   theDistanceMatrixWhole2 %>% 
@@ -2618,7 +2646,7 @@ huffDataDropNaSeasonal <-
   left_join(LargePCAAttTogo %>% st_drop_geometry(),by="placekey")
 ```
 
-```{r}
+```{r probability map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.3 Probability Map with Missing Data'}
 # seperatly get 4 season data
 springModelData <- huffDataDropNaSeasonal %>% filter(season=="spring") %>% dplyr::select(-season)
 summerModelData <- huffDataDropNaSeasonal %>% filter(season=="summer") %>% dplyr::select(-season)
