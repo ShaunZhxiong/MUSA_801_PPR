@@ -1417,7 +1417,7 @@ dwellMean <- dwellTime %>%
   mutate(meanDwell = dwellMuti/visitors)
 
 
-# integrate dwell, total counts and permit
+# integrate dwell, total counts and permit, programs
 sgIntegrated_byMonth <- full_join(dwellMean %>% dplyr::select(placekey,month,meanDwell), 
                           visitCount %>% 
                             st_drop_geometry() %>% 
@@ -1426,15 +1426,23 @@ sgIntegrated_byMonth <- full_join(dwellMean %>% dplyr::select(placekey,month,mea
                           by=c('placekey','month')) %>% 
   na.omit() %>% 
   ungroup() %>% 
-  left_join(propertyWithPlaceKey %>% dplyr::select(placekey, OBJECTID)) %>% 
+  left_join(propertyWithPlaceKey %>% dplyr::select(placekey, OBJECTID, PPR_DISTRICT)) %>% 
+  # join permits
   left_join(permit2021.join %>% 
               group_by(PPR_Properties_ObjectID) %>% 
               summarize(permits = n()),
             by=c("OBJECTID"="PPR_Properties_ObjectID")) %>% 
+  # join programs
+  left_join(program2021.join %>% 
+              group_by(PPR_Properties_ObjectID) %>% 
+              summarize(programs = n()),
+            by=c("OBJECTID"="PPR_Properties_ObjectID")) %>% 
   na.omit() %>% 
   dplyr::select(-OBJECTID) %>% 
-  group_by(placekey, month) %>% 
+  group_by(placekey, month, PPR_DISTRICT) %>% 
   summarize(permits = sum(permits),
+            programs= sum(programs),
+            totalEvents = sum(permits,programs),
             visits = mean(visits),
             meanDwell = mean(meanDwell)) %>% 
   ungroup() %>% 
@@ -1446,7 +1454,7 @@ sgIntegrated_byMonth <- full_join(dwellMean %>% dplyr::select(placekey,month,mea
 ```{r cluster by dwell visits and permit,warning=FALSE,message=FALSE, results='hide'}
 # normalize
 sgIntegrated_byMonth.scale <- scale(sgIntegrated_byMonth %>% 
-                                      dplyr::select(-placekey,-month) %>% 
+                                      dplyr::select(-placekey,-month,-PPR_DISTRICT, -permits,-programs) %>% 
                                       st_drop_geometry())
 
 set.seed(1234)
@@ -1471,7 +1479,7 @@ sgIntegrated_byMonth <- sgIntegrated_byMonth %>%
 
 # mean by cluster
 cluster2_mean <- aggregate(sgIntegrated_byMonth %>% 
-                             dplyr::select(-placekey, -cluster,-month) %>% 
+                             dplyr::select(-placekey, -cluster,-month,-PPR_DISTRICT) %>% 
                              st_drop_geometry(),
                        by=list(cluster=sgIntegrated_byMonth$cluster),
                        FUN=mean) %>% 
@@ -1538,6 +1546,18 @@ sgIntegrated_byMonth %>%
   kable_classic(full_width = F)%>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
+
+### Export top 5 potential facilities
+
+sgIntegrated_byMonth_cluster3 <- sgIntegrated_byMonth %>%
+  #st_drop_geometry() %>% 
+  filter(cluster == 3) %>% 
+  group_by(placekey) %>% 
+  
+  summarize(month = n(),
+            permits = sum(permits),
+            visits = sum(visits))
+
 ```
 
 ```{r spatially distribution of sg bias clusters,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure4.1.2 Map of Bias Type of SafeGraph Data'}
