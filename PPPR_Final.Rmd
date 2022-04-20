@@ -1427,12 +1427,12 @@ sgIntegrated_byMonth <- full_join(dwellMean %>% dplyr::select(placekey,month,mea
   na.omit() %>% 
   ungroup() %>% 
   left_join(propertyWithPlaceKey %>% dplyr::select(placekey, OBJECTID, PPR_DISTRICT)) %>% 
-  # join permits
-  left_join(permit2021.join %>% 
-              group_by(PPR_Properties_ObjectID) %>% 
+  ## join permits
+  left_join(permit2021.join %>%
+              group_by(PPR_Properties_ObjectID) %>%
               summarize(permits = n()),
-            by=c("OBJECTID"="PPR_Properties_ObjectID")) %>% 
-  # join programs
+            by=c("OBJECTID"="PPR_Properties_ObjectID")) %>%
+  ## join programs
   left_join(program2021.join %>% 
               group_by(PPR_Properties_ObjectID) %>% 
               summarize(programs = n()),
@@ -1440,9 +1440,9 @@ sgIntegrated_byMonth <- full_join(dwellMean %>% dplyr::select(placekey,month,mea
   na.omit() %>% 
   dplyr::select(-OBJECTID) %>% 
   group_by(placekey, month, PPR_DISTRICT) %>% 
-  summarize(permits = sum(permits),
-            programs= sum(programs),
-            totalEvents = sum(permits,programs),
+  summarize(programs= sum(programs),
+           permits = sum(permits),
+           totalEvents = sum(permits,programs),
             visits = mean(visits),
             meanDwell = mean(meanDwell)) %>% 
   ungroup() %>% 
@@ -1454,13 +1454,13 @@ sgIntegrated_byMonth <- full_join(dwellMean %>% dplyr::select(placekey,month,mea
 ```{r cluster by dwell visits and permit,warning=FALSE,message=FALSE, results='hide'}
 # normalize
 sgIntegrated_byMonth.scale <- scale(sgIntegrated_byMonth %>% 
-                                      dplyr::select(-placekey,-month,-PPR_DISTRICT, -permits,-programs) %>% 
+                                      dplyr::select(-placekey,-month,-PPR_DISTRICT, -permits, -totalEvents) %>% 
                                       st_drop_geometry())
 
-set.seed(1234)
+
 
 # decide cluster number (only run once)
-
+# set.seed(1234)
 # nc <- NbClust(sgIntegrated_byMonth.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
 # table(nc$Best.n[1,])
 # 
@@ -1470,7 +1470,8 @@ set.seed(1234)
 
 
 # Run K-Means cluster
-cluster2 <- kmeans(sgIntegrated_byMonth.scale, 3) 
+set.seed(1234)
+cluster2 <- kmeans(sgIntegrated_byMonth.scale, centers = 3, nstart = 5) 
 # summary(cluster2)
 
 # add cluster number back
@@ -1493,8 +1494,8 @@ cluster2_mean <- aggregate(sgIntegrated_byMonth %>%
 
 ```{r cluster2_mean, message = FALSE, warning = FALSE}
 kable(cluster2_mean %>% 
-        mutate(color=c("pink","orange","blue"),.before = 2) %>% 
-        mutate(group=c("supportive","normal","potential"),.before = 2),align = 'c',caption = '<center>Table 4.1 Mean values of clusters for conflicts <center/>') %>%
+        mutate(color=c("pink","orange", "blue"),.before = 2) %>% 
+        mutate(group=c("Overprogrammed","Normal", "Potential"),.before = 2),align = 'c',caption = '<center>Table 4.1 Mean values of clusters for conflicts <center/>') %>%
   kable_classic(full_width = T)%>%
   kable_styling(position = "center")
 ```
@@ -1516,7 +1517,7 @@ my_cols <- c(palette1_main,palette5[1],palette5[5])
 
 pairs(sgIntegrated_byMonth %>% 
         st_drop_geometry() %>% 
-        dplyr::select(meanDwell,visits,permits), 
+        dplyr::select(meanDwell,visits,programs), 
       pch = 19, cex = 0.5, cex.labels=1, diag.panel = panel.hist,
       size=0.5,
       col = my_cols[sgIntegrated_byMonth$cluster],
@@ -1549,13 +1550,12 @@ sgIntegrated_byMonth %>%
 
 ### Export top 5 potential facilities
 
-sgIntegrated_byMonth_cluster3 <- sgIntegrated_byMonth %>%
+sgIntegrated_byMonth_cluster1 <- sgIntegrated_byMonth %>%
   #st_drop_geometry() %>% 
-  filter(cluster == 3) %>% 
+  filter(cluster == 1) %>% 
   group_by(placekey) %>% 
-  
   summarize(month = n(),
-            permits = sum(permits),
+            programs = sum(programs),
             visits = sum(visits))
 
 ```
@@ -1572,7 +1572,7 @@ ggplot() +
   labs(title = "", 
        subtitle = "",
        x="",y="")+
-  scale_color_manual(values = my_cols,name = "Facility Clusters", label=c("Supportive (few visits many permits)","Nromal","Potetial (many visits few permits)")) +
+  scale_color_manual(values = my_cols,name = "Facility Clusters", label=c("Overprogramed (few visits many permits)","Normal","Potetial (many visits few permits)")) +
   mapTheme()+
   theme(legend.position = "bottom",
         legend.text = element_text( colour = "black", size = 8))
