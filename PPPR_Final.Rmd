@@ -257,7 +257,7 @@ permit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
 program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
 facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 facilityIDNOT789 <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties_NOT_789.csv")
-facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
+facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("FacilityID" = "ï..FacilityID","PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 
 # define date, filter by attendance date
 program2021.clean <- program2021 %>% 
@@ -608,8 +608,8 @@ In the above data wrangling, we first combine all 11-month pattern data from Saf
 
 ```{r update property and program data with placekey,message = FALSE, warning = FALSE}
 # join filtered safeGraph place with ppr property
-propertyWithPlaceKey <- st_join(property %>% st_transform(crs=32118),
-                                st_buffer(parks %>% dplyr::select(placekey, geometry) %>% st_transform(crs=32118),10),left=FALSE) %>%
+propertyWithPlaceKey <- st_join(property %>% filter(NESTED == "N") %>% st_transform(crs=32118),
+                                st_buffer(parks %>% drop_na() %>% dplyr::select(placekey, geometry) %>% st_transform(crs=32118),10),left=FALSE) %>%
   st_drop_geometry() %>% 
   left_join(property %>% dplyr::select(OBJECTID),by=('OBJECTID'='OBJECTID')) %>% 
   st_sf() %>% 
@@ -617,17 +617,20 @@ propertyWithPlaceKey <- st_join(property %>% st_transform(crs=32118),
   drop_na(placekey)
 
 # join filtered safeGraph place with ppr programs
+
+# back up geometry information
+program2021.joinGEO <- program2021.join %>% dplyr::select(FacilityID,geometry) %>% distinct()
+permit2021.joinGEO <- permit2021.join %>% dplyr::select(FacilityID,geometry) %>% distinct()
+
 program2021.joinWithPlaceKey <- 
   st_join(program2021.join %>%
             st_sf() %>% 
             st_transform(crs=32118) %>%
             st_buffer(10),
-          parks %>% st_transform(crs=32118) %>% dplyr::select(placekey, geometry),left=FALSE) %>%
-  st_drop_geometry() %>%  
-  merge.data.frame(program2021.join %>%
-                     dplyr::select(geometry),
-                   by='row.names')%>%
-  dplyr::select(-Row.names) %>% 
+          propertyWithPlaceKey%>% st_transform(crs=32118) %>% dplyr::select(placekey, geometry),left=FALSE) %>%
+  st_drop_geometry() %>% 
+  left_join(program2021.joinGEO,
+              by='FacilityID')%>%
   st_sf() %>% 
   st_transform(crs=crs)
 
@@ -636,12 +639,10 @@ permit2021.joinWithPlaceKey <-
             st_sf() %>% 
             st_transform(crs=32118) %>%
             st_buffer(10),
-          parks %>% st_transform(crs=32118) %>% dplyr::select(placekey, geometry),left=FALSE) %>%
-  st_drop_geometry() %>%  
-  merge.data.frame(permit2021.join %>%
-                     dplyr::select(geometry),
-                   by='row.names')%>%
-  dplyr::select(-Row.names) %>% 
+          propertyWithPlaceKey%>% st_transform(crs=32118) %>% dplyr::select(placekey, geometry),left=FALSE) %>% 
+  st_drop_geometry() %>% 
+  left_join(permit2021.joinGEO,
+              by='FacilityID')%>%
   st_sf() %>% 
   st_transform(crs=crs)
 ```
