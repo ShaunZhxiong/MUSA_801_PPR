@@ -1225,9 +1225,16 @@ One possible cause maybe that special groups have a stronger need for public res
 # 
 # st_write(depaCountPlot,"data/output/depaCountPlot.GEOJSON")
 depaCountPlot <- st_read("data/output/depaCountPlot.GEOJSON")
+normalizationQuotient = st_read("data/output/normalizationQuotient.csv")
+normalizationQuotient$quotient = as.numeric(normalizationQuotient$quotient)
+depaCountPlot <- 
+  depaCountPlot %>% 
+  left_join(normalizationQuotient %>% dplyr::select(GEOID, quotient),by=c("departure" = "GEOID")) %>% 
+  mutate(visitors = visitors * quotient) %>% 
+  dplyr::select(-quotient)
 
 depaCountPlot2 <- depaCountPlot%>%
-  filter(visitors>200)
+  filter(visitors>1000)
 
 ggplot(data = depaCountPlot2) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
@@ -1256,7 +1263,8 @@ depaCountPlotMostPopular <- depaCountPlot%>%
   filter(totalvisits==max(totalvisits))
 
 depaCountPlotHF <- depaCountPlot%>%
-  filter(placekey==depaCountPlotMostPopular$placekey[1] & visitors>=1000)
+  filter(placekey=="zzz-222@628-pj6-ndv" & visitors>=2000)
+  # filter(placekey==depaCountPlotMostPopular$placekey[1] & visitors>=2000)
 
 ggplot(data = depaCountPlotHF) + 
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
@@ -1438,7 +1446,7 @@ homePanelToGo <-
   summarise(avgDeviceResiding = mean(number_devices_residing)) %>% 
   left_join(censusPopData, by="GEOID") %>% 
   mutate(quotient = population / avgDeviceResiding)
-
+# write.csv(homePanelToGo,"data/output/normalizationQuotient.csv")
 
 originCount_11m <- originCount %>% 
   st_drop_geometry() %>% 
@@ -1736,6 +1744,20 @@ visitCount %>%
   na.omit()%>%
   ggplot(aes(visitDay,visits)) + 
   geom_line(color=palette1_main,size=0.75)+
+  labs(title = '',x="Visit Date",y="Safegraph Visit")+
+  plotTheme()+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+
+#
+albertChristy <- program2021.joinWithPlaceKey %>% filter(placekey=="zzz-222@63s-dvq-5fz")
+albertChristy$AttendenceRealDate
+visitCount %>%
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>%
+  st_drop_geometry()%>%
+  na.omit()%>%
+  ggplot(aes(visitDay,visits)) +
+  geom_line(color=palette1_main,size=0.75)+
+  geom_vline(xintercept = albertChristy$AttendenceRealDate, colour="green", linetype = "longdash")+
   labs(title = '',x="Visit Date",y="Safegraph Visit")+
   plotTheme()+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))

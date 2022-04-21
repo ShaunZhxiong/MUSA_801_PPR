@@ -116,7 +116,7 @@ Options to build Attractiveness Matrix
 [1] "Rsquare: Mean is:  0.368691627547928"
 [1] "Rsquare: Minimum is:  0.0234715185627968"
 [1] "Rsquare: Maximum is:  1"
-[1] "# of lost origins is:  0"
+
 ```
 
 ```
@@ -124,7 +124,7 @@ Options to build Attractiveness Matrix
 [1] "Rsquare: Mean is:  0.445271042578286"
 [1] "Rsquare: Minimum is:  0.0962978360417454"
 [1] "Rsquare: Maximum is:  0.948240340493002"
-[1] "# of lost origins is:  0"
+
 ```
 
 ```
@@ -132,7 +132,7 @@ Options to build Attractiveness Matrix
 [1] "Rsquare: Mean is:  0.137651934260834"
 [1] "Rsquare: Minimum is:  0.0090492210729412"
 [1] "Rsquare: Maximum is:  0.500526340048496"
-[1] "# of lost origins is:  0"
+
 ```
 
 ```
