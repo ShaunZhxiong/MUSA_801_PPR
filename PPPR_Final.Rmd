@@ -257,7 +257,7 @@ permit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
 program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
 facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 facilityIDNOT789 <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties_NOT_789.csv")
-facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("FacilityID" = "ï..FacilityID","PPR_Properties_ObjectID"= "PPR_Properties_ID"))
+facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 
 # define date, filter by attendance date
 program2021.clean <- program2021 %>% 
@@ -374,8 +374,8 @@ There are three facilities with programs scheduled in District 7: Athletic Recre
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==7)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==7),color="black",linetype ="dashed",size=1,fill = "transparent")+
-  geom_sf(data=permit2021.join%>% filter(PPR_DIST ==7),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
-  geom_sf(data=program2021.join%>% filter(PPR_DIST ==7),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
+  geom_sf(data=permit2021.join%>% filter(PPR_DISTRICT ==7),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
+  geom_sf(data=program2021.join%>% filter(PPR_DISTRICT ==7),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
   labs(title="")+
   mapTheme()
 ```
@@ -434,8 +434,8 @@ There are five facilities with programs scheduled in District 8: 48th & Woodland
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==8)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==8),color="black",linetype ="dashed",size=1,fill = "transparent")+
-  geom_sf(data=permit2021.join%>% filter(PPR_DIST ==8),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
-  geom_sf(data=program2021.join%>% filter(PPR_DIST ==8),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
+  geom_sf(data=permit2021.join%>% filter(PPR_DISTRICT ==8),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
+  geom_sf(data=program2021.join%>% filter(PPR_DISTRICT ==8),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
   labs(title="")+
   mapTheme()
 ```
@@ -490,8 +490,8 @@ There are 7 facilities with programs scheduled in District 9: Barry Playground a
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==9),color="black",linetype ="dashed",size=1,fill = "transparent")+
-  geom_sf(data=permit2021.join%>% filter(PPR_DIST ==9),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
-  geom_sf(data=program2021.join%>% filter(PPR_DIST ==9),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
+  geom_sf(data=permit2021.join%>% filter(PPR_DISTRICT ==9),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
+  geom_sf(data=program2021.join%>% filter(PPR_DISTRICT ==9),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
   labs(title="")+
   mapTheme()
 ```
@@ -609,37 +609,40 @@ In the above data wrangling, we first combine all 11-month pattern data from Saf
 ```{r update property and program data with placekey,message = FALSE, warning = FALSE}
 # join filtered safeGraph place with ppr property
 propertyWithPlaceKey <- st_join(property %>% filter(NESTED == "N") %>% st_transform(crs=32118),
-                                st_buffer(parks %>% drop_na() %>% dplyr::select(placekey, geometry) %>% st_transform(crs=32118),10),left=FALSE) %>%
+                                st_buffer(parks %>% drop_na() %>% dplyr::select(placekey, geometry) %>% st_transform(crs=32118),10)) %>%
   st_drop_geometry() %>% 
   left_join(property %>% dplyr::select(OBJECTID),by=('OBJECTID'='OBJECTID')) %>% 
   st_sf() %>% 
   st_transform(crs=crs) %>% 
   drop_na(placekey)
-
-# join filtered safeGraph place with ppr programs
+#st_write(propertyWithPlaceKey, "data/output/dashboard/SitesRelation_PPR_SG.GeoJSON")
 
 # back up geometry information
 program2021.joinGEO <- program2021.join %>% dplyr::select(FacilityID,geometry) %>% distinct()
 permit2021.joinGEO <- permit2021.join %>% dplyr::select(FacilityID,geometry) %>% distinct()
 
-program2021.joinWithPlaceKey <- 
-  st_join(program2021.join %>%
+program2021.joinWithPlaceKey <- st_join(program2021.join %>%
             st_sf() %>% 
-            st_transform(crs=32118) %>%
-            st_buffer(10),
-          propertyWithPlaceKey%>% st_transform(crs=32118) %>% dplyr::select(placekey, geometry),left=FALSE) %>%
+            st_transform(crs=32118),
+          propertyWithPlaceKey %>% 
+            st_transform(crs=32118) %>% 
+            mutate(Parent_ID = OBJECTID) %>% 
+            dplyr::select(Parent_ID, placekey, geometry)
+          ,left=FALSE, join=st_contains) %>%
   st_drop_geometry() %>% 
   left_join(program2021.joinGEO,
               by='FacilityID')%>%
   st_sf() %>% 
   st_transform(crs=crs)
 
-permit2021.joinWithPlaceKey <- 
-  st_join(permit2021.join %>%
+permit2021.joinWithPlaceKey <- st_join(permit2021.join %>%
             st_sf() %>% 
-            st_transform(crs=32118) %>%
-            st_buffer(10),
-          propertyWithPlaceKey%>% st_transform(crs=32118) %>% dplyr::select(placekey, geometry),left=FALSE) %>% 
+            st_transform(crs=32118),
+          propertyWithPlaceKey%>% 
+            st_transform(crs=32118) %>% 
+            mutate(Parent_ID = OBJECTID) %>% 
+            dplyr::select(Parent_ID, placekey, geometry),
+          left=FALSE, join=st_contains) %>% 
   st_drop_geometry() %>% 
   left_join(permit2021.joinGEO,
               by='FacilityID')%>%
@@ -1437,6 +1440,8 @@ censusPopData <-
   as.data.frame() %>%
   rename("population" = "B01003_001E")
 
+#st_write(censusPopData, "data/output/dashboard/population-CensusBlockGroup.csv")
+
 # get the quotient and apply
 # notice: here some cbg doesn't have population
 homePanelToGo <- 
@@ -1445,8 +1450,8 @@ homePanelToGo <-
   group_by(GEOID) %>% 
   summarise(avgDeviceResiding = mean(number_devices_residing)) %>% 
   left_join(censusPopData, by="GEOID") %>% 
-  mutate(quotient = population / avgDeviceResiding)
-# write.csv(homePanelToGo,"data/output/normalizationQuotient.csv")
+  mutate(quotient = population / avgDeviceResiding) %>% 
+  filter(quotient>1)
 
 originCount_11m <- originCount %>% 
   st_drop_geometry() %>% 
@@ -1457,7 +1462,7 @@ originCount_11m <- originCount %>%
   summarise(visitors = sum(visitors)) %>% 
   ungroup() %>% 
   filter(origin %in% CensusData$GEOID) %>% 
-  left_join(homePanelToGo %>% dplyr::select(GEOID,quotient),by=c("origin"="GEOID")) %>% 
+  inner_join(homePanelToGo %>% dplyr::select(GEOID,quotient),by=c("origin"="GEOID")) %>% 
   mutate(visitors =visitors*quotient) %>% 
   dplyr::select(-quotient)
 
@@ -1470,7 +1475,7 @@ originCount_seperate_month <- originCount %>%
   summarise(visitors = sum(visitors)) %>% 
   ungroup() %>% 
   filter(origin %in% CensusData$GEOID) %>% 
-  left_join(homePanelToGo %>% dplyr::select(GEOID,quotient),by=c("origin"="GEOID")) %>% 
+  inner_join(homePanelToGo %>% dplyr::select(GEOID,quotient),by=c("origin"="GEOID")) %>% 
   mutate(visitors =visitors*quotient) %>% 
   dplyr::select(-quotient)
 
@@ -1478,11 +1483,13 @@ modelData <-
   left_join(originCount_11m, propertyWithPlaceKey %>% 
               st_drop_geometry() %>% 
               filter(NESTED == "N") %>%
-              dplyr::select(placekey, ACREAGE),by="placekey") %>% 
-  rename(c("area" = "ACREAGE")) 
+              dplyr::select(placekey, OBJECTID, ACREAGE),by="placekey") %>% 
+  rename(c("area" = "ACREAGE")) %>% 
+  group_by(OBJECTID, origin) %>% 
+  summarise(visitors = sum(visitors),
+            area = max(area))
 ```
 
-#### 
 
 #### 4.2 Conflicts between Mobility Data and Position Usage
 
@@ -1507,37 +1514,47 @@ dwellMean <- dwellTime %>%
          dwellMuti = dwell*visitors) %>% 
   group_by(placekey, month) %>% 
   summarize(dwellMuti = sum(dwellMuti),
-            visitors = sum(visitors)) %>% 
-  mutate(meanDwell = dwellMuti/visitors)
+            dvisitors = sum(visitors)) %>% 
+  ungroup() 
 
 
-# integrate dwell, total counts and permit, programs
-sgIntegrated_byMonth <- full_join(dwellMean %>% dplyr::select(placekey,month, meanDwell), 
+# integrate dwell, total counts in PPR property unit
+sgIntegrated_byMonth <- full_join(dwellMean, 
                                   originCount_seperate_month %>% 
                                     group_by(placekey, month) %>% 
-                                    summarize(visitors = sum(visitors)),
+                                    summarize(visitors = sum(visitors)) %>% ungroup(),
                                   by=c('placekey', 'month')) %>% 
   na.omit() %>% 
+  left_join(propertyWithPlaceKey %>% 
+              dplyr::select(OBJECTID,placekey,PPR_DISTRICT, placekey, PUBLIC_NAME), by=c("placekey")) %>% 
+  group_by(OBJECTID, month, PPR_DISTRICT, PUBLIC_NAME) %>% 
+  summarise(dwellMuti = sum(dwellMuti),
+            dvisitors = sum(dvisitors),
+            visitors = sum(visitors)) %>% 
   ungroup() %>% 
-  # join programs
+  mutate(meanDwell = dwellMuti/dvisitors) %>% 
+  dplyr::select(-dwellMuti, -dvisitors)
+  
+
+  # Add programs numbers
+sgIntegrated_byMonth <-  sgIntegrated_byMonth %>% 
   left_join(program2021.joinWithPlaceKey %>% 
+              st_drop_geometry() %>% 
               mutate(month = month(AttendenceRealDate)) %>% 
-              group_by(placekey, month, PPR_DIST) %>% 
-              summarize(programs = n()),
-            by=c('placekey', 'month')) %>% 
-  na.omit() %>% 
-  ungroup() %>% 
-  st_sf()
+              group_by(PPR_Properties_ObjectID, month,PPR_DISTRICT, PUBLIC_NAME) %>% 
+              summarize(programs = n()) %>% ungroup(),
+            by=c('OBJECTID'='PPR_Properties_ObjectID', 'month'='month',
+                 'PPR_DISTRICT'='PPR_DISTRICT', 'PUBLIC_NAME'='PUBLIC_NAME')) %>% 
+  drop_na()
 
 ```
 
 ```{r cluster by dwell visitors and permit,warning=FALSE,message=FALSE, results='hide'}
 # normalize
 sgIntegrated_byMonth.scale <- scale(sgIntegrated_byMonth %>% 
-                                      st_drop_geometry() %>% 
-                                      dplyr::select(-placekey,-PPR_DIST, -month))
+                                      dplyr::select(-month, -OBJECTID, -PPR_DISTRICT, -PUBLIC_NAME,- meanDwell))
 
-set.seed(1234)
+set.seed(132)
 
 # decide cluster number (only run once)
 # nc <- NbClust(sgIntegrated_byMonth.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
@@ -1549,7 +1566,7 @@ set.seed(1234)
 
 
 # Run K-Means cluster
-cluster2 <- kmeans(sgIntegrated_byMonth.scale, 4) 
+cluster2 <- kmeans(sgIntegrated_byMonth.scale, 3) 
 # summary(cluster2)
 
 # add cluster number back
@@ -1558,12 +1575,10 @@ sgIntegrated_byMonth <- sgIntegrated_byMonth %>%
 
 # mean by cluster
 cluster2_mean <- aggregate(sgIntegrated_byMonth %>% 
-                             dplyr::select(-placekey, -cluster,-month,-PPR_DIST) %>% 
-                             st_drop_geometry(),
+                             dplyr::select(-cluster,-month,-PPR_DISTRICT,-OBJECTID, -PUBLIC_NAME,- meanDwell),
                        by=list(cluster=sgIntegrated_byMonth$cluster),
                        FUN=mean) %>% 
   left_join(sgIntegrated_byMonth %>% 
-              st_drop_geometry() %>% 
               group_by(cluster) %>% 
               summarize(size = n()),
             by="cluster")
@@ -1572,8 +1587,8 @@ cluster2_mean <- aggregate(sgIntegrated_byMonth %>%
 
 ```{r cluster2_mean, message = FALSE, warning = FALSE}
 kable(cluster2_mean %>% 
-        mutate(color=c("pink","orange","blue","orange"),.before = 2) %>% 
-        mutate(group=c("potential", "normal","over-programmed", "normal long-stay"),.before = 2),
+        mutate(color=c("pink","orange","blue"),.before = 2) %>% 
+        mutate(group=c("potential","over-programmed","normal"),.before = 2),
       align = 'c',caption = '<center>Table 4.1 Mean values of clusters for conflicts <center/>') %>%
   kable_classic(full_width = T)%>%
   kable_styling(position = "center")
@@ -1592,11 +1607,10 @@ panel.hist <- function(x, ...)
 }
 
 #Color points by groups
-my_cols <- c(palette1_main,palette5[1],palette5[5],palette5[1])
+my_cols <- c(palette1_main,palette5[1],palette5[5])
 
 pairs(sgIntegrated_byMonth %>% 
-        st_drop_geometry() %>% 
-        dplyr::select(meanDwell,visitors,programs), 
+        dplyr::select(visitors,programs), 
       pch = 19, cex = 0.5, cex.labels=1, diag.panel = panel.hist,
       size=0.5,
       col = my_cols[sgIntegrated_byMonth$cluster],
@@ -1608,9 +1622,8 @@ The Figure 4.1.1 shows how these three types of facilities are spatially distrib
 
 ```{r find the case, eval=FALSE}
 potential_site <- sgIntegrated_byMonth %>%
-  st_drop_geometry() %>% 
   filter(cluster == 1) %>% 
-  group_by(placekey, PPR_DIST) %>% 
+  group_by(PPR_DISTRICT,OBJECTID, PUBLIC_NAME) %>% 
   summarize(howManyMonthBelongToThisCluster=n())
 
 potential_site %>% 
@@ -1620,9 +1633,8 @@ potential_site %>%
   scroll_box(width = "100%", height = "400px")
 
 overprm_site <- sgIntegrated_byMonth %>%
-  st_drop_geometry() %>% 
-  filter(cluster == 3) %>% 
-  group_by(placekey, PPR_DIST) %>% 
+  filter(cluster == 2) %>% 
+  group_by(PPR_DISTRICT,OBJECTID, PUBLIC_NAME) %>% 
   summarize(howManyMonthBelongToThisCluster=n())
 
 overprm_site %>% 
@@ -1631,17 +1643,19 @@ overprm_site %>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
 
+special_site <- mutate(potential_site, cluster="potential") %>% 
+  rbind(mutate(overprm_site, cluster="over-programmed"))
+
+#st_write(special_site, "data/output/dashboard/conflicts_cluster.csv")
 ```
 
 ```{r spatially distribution of sg bias clusters,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure4.1.2 Map of Bias Type of SafeGraph Data'}
 
 ggplot() + 
   geom_sf(data=sgIntegrated_byMonth %>% 
-            filter(cluster %in% c(1,3)) %>% 
-            dplyr::select(placekey, cluster) %>%
-            unique() %>% 
-            st_centroid(),
-          aes(color=as.factor(cluster)))+
+            filter(cluster %in% c(1,2)) %>% 
+            left_join(propertyWithPlaceKey,by=c("OBJECTID")) %>% st_sf() %>% st_centroid(),
+          aes(color=as.factor(cluster)), size=3)+
   geom_sf(data=pprDistrict,color="black",size=0.7,linetype ="dashed",fill = "transparent")+
   geom_sf(data=pprDistrict %>% filter(DISTRICTID %in% c(7,8,9)),color="black",size=1,fill = "transparent")+
   labs(title = "", 
@@ -1864,189 +1878,172 @@ attractivenssData <-
   modelData %>% 
   dplyr::select(-origin,-visitors) %>% 
   distinct() %>% 
-  left_join(parks %>% dplyr::select(placekey),by="placekey")%>% 
-  st_sf() %>% 
-  filter(!st_is_empty(geometry))
-attracGEO <- attractivenssData %>% dplyr::select(placekey)
-#st_write(attracGEO, "data/output/attracGEO.GeoJSON")
+  ungroup()
+
+# attracGEO <- left_join(attractivenssData %>% dplyr::select(OBJECTID),
+#                        property %>% dplyr::select(OBJECTID), BY=C("OBJECTID")) %>%
+#   st_sf()
+#st_write(attracGEO %>% drop_na(), "data/output/attracGEO.GeoJSON")
+attracGEO <- st_read("data/output/attracGEO.GeoJSON")
 
 # # the area and number of the insided facilities
-# pprBuildingStructures <- st_read('https://opendata.arcgis.com/datasets/97e90a049a35453ba0c51f974b3c77b4_0.geojson')%>%
-#   st_transform(crs=32118) %>%
-#   mutate(count=1) %>%
-#   st_buffer(500) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
+# pprBuildingStructures <- st_join(st_read('https://opendata.arcgis.com/datasets/97e90a049a35453ba0c51f974b3c77b4_0.geojson') %>% mutate(count=1) %>% dplyr::select(-OBJECTID),attracGEO) %>%
 #   st_drop_geometry()%>%
-#   drop_na() %>%
-#   group_by(placekey) %>%
+#   drop_na(OBJECTID) %>%
+#   group_by(OBJECTID) %>%
 #   summarise(facilityNum = sum(count),facilityArea = sum(Shape__Area))
-# attractivenssData <- attractivenssData %>%left_join(pprBuildingStructures, by="placekey")
+# attractivenssData <- attractivenssData %>%left_join(.,pprBuildingStructures, by="OBJECTID")
 # attractivenssData$facilityNum[is.na(attractivenssData$facilityNum)] <- 0
 # attractivenssData$facilityArea[is.na(attractivenssData$facilityArea)] <- 0
 # # the length of the trail
 # pprTrails <- st_read('https://opendata.arcgis.com/datasets/48323d574068405bbf5336b9b5b29455_0.geojson')%>%
-#   st_transform(crs=32118) %>%
 #   filter(TRAIL_STATUS =="EXISTING") %>%
-#   dplyr::select(MILES) %>%
-#   st_buffer(100) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
-#   st_drop_geometry() %>%
+#   dplyr::select(MILES) %>% 
+#   st_intersection(., attracGEO) %>% 
+#   st_join(.,attracGEO, join=st_within) 
+#   mutate(st_length())
+# pprTrails <-  pprTrails %>% 
+#   mutate(trailMiles = as.numeric(st_length(pprTrails))) %>%
 #   drop_na() %>%
-#   rename("trailMiles" = "MILES")%>%
-#   group_by(placekey) %>%
+#   st_drop_geometry() %>% 
+#   rename("OBJECTID" = "OBJECTID.y")%>%
+#   group_by(OBJECTID) %>%
 #   summarise(trailMiles = sum(trailMiles))
-# attractivenssData <- attractivenssData %>%left_join(pprTrails, by="placekey")
+# attractivenssData <- attractivenssData %>% left_join(.,pprTrails, by="OBJECTID")
 # attractivenssData$trailMiles[is.na(attractivenssData$trailMiles)] <- 0
-# 
+
 # # the number of the picnic tables
 # pprPicnicSites <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_picnic_sites&filename=ppr_picnic_sites&format=geojson&skipfields=cartodb_id')%>%
-#   st_transform(crs=32118) %>%
 #   dplyr::select(table_count) %>%
-#   st_buffer(100) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
+#   st_join(.,attracGEO) %>%
 #   st_drop_geometry()%>%
 #   drop_na()%>%
 #   rename("picnicTable" = "table_count") %>%
-#   group_by(placekey) %>%
+#   group_by(OBJECTID) %>%
 #   summarise(picnicTable = sum(picnicTable))
-# attractivenssData <- attractivenssData %>%left_join(pprPicnicSites, by="placekey")
+# attractivenssData <- attractivenssData %>%left_join(.,pprPicnicSites, by="OBJECTID")
 # attractivenssData$picnicTable[is.na(attractivenssData$picnicTable)] <- 0
-# # AdExercise
-# pprAdExercise <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_adult_exercise_equipment&filename=ppr_adult_exercise_equipment&format=geojson&skipfields=cartodb_id')%>%
-#   st_transform(crs=32118) %>%
-#   mutate(count=1) %>%
-#   st_buffer(100) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
-#   st_drop_geometry()%>%
-#   drop_na()%>%
-#   group_by(placekey) %>%
-#   summarise(exerciseNum = sum(count))
-# attractivenssData <- attractivenssData %>%left_join(pprAdExercise, by="placekey")
-# attractivenssData$exerciseNum[is.na(attractivenssData$exerciseNum)] <- 0
-# # SwimmingPool
-# pprSwimmingPool <- st_read('https://opendata.arcgis.com/datasets/c6f6176968f04d3f88adbc4c362af55d_0.geojson')%>%
-#   st_transform(crs=32118) %>%
+# SwimmingPool
+# pprSwimmingPool <- st_read('https://opendata.arcgis.com/datasets/c6f6176968f04d3f88adbc4c362af55d_0.geojson') %>%
+#   dplyr::select(-OBJECTID) %>% 
 #   filter(POOL_STATUS =="ACTIVE")%>%
 #   mutate(count=1) %>%
-#   st_buffer(1000) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
+#   st_join(attracGEO) %>%
 #   st_drop_geometry()%>%
-#   drop_na()%>%
-#   group_by(placekey) %>%
+#   drop_na(OBJECTID)%>%
+#   group_by(OBJECTID) %>%
 #   summarise(swimmingPoolNum = sum(count))
-# attractivenssData <- attractivenssData %>%left_join(pprSwimmingPool, by="placekey")
+# attractivenssData <- attractivenssData %>%left_join(.,pprSwimmingPool, by="OBJECTID")
 # attractivenssData$swimmingPoolNum[is.na(attractivenssData$swimmingPoolNum)] <- 0
 # # Sprayground & Hydration Station
 # pprSpraygrounds <- st_read('https://opendata.arcgis.com/datasets/a148cc904d374b22bd456e44a044d554_0.geojson')%>%
-#   st_transform(crs=32118) %>%
+#   dplyr::select(-OBJECTID) %>% 
 #   filter(SPRAY_STATUS =="ACTIVE")%>%
 #   mutate(count=1) %>%
-#   st_buffer(100) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
+#   st_join(attracGEO) %>%
 #   st_drop_geometry()%>%
-#   drop_na()%>%
-#   group_by(placekey) %>%
+#   drop_na(OBJECTID)%>%
+#   group_by(OBJECTID) %>%
 #   summarise(spraygroundNum = sum(count))
-# attractivenssData <- attractivenssData %>%left_join(pprSpraygrounds, by="placekey")
+# attractivenssData <- attractivenssData %>%left_join(pprSpraygrounds, by="OBJECTID")
 # attractivenssData$spraygroundNum[is.na(attractivenssData$spraygroundNum)] <- 0
-# 
+
 # pprHydrationStations <- st_read('https://opendata.arcgis.com/datasets/cc35dc98180249fb9a6f2f5f06657df1_0.geojson')%>%
-#   st_transform(crs=32118) %>%
+#   dplyr::select(-OBJECTID) %>% 
 #   mutate(count=1) %>%
-#   st_buffer(500) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
+#   st_join(attracGEO) %>%
 #   st_drop_geometry()%>%
-#   drop_na()%>%
-#   group_by(placekey) %>%
+#   drop_na(OBJECTID)%>%
+#   group_by(OBJECTID) %>%
 #   summarise(hydrationNum = sum(count))
-# attractivenssData <- attractivenssData %>%left_join(pprHydrationStations, by="placekey")
+# attractivenssData <- attractivenssData %>%left_join(pprHydrationStations, by="OBJECTID")
 # attractivenssData$hydrationNum[is.na(attractivenssData$hydrationNum)] <- 0
-# 
+
 # # Tennis Court
 # pprTennisCourt <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_tennis_courts&filename=ppr_tennis_courts&format=geojson&skipfields=cartodb_id')%>%
-#   st_transform(crs=32118) %>%
-#   mutate(count=1) %>%
-#   st_buffer(1000) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
+#   st_join(attracGEO) %>%
 #   st_drop_geometry()%>%
-#   drop_na()%>%
-#   group_by(placekey) %>%
-#   summarise(tennisCourtNum = sum(count))
-# attractivenssData <- attractivenssData %>%left_join(pprTennisCourt, by="placekey")
+#   drop_na(OBJECTID)%>%
+#   group_by(OBJECTID) %>%
+#   summarise(tennisCourtNum = sum(court_number))
+# attractivenssData <- attractivenssData %>%left_join(pprTennisCourt, by="OBJECTID")
 # attractivenssData$tennisCourtNum[is.na(attractivenssData$tennisCourtNum)] <- 0
-# 
+
 # # Playgrounds
 # pprPlaygrounds <- st_read('https://opendata.arcgis.com/datasets/899c807e205244278b3f39421be8489c_0.geojson')%>%
-#   st_transform(crs=32118) %>%
+#   dplyr::select(-OBJECTID) %>% 
 #   mutate(count=1) %>%
-#   st_buffer(1000) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
+#   st_join(attracGEO) %>%
 #   st_drop_geometry()%>%
-#   drop_na()%>%
-#   group_by(placekey) %>%
+#   drop_na(OBJECTID)%>%
+#   group_by(OBJECTID) %>%
 #   summarise(playgroundNum = sum(count))
-# attractivenssData <- attractivenssData %>%left_join(pprPlaygrounds, by="placekey")
+# attractivenssData <- attractivenssData %>%left_join(pprPlaygrounds, by="OBJECTID")
 # attractivenssData$playgroundNum[is.na(attractivenssData$playgroundNum)] <- 0
-# 
+
 # # Tree Area
-# query <- paste("SELECT objectid, avg_height, shape_area",
-#                "FROM ppr_tree_canopy_outlines_2015",
-#                "ORDER BY objectid ASC")
-# 
-# pprTreeCanopyWithArea <- get_carto(query, format = "csv",
-#                                    base_url = "https://phl.carto.com/api/v2/sql", stringsAsFactors = F)
-# 
-# pprTreeCanopy <- st_read('https://phl.carto.com/api/v2/sql?q=SELECT+*+FROM+ppr_tree_canopy_points_2015&filename=ppr_tree_canopy_points_2015&format=geojson&skipfields=cartodb_id')%>%
-#   st_transform(crs)%>%
-#   left_join(pprTreeCanopyWithArea,by = "objectid") %>%
-#   st_transform(crs=32118) %>%
-#   st_buffer(500) %>%
-#   st_join(attracGEO %>% st_transform(crs=32118)) %>%
+# pprTreeCanopy <- st_read('data/open-data-philly/tree-canopy/ppr_tree_canopy_outlines_2015.geojson')
+# pprTreeCanopy <- pprTreeCanopy %>%
+#   st_boundary() %>% 
+#   st_join(.,attracGEO) %>%
 #   st_drop_geometry()%>%
-#   drop_na() %>%
-#   group_by(placekey) %>%
-#   summarise(treeHeight = mean(avg_height),treeArea = sum(shape_area))
-# attractivenssData <- attractivenssData %>%left_join(pprTreeCanopy, by="placekey")
+#   drop_na(OBJECTID) %>%
+#   group_by(OBJECTID) %>%
+#   summarise(treeHeight = mean(avg_height))
+# attractivenssData <- attractivenssData %>%left_join(pprTreeCanopy, by="OBJECTID")
 # attractivenssData$treeHeight[is.na(attractivenssData$treeHeight)] <- 0
-# attractivenssData$treeArea[is.na(attractivenssData$treeArea)] <- 0
 # # the sum of the number of the programs and the permits
 # attractivenssData <-
 #   attractivenssData %>%
 #   left_join(program2021.joinWithPlaceKey %>%
+#               st_drop_geometry() %>% 
 #               mutate(count=1) %>%
-#               group_by(placekey) %>%
-#               summarise(programNum = sum(count)) %>%
-#               st_drop_geometry(),by="placekey")%>%
+#               group_by(PPR_Properties_ObjectID) %>%
+#               summarise(programNum = sum(count)),
+#             by=c("OBJECTID"="PPR_Properties_ObjectID")) %>%
 #   left_join(permit2021.joinWithPlaceKey %>%
+#               st_drop_geometry() %>% 
 #               mutate(count=1) %>%
-#               group_by(placekey) %>%
-#               summarise(permitNum = sum(count)) %>%
-#               st_drop_geometry(),by="placekey")
+#               group_by(PPR_Properties_ObjectID) %>%
+#               summarise(permitNum = sum(count)),
+#             by=c("OBJECTID"="PPR_Properties_ObjectID"))
 # attractivenssData$programNum[is.na(attractivenssData$programNum)] <- 0
 # attractivenssData$permitNum[is.na(attractivenssData$permitNum)] <- 0
-# 
+
 # # the total audience capacity
 # attractivenssData <-
 #   attractivenssData %>%
 #   left_join(program2021.joinWithPlaceKey %>%
-#               group_by(placekey) %>%
-#               summarise(programCap = sum(RegisteredIndividualsCount)) %>%
-#               st_drop_geometry(),by="placekey")%>%
+#               mutate(OBJECTID=PPR_Properties_ObjectID) %>% 
+#               st_drop_geometry() %>% 
+#               group_by(OBJECTID, ProgramID, DateFrom, DateTo) %>%
+#               summarise(programCap = mean(RegisteredIndividualsCount)) %>% 
+#               ungroup() %>% 
+#               group_by(OBJECTID) %>% 
+#               summarise(programCap = sum(programCap)) %>% 
+#               ungroup()
+#             ,by="OBJECTID") %>%
 #   left_join(permit2021.joinWithPlaceKey %>%
-#               group_by(placekey) %>%
-#               summarise(permitCap = sum(ExpectedGroupSizeMin)) %>%
-#               st_drop_geometry(),by="placekey")
+#               mutate(OBJECTID=PPR_Properties_ObjectID) %>% 
+#               st_drop_geometry() %>% 
+#               group_by(OBJECTID, PublishID, StartDate, EndDate) %>%
+#               summarise(permitCap = mean(ExpectedGroupSizeMin)) %>% 
+#               ungroup() %>% 
+#               group_by(OBJECTID) %>% 
+#               summarise(permitCap = sum(permitCap)) %>% 
+#               ungroup(),
+#             by="OBJECTID")
 # attractivenssData$programCap[is.na(attractivenssData$programCap)] <- 0
 # attractivenssData$permitCap[is.na(attractivenssData$permitCap)] <- 0
 
-# st_write(attractivenssData,"data/output/attractivenssDataOutput.GEOJSON")
-attractivenssDataOutput <- st_read("data/output/attractivenssDataOutput.GEOJSON")
+# st_write(attractivenssData %>% drop_na(),"data/output/attractivenssDataOutput.csv")
+attractivenssDataOutput <- st_read("data/output/attractivenssDataOutput.csv") %>% 
+  mutate(OBJECTID = as.integer(OBJECTID))
 
 attractivenssDataOutput %>%
-  st_drop_geometry() %>%
-  pivot_longer(!c(placekey), names_to = "attractivenessCatog", values_to = "value") %>% 
+  pivot_longer(!c(OBJECTID), names_to = "attractivenessCatog", values_to = "value") %>% 
   filter(value != 0) %>% 
-  left_join(attracGEO,by="placekey") %>% 
+  left_join(attracGEO,by="OBJECTID") %>% 
   st_sf() %>% 
   st_transform(crs=crs) %>% 
   ggplot()+
@@ -2064,22 +2061,26 @@ attractivenssDataOutput %>%
 In the correlation analysis, most predictors are not correlated except of facility number and facility area. We will do Prominent Component Analysis(PCA) to see it it can improve the prediction result.
 
 ```{r calculate correlation, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.2.2 Correlation of Attractiveness'}
-attracGEO <- 
-  st_join(attractivenssDataOutput, 
-          pprDistrict %>% dplyr::select(DISTRICTID),
-          left=TRUE) %>% 
-  filter(!is.na(DISTRICTID))
+attracGEO <- left_join(attracGEO, attractivenssDataOutput,  by="OBJECTID") %>% 
+  left_join(., 
+          propertyWithPlaceKey %>% 
+            st_drop_geometry() %>% 
+            dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
+            distinct(),
+          by="OBJECTID") %>% 
+  st_sf()
 
 # join the visits
 attracGEOVISIT <- modelData %>% 
-  dplyr::select(placekey,visitors) %>% 
-  group_by(placekey) %>% 
+  dplyr::select(OBJECTID,visitors) %>% 
+  group_by(OBJECTID) %>% 
   summarise(visitors=sum(visitors)) %>% 
-  inner_join(attracGEO %>% st_drop_geometry(),by="placekey")
+  inner_join(attracGEO %>% st_drop_geometry(),by="OBJECTID")
                         
 # correlation matrix among predictors to see if some of them are highly correlated
 attracGEO.cor = cor(attracGEOVISIT %>% 
-                         dplyr::select(-placekey, -DISTRICTID), method="spearman")
+                      dplyr::select(-OBJECTID, -PPR_DISTRICT) %>% 
+                      mutate_all(.,as.numeric), method="spearman")
 corrplot(attracGEO.cor,method="number", tl.cex = 0.75, type = "lower")
 ```
 
@@ -2089,13 +2090,16 @@ We will use two methods to do feature extraction.
 
 ```{r calculate Large attractiveness PCA, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.3 Primary Components of Large Attractiveness'}
 # -----------Large Attractiveness----------------
-pcaDF <- attracGEOVISIT %>% dplyr::select(-visitors,-placekey, -DISTRICTID)
+pcaDF <- attracGEOVISIT %>% 
+  dplyr::select(-visitors,-OBJECTID, -PPR_DISTRICT) %>% 
+  mutate_all(.,as.numeric)
 pca = prcomp(pcaDF, center = TRUE, scale. = TRUE)  
 
 # decide the number of components
-components = 1:ncol(pcaDF)
-plot(pca$sdev ~ components, ylab = "PCA Standard Deviation", xlab = "Component", pch = 19, type = "b")
-abline(v = 9, col = "red")
+#components = 1:ncol(pcaDF)
+#plot(pca$sdev ~ components, ylab = "PCA Standard Deviation", xlab = "Component", pch = 19, type = "b")
+#abline(v = 9, col = "red")
+fa.parallel(scale(pcaDF), fa = 'pc', n.iter = 100, show.legend = FALSE)
 
 pca$rotation <- -1*pca$rotation
 pca$x <- -1*pca$x
@@ -2149,11 +2153,13 @@ smallPCAAttTogo <-
          PC5 = PC5-min(SmallPCA$PC5),
          PC6 = PC6-min(SmallPCA$PC6))
 
-# try no pca
-noPCATogo <- attracGEO %>% dplyr::select(-DISTRICTID) %>% st_sf()
-
 # st_write(LargePCAAttTogo,"data/output/LargePCAAttTogo.GEOJSON")
 # st_write(smallPCAAttTogo,"data/output/smallPCAAttTogo.GEOJSON")
+```
+
+```{r noPCATogo}
+# try no pca
+noPCATogo <- attracGEO %>% dplyr::select(-PPR_DISTRICT) %>% st_sf()
 ```
 
 #### 5.3 Distance
@@ -2162,10 +2168,10 @@ OSRM (Open Source Routing Machine) is a C++ implementation of a high performance
 
 ```{r calculate distance,  message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # # parks
-# modelPlaces<- as.character(attracGEO$geometry)
+# modelPlaces<- as.character(attracGEO$geometry %>% st_centroid())
 # 
-# modelPlaces <- modelPlaces %>% str_replace("\\(","") %>% 
-#   str_replace("\\)","")%>% 
+# modelPlaces <- modelPlaces %>% str_replace("\\(","") %>%
+#   str_replace("\\)","")%>%
 #   str_replace("c","")
 # 
 # latParks = map(modelPlaces,function(x){
@@ -2184,15 +2190,15 @@ OSRM (Open Source Routing Machine) is a C++ implementation of a high performance
 # lngParks = unlist(lngParks)
 # 
 # modelPlacesFinal <- attracGEO %>%
-#   mutate(parkLat = latParks)%>% 
-#   mutate(parkLng = lngParks) %>% 
+#   mutate(parkLat = latParks)%>%
+#   mutate(parkLng = lngParks) %>%
 #   st_drop_geometry()
 # 
 # # census
 # distCensusData<- as.character(CensusData$originGeometry)
 # 
-# distCensusData <- distCensusData %>% str_replace("\\(","") %>% 
-#   str_replace("\\)","")%>% 
+# distCensusData <- distCensusData %>% str_replace("\\(","") %>%
+#   str_replace("\\)","")%>%
 #   str_replace("c","")
 # 
 # latCensus = map(distCensusData,function(x){
@@ -2210,25 +2216,26 @@ OSRM (Open Source Routing Machine) is a C++ implementation of a high performance
 # latCensus = unlist(latCensus)
 # lngCensus = unlist(lngCensus)
 # 
-# CensusData2 <- CensusData %>% 
-#   mutate(bgLat = latCensus)%>% 
+# CensusData2 <- CensusData %>%
+#   mutate(bgLat = latCensus)%>%
 #   mutate(bgLng = lngCensus)
 # 
 # #openstreetmap
-# st_write(modelPlacesFinal,"modelPlacesFinal.csv")
-# st_write(CensusData2,"CensusData2.csv")
+# st_write(modelPlacesFinal,"data/output/modelPlacesFinal.csv")
+# st_write(CensusData2,"data/output/CensusData2.csv")
+modelPlacesFinalNew <- st_read("data/output/modelPlacesFinalNew.csv")
 modelPlacesFinal <- st_read("data/output/modelPlacesFinal.csv")
-CensusData2 <- st_read("CensusData2.csv")
-# 
+CensusData2 <- st_read("data/output/CensusData2.csv")
+#
 # #query the distance
 # options(osrm.server = "http://127.0.0.1:5000/")
 # options(digits=8)
 # 
 # theDistanceMatrix=list()
-# for(i in 1:nrow(CensusData2)){
+# for(i in 1:3){
 #   src = c(as.numeric(CensusData2["bgLng"][i,]),as.numeric(CensusData2["bgLat"][i,]))
 #   theVector = c()
-#   for (j in 1:nrow(modelPlacesFinal)){
+#   for (j in 1:3){
 #     dst = c(as.numeric(modelPlacesFinal["parkLng"][j,]),as.numeric(modelPlacesFinal["parkLat"][j,]))
 #     medium = osrmRoute(src,dst,overview = "FALSE")
 #     theVector = append(theVector,medium[2])
@@ -2241,13 +2248,27 @@ CensusData2 <- st_read("CensusData2.csv")
 # daFrame <- as.data.frame(matrix(unlist(theDistanceMatrix2), nrow=length(theDistanceMatrix2), byrow=TRUE))
 #st_write(daFrame,"data/output/theDistanceMatrixWhole.csv")
 theDistanceMatrixWhole <- st_read("data/output/theDistanceMatrixWhole.csv")
-theDistanceMatrixWhole <- setNames(theDistanceMatrixWhole, modelPlacesFinal$placekey)
+theDistanceMatrixWhole <- setNames(theDistanceMatrixWhole, 
+                                   modelPlacesFinal$placekey)# change to modelPlacesFinalNew
 theDistanceMatrixWhole <- 
   merge(theDistanceMatrixWhole, CensusData2 %>% dplyr::select(GEOID), by = "row.names") %>%
   dplyr::select(-Row.names)
 theDistanceMatrixWhole2 <- 
   theDistanceMatrixWhole %>%
   pivot_longer(!GEOID, names_to = "placekey", values_to = "distance")
+
+# in PPR OBJECTID unit
+theDistanceMatrixWhole3 <- theDistanceMatrixWhole2 %>% 
+  left_join(.,propertyWithPlaceKey %>% 
+              st_drop_geometry() %>% 
+              dplyr::select(placekey, OBJECTID), by="placekey") %>% 
+  right_join(attracGEO %>% 
+               dplyr::select(OBJECTID) %>% st_drop_geometry(),by="OBJECTID") %>% 
+  drop_na() %>% # delete this step in the future
+  mutate(distance = as.numeric(distance)) %>% 
+  group_by(GEOID, OBJECTID) %>% 
+  summarise(distance = mean(distance)) %>% 
+  ungroup()
 ```
 
 #### 5.4 Probability
@@ -2261,13 +2282,9 @@ prob <- modelData %>%
   summarise(total = sum(visitors)) %>% 
   left_join(modelData, by="origin") %>% 
   mutate(probability = visitors/total) %>% 
-  dplyr::select(placekey, origin, probability)
+  dplyr::select(OBJECTID, origin, probability)
 
-prob.na <- modelData %>% 
-  group_by(origin) %>% 
-  summarise(total = sum(visitors)) %>% 
-  left_join(modelData, by="origin") %>% 
-  mutate(probability = visitors/total) %>% 
+prob.na <- prob %>% 
   filter(is.na(prob$probability))
 
 CensusPoly <-
@@ -2427,10 +2444,10 @@ We prepare 4 sets of data to test the Huff model:
 ```{r combined three parameters, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # Based on the distance panel
 huffData <- 
-  theDistanceMatrixWhole2 %>% 
+  theDistanceMatrixWhole3 %>% 
   rename("origin" = "GEOID")%>% 
   mutate(distance = as.numeric(distance)) %>% 
-  left_join(prob,by=c("placekey","origin"))
+  left_join(prob,by=c("OBJECTID","origin"))
 
 huffDataReplaceNa <- 
   huffData %>% 
@@ -2440,21 +2457,25 @@ huffDataDropNa <-
   huffData %>% 
   drop_na(probability)
 
+huffDataDropNaNOPCA <- 
+  huffDataDropNa%>% 
+  left_join(noPCATogo %>% 
+              st_drop_geometry() %>% 
+              mutate_all(.,as.numeric),by="OBJECTID")
+
 huffDataReplaceNaLargeAttract <- 
   huffDataReplaceNa %>% 
-  left_join(LargePCAAttTogo %>% st_drop_geometry(),by="placekey")
+  left_join(LargePCAAttTogo %>% st_drop_geometry(),by="OBJECTID")
 
 huffDataDropNaLargeAttract <- 
   huffDataDropNa %>% 
-  left_join(LargePCAAttTogo %>% st_drop_geometry(),by="placekey")
+  left_join(LargePCAAttTogo %>% st_drop_geometry(),by="OBJECTID")
 
 huffDataDropNaSmallAttract <- 
   huffDataDropNa %>% 
-  left_join(smallPCAAttTogo %>% st_drop_geometry(),by="placekey")
+  left_join(smallPCAAttTogo %>% st_drop_geometry(),by="OBJECTID")
 
-huffDataDropNaNOPCA <- 
-  huffDataDropNa%>% 
-  left_join(noPCATogo %>% st_drop_geometry(),by="placekey")
+
 ```
 
 ```{r general fit parameter, message = FALSE, warning = FALSE, echo=FALSE, results='hide'}
@@ -2492,7 +2513,7 @@ fit <- fit_parameter(data = RealModelData,
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
@@ -2522,7 +2543,7 @@ fit <- fit_parameter(data = RealModelData,
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
@@ -2540,18 +2561,19 @@ outcomeAnalysis(parameterDrop,"sCENARIO 2: Drop NA probability and use small PCA
 ```{r huff model3 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.3 Histogram of data set3'}
 # sCENARIO 3: Drop NA probability and use no PCA
 RealModelData <- huffDataDropNaNOPCA
+RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
 fit <- fit_parameter(data = RealModelData,
-                           places = attracGEO,
+                           places = RealModelPlaces,
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
-                           attr_column =colnames(huffDataDropNaNOPCA)[5:21],
+                           id_column="OBJECTID",
+                           attr_column =colnames(huffDataDropNaNOPCA)[5:19],
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
@@ -2561,7 +2583,21 @@ parameterDrop <- parameter %>% drop_na()
 R_Square <- parameterDrop$r2
 hist(R_Square,breaks=40)
 
+data <- fit %>% 
+  dplyr::select(data) %>% 
+  unnest(cols="data")
+
 outcomeAnalysis(parameterDrop,"sCENARIO 3: Drop NA probability and no use PCA")
+```
+
+```{r for jeff}
+parameter_out <- parameter %>% 
+  mutate_all(~replace(., is.na(.), 0))
+
+data <- data[, c((1:3),20,(4:19))]
+
+#st_write(parameter_out,"data/output/dashboard/parameter_for_prediction.csv") 
+#st_write(data,"data/output/dashboard/data_for_prediction.csv") 
 ```
 
 **SCENARIO 4** Result (Replace NA probability and use large PCA)
@@ -2580,7 +2616,7 @@ fit <- fit_parameter(data = RealModelData,
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
@@ -2592,6 +2628,7 @@ hist(R_Square,breaks=40)
 
 outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large PCA")
 ```
+
 
 #### 5.7 Temperoal Model
 
@@ -2685,7 +2722,7 @@ ggplot() +
 ```{r distance panel, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # Based on the distance panel
 huffDataSeasonal <- 
-  theDistanceMatrixWhole2 %>% 
+  theDistanceMatrixWhole3 %>% 
   rename("origin" = "GEOID")%>% 
   mutate(distance = as.numeric(distance)) %>% 
   left_join(probSeasonal,by=c("placekey","origin"))
@@ -2722,7 +2759,7 @@ modelEnsemble <- function(df,season){
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
   parameter <- fit %>% 
     dplyr::select(parameter) %>% 
@@ -2776,7 +2813,7 @@ modelEnsemble <- function(df,season){
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
   parameter <- fit %>% 
     dplyr::select(parameter) %>% 
@@ -2831,7 +2868,7 @@ modelEnsemble <- function(df,season){
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
   parameter <- fit %>% 
     dplyr::select(parameter) %>% 
@@ -2886,7 +2923,7 @@ modelEnsemble <- function(df,season){
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
   parameter <- fit %>% 
     dplyr::select(parameter) %>% 
@@ -2929,46 +2966,45 @@ modelEnsemble(huffDataDropNaLargeAttract,"Drop Na & Large Attractiveness")
 ```{r predict in sCENARIO 3}
 # sCENARIO 3: Drop NA probability and use no PCA
 RealModelData3 <- huffDataDropNaNOPCA 
+RealModelPlaces3 <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
 # records are not enough for (421010008033, 421010008034, 421010008042, 421010158004)
-RealModelData3 <- RealModelData3 %>% 
+RealModelData3 <- RealModelData3 %>%
   filter(!origin %in% c(421010008033, 421010008034, 421010008042, 421010158004))
 
 # Split data
 set.seed(3456)
-placeSet <- attracGEO %>% 
+placeSet <- RealModelPlaces3 %>% 
   mutate(setID =sample(c("Train", "Test"),nrow(.), prob=c(0.8, 0.2), replace=TRUE))
 
 TrainList <- placeSet %>% 
   st_drop_geometry() %>% 
   filter(setID=="Train") %>% 
-  pull(placekey) 
+  pull(OBJECTID) 
 
 TestList <- placeSet %>% 
   st_drop_geometry() %>% 
   filter(setID=="Test") %>% 
-  pull(placekey) 
+  pull(OBJECTID) 
 
 # flter train data
 Train <- RealModelData3 %>% 
-  filter(placekey %in% TrainList)
+  filter(OBJECTID %in% TrainList)
 # flter test data
 Test <- RealModelData3 %>% 
-  filter(placekey %in% TestList)
+  filter(OBJECTID %in% TestList)
 
-# fit on train test
-fit3 <- fit_parameter(data = Train,
-                           # remove some places
-                           places = placeSet %>% filter(setID=="Train"),
+fit <- fit_parameter(data = RealModelData3,
+                           places = RealModelPlaces3,
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
-                           attr_column =colnames(huffDataDropNaNOPCA)[5:21],
+                           id_column="OBJECTID",
+                           attr_column =colnames(RealModelData3)[5:19],
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
-                           k=3)
+                           k=2)
 
 parameter3 <- fit %>% 
   dplyr::select(parameter) %>% 
@@ -2987,8 +3023,8 @@ Test <- centrality_to_df(data = Test,
                          neighbor_data = convenientSurroundEffect, 
                          neighbor_id_column="placekey",
                          neighbor_attr_column ="visits",
-                         id_column="placekey",
-                         k = 3)
+                         id_column="OBJECTID",
+                         k = 2)
 
 # attr in test cannot be 0!!!! because 0^negative => NA 
 Test <- Test %>% 
@@ -2997,7 +3033,7 @@ Test <- Test %>%
 
 # predict
 huff_results <- huff_NE(destinations_name = Test$id, 
-                        destinations_attractiveness = Test[,5:21], 
+                        destinations_attractiveness = Test[,5:19], 
                         origins_name = Test$origin, 
                         destinations_centrality = Test$centrality,
                         distance = Test$distance,
@@ -3010,6 +3046,8 @@ huff_results <- huff_NE(destinations_name = Test$id,
 # MAE
 MAE <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
   mutate(AE = abs(huff_probability - probability)) %>% 
+  # dplyr::select(AE, probability) %>% 
+  # drop_na() %>% 
   summarise(MAE = mean(AE,na.rm=T),
             mean_prob = mean(probability,na.rm=T))
 
@@ -3017,3 +3055,6 @@ MAE$MAE
 # MAPE
 MAE$MAE/MAE$mean_prob
 ```
+
+
+
