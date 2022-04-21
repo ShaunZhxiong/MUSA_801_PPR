@@ -615,7 +615,7 @@ propertyWithPlaceKey <- st_join(property %>% filter(NESTED == "N") %>% st_transf
   st_sf() %>% 
   st_transform(crs=crs) %>% 
   drop_na(placekey)
-
+#st_write(propertyWithPlaceKey, "data/output/dashboard/SitesRelation_PPR_SG.GeoJSON")
 
 # back up geometry information
 program2021.joinGEO <- program2021.join %>% dplyr::select(FacilityID,geometry) %>% distinct()
@@ -1432,6 +1432,8 @@ censusPopData <-
   as.data.frame() %>%
   rename("population" = "B01003_001E")
 
+#st_write(censusPopData, "data/output/dashboard/population-CensusBlockGroup.csv")
+
 # get the quotient and apply
 # notice: here some cbg doesn't have population
 homePanelToGo <- 
@@ -1634,6 +1636,10 @@ overprm_site %>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
 
+special_site <- mutate(potential_site, cluster="potential") %>% 
+  rbind(mutate(overprm_site, cluster="over-programmed"))
+
+#st_write(special_site, "data/output/dashboard/conflicts_cluster.csv")
 ```
 
 ```{r spatially distribution of sg bias clusters,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure4.1.2 Map of Bias Type of SafeGraph Data'}
@@ -2126,11 +2132,13 @@ smallPCAAttTogo <-
          PC5 = PC5-min(SmallPCA$PC5),
          PC6 = PC6-min(SmallPCA$PC6))
 
-# try no pca
-noPCATogo <- attracGEO %>% dplyr::select(-PPR_DISTRICT) %>% st_sf()
-
 # st_write(LargePCAAttTogo,"data/output/LargePCAAttTogo.GEOJSON")
 # st_write(smallPCAAttTogo,"data/output/smallPCAAttTogo.GEOJSON")
+```
+
+```{r noPCATogo}
+# try no pca
+noPCATogo <- attracGEO %>% dplyr::select(-PPR_DISTRICT) %>% st_sf()
 ```
 
 #### 5.3 Distance
@@ -2428,6 +2436,12 @@ huffDataDropNa <-
   huffData %>% 
   drop_na(probability)
 
+huffDataDropNaNOPCA <- 
+  huffDataDropNa%>% 
+  left_join(noPCATogo %>% 
+              st_drop_geometry() %>% 
+              mutate_all(.,as.numeric),by="OBJECTID")
+
 huffDataReplaceNaLargeAttract <- 
   huffDataReplaceNa %>% 
   left_join(LargePCAAttTogo %>% st_drop_geometry(),by="OBJECTID")
@@ -2440,11 +2454,7 @@ huffDataDropNaSmallAttract <-
   huffDataDropNa %>% 
   left_join(smallPCAAttTogo %>% st_drop_geometry(),by="OBJECTID")
 
-huffDataDropNaNOPCA <- 
-  huffDataDropNa%>% 
-  left_join(noPCATogo %>% 
-              st_drop_geometry() %>% 
-              mutate_all(.,as.numeric),by="OBJECTID")
+
 ```
 
 ```{r general fit parameter, message = FALSE, warning = FALSE, echo=FALSE, results='hide'}
@@ -2552,7 +2562,21 @@ parameterDrop <- parameter %>% drop_na()
 R_Square <- parameterDrop$r2
 hist(R_Square,breaks=40)
 
+data <- fit %>% 
+  dplyr::select(data) %>% 
+  unnest(cols="data")
+
 outcomeAnalysis(parameterDrop,"sCENARIO 3: Drop NA probability and no use PCA")
+```
+
+```{r for jeff}
+parameter_out <- parameter %>% 
+  mutate_all(~replace(., is.na(.), 0))
+
+data <- data[, c((1:3),20,(4:19))]
+
+#st_write(parameter_out,"data/output/dashboard/parameter_for_prediction.csv") 
+#st_write(data,"data/output/dashboard/data_for_prediction.csv") 
 ```
 
 **SCENARIO 4** Result (Replace NA probability and use large PCA)
@@ -2583,6 +2607,7 @@ hist(R_Square,breaks=40)
 
 outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large PCA")
 ```
+
 
 #### 5.7 Temperoal Model
 
@@ -3009,3 +3034,6 @@ MAE$MAE
 # MAPE
 MAE$MAE/MAE$mean_prob
 ```
+
+
+
