@@ -257,7 +257,7 @@ permit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
 program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
 facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 facilityIDNOT789 <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties_NOT_789.csv")
-facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
+facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("FacilityID" = "ï..FacilityID","PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 
 # define date, filter by attendance date
 program2021.clean <- program2021 %>% 
@@ -1763,18 +1763,18 @@ visitCount %>%
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 #
-albertChristy <- program2021.joinWithPlaceKey %>% filter(placekey=="zzz-222@63s-dvq-5fz")
-albertChristy$AttendenceRealDate
-visitCount %>%
-  filter(placekey=='zzz-222@63s-dvq-5fz') %>%
-  st_drop_geometry()%>%
-  na.omit()%>%
-  ggplot(aes(visitDay,visits)) +
-  geom_line(color=palette1_main,size=0.75)+
-  geom_vline(xintercept = albertChristy$AttendenceRealDate, colour="green", linetype = "longdash")+
-  labs(title = '',x="Visit Date",y="Safegraph Visit")+
-  plotTheme()+
-  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+# albertChristy <- program2021.joinWithPlaceKey %>% filter(placekey=="zzz-222@63s-dvq-5fz")
+# albertChristy$AttendenceRealDate
+# visitCount %>%
+#   filter(placekey=='zzz-222@63s-dvq-5fz') %>%
+#   st_drop_geometry()%>%
+#   na.omit()%>%
+#   ggplot(aes(visitDay,visits)) +
+#   geom_line(color=palette1_main,size=0.75)+
+#   geom_vline(xintercept = albertChristy$AttendenceRealDate, colour="green", linetype = "longdash")+
+#   labs(title = '',x="Visit Date",y="Safegraph Visit")+
+#   plotTheme()+
+#   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ```
 
@@ -2096,62 +2096,56 @@ pcaDF <- attracGEOVISIT %>%
 pca = prcomp(pcaDF, center = TRUE, scale. = TRUE)  
 
 # decide the number of components
-#components = 1:ncol(pcaDF)
-#plot(pca$sdev ~ components, ylab = "PCA Standard Deviation", xlab = "Component", pch = 19, type = "b")
-#abline(v = 9, col = "red")
-fa.parallel(scale(pcaDF), fa = 'pc', n.iter = 100, show.legend = FALSE)
+# components = 1:ncol(pcaDF)
+# plot(pca$sdev ~ components, ylab = "PCA Standard Deviation", xlab = "Component", pch = 19, type = "b")
+# abline(v = 9, col = "red")
+# fa.parallel(scale(pcaDF), fa = 'pc', n.iter = 100, show.legend = FALSE)
 
 pca$rotation <- -1*pca$rotation
 pca$x <- -1*pca$x
 
-corrplot(t(pca$rotation[,1:9]), is.corr=FALSE)
+corrplot(t(pca$rotation[,1:3]), is.corr=FALSE)
 ```
 
 2.  **Small group of attractiveness**: some important attractiveness, like area, trail miles, swimming PoolNum, spraygroundNum, tennisCourtNum, treeHeight, treeArea, programNum, and permitNum are included in the PCA. Then 6 prominent components are extracted.
 
 ```{r calculate Small attractiveness PCA, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.3 Primary Components of Small Attractiveness'}
 # -----------Small Attractiveness--------------
-pcaDFSmall <- attracGEOVISIT %>% dplyr::select(area,trailMiles, swimmingPoolNum, spraygroundNum,tennisCourtNum,treeHeight,treeArea,programNum,permitNum)
+pcaDFSmall <- 
+  attracGEOVISIT %>% 
+  dplyr::select(area,trailMiles, facilityNum,facilityArea,hydrationNum,tennisCourtNum,playgroundNum,programNum,permitNum) %>% 
+  mutate_all(.,as.numeric)
 pcaSmall = prcomp(pcaDFSmall, center = TRUE, scale. = TRUE)  
 
 # decide the number of components
 componentsSmall = 1:ncol(pcaDFSmall)
 plot(pcaSmall$sdev ~ componentsSmall, ylab = "PCA Standard Deviation", xlab = "Component", pch = 19, type = "b")
 abline(v = 6, col = "red")
+# fa.parallel(scale(pcaDFSmall), fa = 'pc', n.iter = 100, show.legend = FALSE)
 
 pcaSmall$rotation <- -1*pcaSmall$rotation
 pcaSmall$x <- -1*pcaSmall$x
 
-corrplot(t(pcaSmall$rotation[,1:6]), is.corr=FALSE)
+corrplot(t(pcaSmall$rotation[,1:2]), is.corr=FALSE)
 
 # construct attractiveness matrix
 largeRetrunPCAValue <- as.data.frame(pca$x)
 smallRetrunPCAValue <- as.data.frame(pcaSmall$x)
-LargePCA <- largeRetrunPCAValue %>% dplyr::select(PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9)
-SmallPCA <- smallRetrunPCAValue %>% dplyr::select(PC1,PC2,PC3,PC4,PC5,PC6)
+LargePCA <- largeRetrunPCAValue %>% dplyr::select(PC1,PC2,PC3)
+SmallPCA <- smallRetrunPCAValue %>% dplyr::select(PC1,PC2)
 
 LargePCAAttTogo <- 
-  cbind(LargePCA, attracGEO %>% dplyr::select(placekey)) %>% 
+  cbind(LargePCA, attracGEO %>% dplyr::select(OBJECTID)) %>% 
   st_sf() %>% 
   mutate(PC1 = PC1-min(LargePCA$PC1),
          PC2 = PC2-min(LargePCA$PC2),
-         PC3 = PC3-min(LargePCA$PC3),
-         PC4 = PC4-min(LargePCA$PC4),
-         PC5 = PC5-min(LargePCA$PC5),
-         PC6 = PC6-min(LargePCA$PC6),
-         PC7 = PC7-min(LargePCA$PC7),
-         PC8 = PC8-min(LargePCA$PC8),
-         PC9 = PC9-min(LargePCA$PC9))
+         PC3 = PC3-min(LargePCA$PC3))
 
 smallPCAAttTogo <- 
-  cbind(SmallPCA, attracGEO %>% dplyr::select(placekey)) %>% 
+  cbind(SmallPCA, attracGEO %>% dplyr::select(OBJECTID)) %>% 
   st_sf()%>% 
   mutate(PC1 = PC1-min(SmallPCA$PC1),
-         PC2 = PC2-min(SmallPCA$PC2),
-         PC3 = PC3-min(SmallPCA$PC3),
-         PC4 = PC4-min(SmallPCA$PC4),
-         PC5 = PC5-min(SmallPCA$PC5),
-         PC6 = PC6-min(SmallPCA$PC6))
+         PC2 = PC2-min(SmallPCA$PC2))
 
 # st_write(LargePCAAttTogo,"data/output/LargePCAAttTogo.GEOJSON")
 # st_write(smallPCAAttTogo,"data/output/smallPCAAttTogo.GEOJSON")
@@ -2223,8 +2217,8 @@ OSRM (Open Source Routing Machine) is a C++ implementation of a high performance
 # #openstreetmap
 # st_write(modelPlacesFinal,"data/output/modelPlacesFinal.csv")
 # st_write(CensusData2,"data/output/CensusData2.csv")
-modelPlacesFinalNew <- st_read("data/output/modelPlacesFinalNew.csv")
-modelPlacesFinal <- st_read("data/output/modelPlacesFinal.csv")
+modelPlacesFinal <- st_read("data/output/modelPlacesFinalNew.csv")
+# modelPlacesFinal <- st_read("data/output/modelPlacesFinal.csv")
 CensusData2 <- st_read("data/output/CensusData2.csv")
 #
 # #query the distance
@@ -2232,10 +2226,10 @@ CensusData2 <- st_read("data/output/CensusData2.csv")
 # options(digits=8)
 # 
 # theDistanceMatrix=list()
-# for(i in 1:3){
+# for(i in 1:nrow(CensusData2)){
 #   src = c(as.numeric(CensusData2["bgLng"][i,]),as.numeric(CensusData2["bgLat"][i,]))
 #   theVector = c()
-#   for (j in 1:3){
+#   for (j in 1:nrow(modelPlacesFinal)){
 #     dst = c(as.numeric(modelPlacesFinal["parkLng"][j,]),as.numeric(modelPlacesFinal["parkLat"][j,]))
 #     medium = osrmRoute(src,dst,overview = "FALSE")
 #     theVector = append(theVector,medium[2])
@@ -2246,29 +2240,29 @@ CensusData2 <- st_read("data/output/CensusData2.csv")
 # 
 # theDistanceMatrix2 <- theDistanceMatrix
 # daFrame <- as.data.frame(matrix(unlist(theDistanceMatrix2), nrow=length(theDistanceMatrix2), byrow=TRUE))
-#st_write(daFrame,"data/output/theDistanceMatrixWhole.csv")
-theDistanceMatrixWhole <- st_read("data/output/theDistanceMatrixWhole.csv")
+# st_write(daFrame,"data/output/theDistanceMatrixWhole2.csv")
+theDistanceMatrixWhole <- st_read("data/output/theDistanceMatrixWhole2.csv")
 theDistanceMatrixWhole <- setNames(theDistanceMatrixWhole, 
-                                   modelPlacesFinal$placekey)# change to modelPlacesFinalNew
+                                   modelPlacesFinal$OBJECTID)
 theDistanceMatrixWhole <- 
   merge(theDistanceMatrixWhole, CensusData2 %>% dplyr::select(GEOID), by = "row.names") %>%
   dplyr::select(-Row.names)
 theDistanceMatrixWhole2 <- 
   theDistanceMatrixWhole %>%
-  pivot_longer(!GEOID, names_to = "placekey", values_to = "distance")
+  pivot_longer(!GEOID, names_to = "OBJECTID", values_to = "distance")
 
 # in PPR OBJECTID unit
-theDistanceMatrixWhole3 <- theDistanceMatrixWhole2 %>% 
-  left_join(.,propertyWithPlaceKey %>% 
-              st_drop_geometry() %>% 
-              dplyr::select(placekey, OBJECTID), by="placekey") %>% 
-  right_join(attracGEO %>% 
-               dplyr::select(OBJECTID) %>% st_drop_geometry(),by="OBJECTID") %>% 
-  drop_na() %>% # delete this step in the future
-  mutate(distance = as.numeric(distance)) %>% 
-  group_by(GEOID, OBJECTID) %>% 
-  summarise(distance = mean(distance)) %>% 
-  ungroup()
+# theDistanceMatrixWhole3 <- theDistanceMatrixWhole2 %>% 
+#   left_join(.,propertyWithPlaceKey %>% 
+#               st_drop_geometry() %>% 
+#               dplyr::select(placekey, OBJECTID), by="placekey") %>% 
+#   right_join(attracGEO %>% 
+#                dplyr::select(OBJECTID) %>% st_drop_geometry(),by="OBJECTID") %>% 
+#   drop_na() %>% # delete this step in the future
+#   mutate(distance = as.numeric(distance)) %>% 
+#   group_by(GEOID, OBJECTID) %>% 
+#   summarise(distance = mean(distance)) %>% 
+#   ungroup()
 ```
 
 #### 5.4 Probability
@@ -2444,9 +2438,10 @@ We prepare 4 sets of data to test the Huff model:
 ```{r combined three parameters, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # Based on the distance panel
 huffData <- 
-  theDistanceMatrixWhole3 %>% 
-  rename("origin" = "GEOID")%>% 
+  theDistanceMatrixWhole2 %>% 
+  rename("origin" = "GEOID")%>%
   mutate(distance = as.numeric(distance)) %>% 
+  mutate(OBJECTID = as.numeric(OBJECTID)) %>% 
   left_join(prob,by=c("OBJECTID","origin"))
 
 huffDataReplaceNa <- 
@@ -2502,14 +2497,15 @@ convenientSurroundEffect <- st_read("data/output/convenientSurroundEffect.GeoJSO
 
 # sCENARIO 1: Drop NA probability and use large PCA
 RealModelData <- huffDataDropNaLargeAttract
+RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
 fit <- fit_parameter(data = RealModelData,
-                           places = attracGEO,
+                           places = RealModelPlaces,
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
-                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
+                           id_column="OBJECTID",
+                           attr_column =c("PC1","PC2","PC3"),
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
@@ -2532,14 +2528,15 @@ outcomeAnalysis(parameterDrop,"sCENARIO 1: Drop NA probability and use large PCA
 ```{r, 2model fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.2 Histogram of data set2'}
 # sCENARIO 2: Drop NA probability and use small PCA
 RealModelData <- huffDataDropNaSmallAttract
+RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
 fit <- fit_parameter(data = RealModelData,
-                           places = attracGEO,
+                           places = RealModelPlaces,
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
-                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6"),
+                           id_column="OBJECTID",
+                           attr_column =c("PC1","PC2"),
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
@@ -2605,14 +2602,15 @@ data <- data[, c((1:3),20,(4:19))]
 ```{r model huff4 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.4 Histogram of data set4'}
 # sCENARIO 4: Replace NA probability and use large PCA
 RealModelData <- huffDataReplaceNaLargeAttract
+RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
 fit <- fit_parameter(data = RealModelData,
-                           places = attracGEO,
+                           places = RealModelPlaces,
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
-                           attr_column =colnames(huffDataReplaceNaLargeAttract)[5:13],
+                           id_column="OBJECTID",
+                           attr_column =c("PC1","PC2","PC3"),
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
@@ -2623,7 +2621,7 @@ parameter <- fit %>%
   unnest(cols="parameter")
 
 parameterDrop <- parameter %>% drop_na()
-R_Square <- parameterDrop$r2
+R_Square <- parameterDrop$r2 
 hist(R_Square,breaks=40)
 
 outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large PCA")
