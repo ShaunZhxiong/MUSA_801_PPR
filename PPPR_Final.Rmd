@@ -1273,11 +1273,12 @@ ggplot(data = depaCountPlotHF) +
   geom_sf(data = pprServiceArea %>% st_transform(crs=4326),fill ="transparent", color="black",size=0.5)+
   geom_sf(data=pprDistrict %>% st_transform(crs=4326),fill ="transparent", color="black",size=1)+
   geom_sf(data=propertyWithPlaceKey %>% dplyr::select(OBJECTID) %>%distinct() %>%  st_transform(crs=crs), fill ='#C5C5C5', color='#C5C5C5',alpha=0.3,size=0)+
+  geom_sf(data=CensusPoly %>% filter(GEOID %in% depaCountPlotHF$departure),fill ="transparent", color=palette1_main,size=1)+
   geom_curve(aes(x = departure.x, y = departure.y, xend = park.x, yend = park.y,color = q5(visitors)),
              # arrow = arrow(length = unit(0.01, "npc"), type="closed"),
              size = 1,curvature = -0.2, alpha = 0.7)+
   scale_color_manual(values = palette5,
-                     labels = qBr(depaCountPlot2,"visitors"),
+                     labels = qBr(depaCountPlotHF,"visitors"),
                      name = "Device Visits (Quintile Breaks)") +
   labs(x="",y="")+
   mapTheme()+
@@ -1763,18 +1764,18 @@ visitCount %>%
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 #
-# albertChristy <- program2021.joinWithPlaceKey %>% filter(placekey=="zzz-222@63s-dvq-5fz")
-# albertChristy$AttendenceRealDate
-# visitCount %>%
-#   filter(placekey=='zzz-222@63s-dvq-5fz') %>%
-#   st_drop_geometry()%>%
-#   na.omit()%>%
-#   ggplot(aes(visitDay,visits)) +
-#   geom_line(color=palette1_main,size=0.75)+
-#   geom_vline(xintercept = albertChristy$AttendenceRealDate, colour="green", linetype = "longdash")+
-#   labs(title = '',x="Visit Date",y="Safegraph Visit")+
-#   plotTheme()+
-#   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+albertChristy <- program2021.joinWithPlaceKey %>% filter(placekey=="zzz-222@63s-dvq-5fz")
+albertChristy$AttendenceRealDate
+visitCount %>%
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>%
+  st_drop_geometry()%>%
+  na.omit()%>%
+  ggplot(aes(visitDay,visits)) +
+  geom_line(color=palette1_assist,size=0.75)+
+  geom_vline(xintercept = albertChristy$AttendenceRealDate, colour=palette1_main, linetype = "longdash")+
+  labs(title = '',x="Visit Date",y="Safegraph Visit")+
+  plotTheme()+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ```
 
@@ -2081,7 +2082,7 @@ attracGEOVISIT <- modelData %>%
 attracGEO.cor = cor(attracGEOVISIT %>% 
                       dplyr::select(-OBJECTID, -PPR_DISTRICT) %>% 
                       mutate_all(.,as.numeric), method="spearman")
-corrplot(attracGEO.cor,method="number", tl.cex = 0.75, type = "lower")
+corrplot(attracGEO.cor,method="number", tl.cex = 2, type = "lower",number.cex=2,addgrid.col = "black",addCoef.col="black")
 ```
 
 We will use two methods to do feature extraction.
@@ -2411,7 +2412,7 @@ parksSurroundDot <- parksSurroundEffect %>% mutate(label="park")
 ggplot() +
   geom_sf(data=pprServiceArea,color='black',size=0.35,fill= "transparent")+
   geom_sf(data=pprDistrict,color='black',size=0.5,fill= "transparent")+
-  geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = "black",fill = "black",alpha = 1, size = 1) +
+  geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = "black",fill = "grey90",alpha = 1, size = 1) +
   geom_sf(data=restSurroundDot,aes(geometry=geometry),color = palette2[2],fill = palette2[2],alpha = 0.5,size = 2) +
   geom_sf(data=convenientSurroundDot,aes(geometry=geometry),color = palette2[1],fill = palette2[1],alpha = 0.5,size = 2) +
 
