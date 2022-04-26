@@ -1692,13 +1692,13 @@ According to the time trend of visits, **all the visit peaks here respond to som
 
 #### 4.3 Special Cases2:Albert W. Christy, Sr. Recreation Center
 
-**Albert W. Christy, Sr. Recreation Center** is a representative case of **potential** facilities with low permits, high visits and long dwelling time. The facility improvements in 2021 make the Christy Recreation Center a safe destination for West Philadelphia teens and young adults. It is a good opportunity to see the community and local businesses respond to violence by coming together with law enforcement and elected leaders to expand on- and off-court programs for teens and older youth. [Click for more Information](https://www.phila.gov/2021-09-28-new-amenities-at-christy-rec-center-attract-teens/)
+**Albert W. Christy, Sr. Recreation Center** is a representative case of **potential** facilities with low permits, high visits and long dwelling time.It is a neighborhood park in District 8. There are only two types of programs scheduled, football and after school. But 1000+ device visits was recorded by the SafeGraph data on a single day, like some dates in the middle of March, June, July and August.[Click for more Information](https://www.phila.gov/2021-09-28-new-amenities-at-christy-rec-center-attract-teens/)
 
 ```{r GEP img, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
-knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined3.png"))
+knitr::include_graphics(c("resources/imgaes/ChristyRec_combine1.jpg"))
 ```
 
-The  Christy Recreation Center is a neighborhood park in District 8.The weekly program attracts an average of 50-100 teens a week, and is contributing to the overall increase in recreational programming now available to older youth in the West Philadelphia neighborhood.
+According to news about the Christy Rec Center, the weekly program attracts an average of 50-100 teens a week, and is contributing to the overall increase in recreational programming now available to older youth in the West Philadelphia neighborhood. Limited types of programs were provided based on PPR record.
 
 ```{r Christy Recreation Center dwell time ,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.3.6 Christy Rec Center Activity with Total'}
 
@@ -1726,9 +1726,8 @@ ChristySum %>%
         legend.text = element_text( colour = "black", size = 8))
 ```
 
-Above is program distribution.
 
-```{r GEP temperal pattern by day ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.6 Distribution of  Christy Recreation Center visits in 2021'}
+```{r GEP temperal pattern by day ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.7 Distribution of  Christy Recreation Center visits in 2021'}
 
 visitCount %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
@@ -1742,13 +1741,13 @@ visitCount %>%
 
 ```
 
-xxxxxxxxxxxThe three peaks of visits in Figure3.3.6 above may respond to events for celebrating major festivals, like Easter Egg Hunt, Halloween and Christmas carriage rides. The spring, summer and fall children concerts also take place in May, June and September. Compared to limited PPR program/ permit records, Safegraph data can reflect better using conditions of high visits in the park.
+A baseball court, playground, and an outdoor basketball court surround the Christy Rec Center. Interior basketball court, multi-purpose interior space are provided inside the Christy Rec Center.  
 
 ```{r GEP img3, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
-knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined.png"))
+knitr::include_graphics(c("resources/imgaes/ChristyRec_combine2.jpg"))
 ```
 
-```{r GEP temperal pattern by hour,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.7 Temperal Vistis Pattern By Hour & Vistis Dwelling Time'}
+```{r GEP temperal pattern by hour,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.8 Temperal Vistis Pattern By Hour & Vistis Dwelling Time'}
 sumVisit <- visitHour %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
@@ -1787,11 +1786,10 @@ plot2 <- ggplot(data=sumVisit3, aes(dwellTimes,visitors)) +
 grid.arrange(plot2,plot1,ncol=2,top="")
 ```
 
-xxxx According to the Figure3.3.7 above, people usually dwell longer (\>240min) here, because most activities, like live concert, educational class take place during the day are long. It seems 11 am to 3 pm is the most time period with the most aggregated visits.
+According to the Figure3.3.8 above, people usually dwell longer (\>120min) here, because most activities, like athletic events and after class activities take place during the day are long. It seems 11 am to 3 pm is the most time period with the most aggregated visits.
 
-```{r GEP img4, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
-knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined2.png"))
-```
+The facility improvements in 2021 make the Christy Recreation Center a safe destination for West Philadelphia teens and young adults. It is a good opportunity to see the community and local businesses respond to violence by coming together with law enforcement and elected leaders to expand on- and off-court programs for teens and older youth. More programs related basketball and more interior activities might be suggested for future program schedules.
+
 
 ### 5 Huff Model with Neighbor Effect
 
