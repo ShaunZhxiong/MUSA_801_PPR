@@ -1461,13 +1461,13 @@ sgIntegrated_byMonth.scale <- scale(sgIntegrated_byMonth %>%
 
 
 # decide cluster number (only run once)
-# set.seed(1234)
-# nc <- NbClust(sgIntegrated_byMonth.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
-# table(nc$Best.n[1,])
-# 
-# barplot(table(nc$Best.n[1,]),
-#         xlab="Numer of Clusters", ylab="Number of Criteria",
-#         main="Number of Clusters Chosen by 26 Criteria")
+set.seed(1234)
+nc <- NbClust(sgIntegrated_byMonth.scale, min.nc=2, max.nc=15, method="kmeans", index="all")
+table(nc$Best.n[1,])
+
+barplot(table(nc$Best.n[1,]),
+        xlab="Numer of Clusters", ylab="Number of Criteria",
+        main="Number of Clusters Chosen by 26 Criteria")
 
 
 # Run K-Means cluster
@@ -1478,6 +1478,7 @@ cluster2 <- kmeans(sgIntegrated_byMonth.scale, centers = 3, nstart = 5)
 # add cluster number back
 sgIntegrated_byMonth <- sgIntegrated_byMonth %>% 
   mutate(cluster = cluster2$cluster)
+
 
 # mean by cluster
 cluster2_mean <- aggregate(sgIntegrated_byMonth %>% 
@@ -1495,8 +1496,8 @@ cluster2_mean <- aggregate(sgIntegrated_byMonth %>%
 
 ```{r cluster2_mean, message = FALSE, warning = FALSE}
 kable(cluster2_mean %>% 
-        mutate(color=c("pink","orange", "blue"),.before = 2) %>% 
-        mutate(group=c("Overprogrammed","Normal", "Potential"),.before = 2),align = 'c',caption = '<center>Table 4.1 Mean values of clusters for conflicts <center/>') %>%
+        mutate(color=c("blue","orange","pink"),.before = 2) %>% 
+        mutate(group=c("Potential", "Normal", "Overprogrammed"),.before = 2),align = 'c',caption = '<center>Table 4.1 Mean values of clusters for conflicts <center/>') %>%
   kable_classic(full_width = T)%>%
   kable_styling(position = "center")
 ```
@@ -1514,7 +1515,7 @@ panel.hist <- function(x, ...)
 }
 
 #Color points by groups
-my_cols <- c(palette1_main,palette5[1],palette5[5])
+my_cols <- c(palette5[5],palette5[1],palette1_main)
 
 pairs(sgIntegrated_byMonth %>% 
         st_drop_geometry() %>% 
@@ -1526,20 +1527,30 @@ pairs(sgIntegrated_byMonth %>%
 
 ```
 
-The Figure 4.1.1 shows how these three types of facilities are spatially distributed in District 7,8,9. There are many supportive facilities in the south Philadelphia.
+The Figure 4.1.1 shows how these three types of facilities are spatially distributed in District 7,8,9. There are many over-programmed facilities in the south Philadelphia.
 
 ```{r find the case, include=FALSE, eval=FALSE}
-sgIntegrated_byMonth %>%
+# Checked the cluster number but find 4 facilities (22n-222@628-pgj-2x5, zzw-222@628-php-s89, zzw-222@628-pmb-cdv, zzy-222@628-pgm-4sq) from potential should belong to over-programmed facilities. So I change the as below manually.
+
+sgIntegrated_byMonth2 <- copy(sgIntegrated_byMonth)
+ 
+                                                          sgIntegrated_byMonth2$cluster[which(
+                                                            sgIntegrated_byMonth$placekey == "22n-222@628-pgj-2x5"|                          sgIntegrated_byMonth$placekey == "zzw-222@628-php-s89"|                          sgIntegrated_byMonth$placekey == "zzw-222@628-pmb-cdv"|
+sgIntegrated_byMonth$placekey == "zzy-222@628-pgm-4sq")] <- 3
+
+# Potential Facilities
+sgIntegrated_byMonth2 %>%
   st_drop_geometry() %>% 
   filter(cluster == 1) %>% 
   group_by(placekey) %>% 
   summarize(howManyMonthBelongToThisCluster=n()) %>% 
-  kable(.,align = 'c') %>%
+  kable(.,align = 'c',caption = '<center>Table 4.1.2 Mean values of clusters for conflicts <center/>') %>%
   kable_classic(full_width = F)%>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
 
-sgIntegrated_byMonth %>%
+# Over-programmed facilities
+sgIntegrated_byMonth2 %>%
   st_drop_geometry() %>% 
   filter(cluster == 3) %>% 
   group_by(placekey) %>% 
@@ -1549,31 +1560,45 @@ sgIntegrated_byMonth %>%
   kable_styling(position = "center")%>%
   scroll_box(width = "100%", height = "400px")
 
-### Export top 5 potential facilities
-
-sgIntegrated_byMonth_cluster1 <- sgIntegrated_byMonth %>%
-  #st_drop_geometry() %>% 
+# More details in cluster1 Potential
+sgIntegrated_byMonth_cluster1 <- sgIntegrated_byMonth2 %>%
+  st_drop_geometry() %>% 
   filter(cluster == 1) %>% 
   group_by(placekey) %>% 
   summarize(month = n(),
             programs = sum(programs),
             visits = sum(visits))
-
+# More details in cluster2 Normal
+sgIntegrated_byMonth_cluster2 <- sgIntegrated_byMonth2 %>%
+  st_drop_geometry() %>% 
+  filter(cluster == 2) %>% 
+  group_by(placekey) %>% 
+  summarize(month = n(),
+            programs = sum(programs),
+            visits = sum(visits))
+# More details in cluster3 Over-programmed
+sgIntegrated_byMonth_cluster3 <- sgIntegrated_byMonth2 %>%
+  st_drop_geometry() %>% 
+  filter(cluster == 3) %>% 
+  group_by(placekey) %>% 
+  summarize(month = n(),
+            programs = sum(programs),
+            visits = sum(visits))
 ```
 
 ```{r spatially distribution of sg bias clusters,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure4.1.2 Map of Bias Type of SafeGraph Data'}
 
 ggplot() + 
-  geom_sf(data=sgIntegrated_byMonth %>%
+  geom_sf(data=sgIntegrated_byMonth2 %>%
             group_by(placekey,cluster) %>% 
             summarize(howManyMonthBelongToThisCluster=n()) %>% 
-            filter(howManyMonthBelongToThisCluster >=6),aes(color=as.factor(cluster)))+
+            filter(howManyMonthBelongToThisCluster >=1),aes(color=as.factor(cluster)), size = 1)+
   geom_sf(data=pprDistrict,color="black",size=0.7,linetype ="dashed",fill = "transparent")+
   geom_sf(data=pprDistrict %>% filter(DISTRICTID %in% c(7,8,9)),color="black",size=1,fill = "transparent")+
   labs(title = "", 
        subtitle = "",
        x="",y="")+
-  scale_color_manual(values = my_cols,name = "Facility Clusters", label=c("Overprogramed (few visits many permits)","Normal","Potetial (many visits few permits)")) +
+  scale_color_manual(values = my_cols,name = "Facility Clusters", label=c("Potetial (many visits few permits)","Overprogramed (few visits many permits)","Normal")) +
   mapTheme()+
   theme(legend.position = "bottom",
         legend.text = element_text( colour = "black", size = 8))
@@ -1582,7 +1607,7 @@ ggplot() +
 #### 4.2 Special Cases1: Thomas B. Smith Recreation Center
 
 
-Thomas B. Smith Recreation Center is a case of these potential center with low demand but high activity supply (pwemits) in District 9. There are several sport courts, the Smith playground, and a spray park surrounding the B. Smith Recreation Center. According to scheduled program, more activities of athletic, education, and after school take place here.
+Thomas B. Smith Recreation Center is a case of these potential center with low demand but high activity supply (permits) in District 9. There are several sport courts, the Smith playground, and a spray park surrounding the B. Smith Recreation Center. According to scheduled program, more activities of athletic, education, and after school take place here.
 
 With a certain number of permits, the visit counts there is as low as 100-300 visits per month (average devices value:426) and the short average dwell time is around one hour.
 
