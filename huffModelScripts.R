@@ -166,10 +166,14 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
   
   # mean of centrality
   mean_total <- data %>% 
+    dplyr::select(id, centrality) %>% 
+    distinct() %>% 
     summarise(centrality_m = mean(centrality))
   # mean of attractiveness
   foreach (attr=attr_column, i = (1:length(attr_column))) %do% {
-    mean_value <- mean(data[[attr]])
+    distict_data <- data[c("id", attr)] %>% 
+      distinct()
+    mean_value <- mean(distict_data[[attr]])
     mean_part <- data.frame(x = mean_value)
     colnames(mean_part) <- c(paste0("attr_m_",i))
     mean_total <- cbind(mean_total, mean_part)
@@ -184,16 +188,16 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
   
   # join mean df, transform var for fitting
   new_data <- left_join(data, mean_origin, by=c("origin")) %>% 
-    mutate(x1 = log(1+distance/distance_m),
-           x2 = log(1+centrality/mean_total$centrality_m),
-           y = log(1+prob/prob_m))
+    mutate(x1 = log(ifelse(distance==0,1e-3,distance)/distance_m),
+           x2 = log(ifelse(centrality==0,1e-3,centrality)/mean_total$centrality_m),
+           y = log(ifelse(prob==0,0.00015,prob)/prob_m))
   
   col_list <- vector()
   foreach (attr=attr_column, i = (1:length(attr_column))) %do% {
-    a <- new_data[attr] %>% as.vector()
+    a <- new_data[[attr]] 
     mean_a <- mean_total[paste0("attr_m_",i)] %>% as.numeric()
     mean_a <- rep(c(mean_a),each=nrow(a))
-    value <-  log(1 + a/mean_a)
+    value <-  log(ifelse(a==0,1e-3,a)/mean_a)
     new_data_part <- as.data.frame(value)
     colnames(new_data_part) <- c(paste0("x",2+i))
     new_data <- cbind(new_data, new_data_part, deparse.level = 1)
@@ -229,6 +233,10 @@ fit_parameter <- function(data, places, neighbor_data, neighbor_id_column, neigh
       alpha_part <- data.frame(x = alpha_value)
       colnames(alpha_part) <- c(paste0("alpha", i))
       alpha <- cbind(alpha, alpha_part)
+      # alpha_p_value <- as.numeric(summary(fit)$coefficients[paste0("x",2+i),4])
+      # alpha_p_part <- data.frame(x = alpha_p_value)
+      # colnames(alpha_p_part) <- c(paste0("alpha_p", i))
+      # alpha_p <- cbind(alpha_p, alpha_p_part)
     }
     # if(!is.na(fit$coefficients["x1"])) {alpha_p <- as.numeric(summary(fit)$coefficients["x1",4])}
     beta <- as.numeric(fit$coefficients["x1"])
@@ -432,7 +440,7 @@ huff_NE <- function(destinations_name, destinations_attractiveness, origins_name
   out$huff_probability <- with(out, huff / sum_huff)
   
   # Identify primary catchment areas
-  #  out$catchment <- ifelse(out$huff_probability > 0.5, "Primary", "Secondary")
+  out$catchment <- ifelse(out$huff_probability > 0.5, "Primary", "Secondary")
   
   return(out)
 }
