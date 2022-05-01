@@ -161,13 +161,15 @@ library(dplyr)
 library(tidyverse)
 
 # dataForPrediction data can also be passed in directly
-#dataForPrediction <- st_read("data/output/dashboard/final/dataForPrediction.csv")
+# dataForPrediction <- st_read("data/output/dashboard/final/dataForPrediction.csv")
 
+# just in case that values for calculation are not in numeric format
 dataForPrediction <- dataForPrediction %>% 
   mutate_all(.,as.numeric) %>% 
   mutate(id = as.character(id),
          origin = as.character(origin))
 
+# calculate possibilities which is "huff_probability" column in the output dataFrame
 predictionResult <- huff_NE(destinations_name = dataForPrediction$id, 
                             destinations_attractiveness = dataForPrediction[c("PC1","PC2",
                                                                               "PC3","programNum")], 
