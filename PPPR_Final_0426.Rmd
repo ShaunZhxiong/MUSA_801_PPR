@@ -2084,9 +2084,18 @@ attracGEOVISIT <- modelData %>%
   inner_join(attracGEO %>% st_drop_geometry(),by="OBJECTID")
                         
 # correlation matrix among predictors to see if some of them are highly correlated
-attracGEO.cor = cor(attracGEOVISIT %>% 
+
+#define Min-Max normalization function
+min_max_norm <- function(x) {
+    (x - min(x)) / (max(x) - min(x))
+  }
+
+#apply Min-Max normalization to first four columns in iris dataset
+attracGEOVISIT_norm <- as.data.frame(lapply(attracGEOVISIT %>% 
                       dplyr::select(-OBJECTID, -PPR_DISTRICT) %>% 
-                      mutate_all(.,as.numeric), method="spearman")
+                      mutate_all(.,as.numeric), min_max_norm))
+
+attracGEO.cor = cor(attracGEOVISIT_norm, method="spearman")
 corrplot(attracGEO.cor,method="number", tl.cex = 0.75, type = "lower")
 ```
 
@@ -2111,6 +2120,25 @@ pca$rotation <- -1*pca$rotation
 pca$x <- -1*pca$x
 
 corrplot(t(pca$rotation[,1:3]), is.corr=FALSE)
+
+
+# -----------Large Attractiveness Except program programNum programCap----------------
+pcaDF2 <- attracGEOVISIT %>% 
+  dplyr::select(-visitors,-OBJECTID, -PPR_DISTRICT, -programNum, -programCap) %>% 
+  mutate_all(.,as.numeric)
+pca2 = prcomp(pcaDF2, center = TRUE, scale. = TRUE)  
+
+#decide the number of components
+# components = 1:ncol(pcaDF2)
+# plot(pca2$sdev ~ components, ylab = "PCA Standard Deviation", xlab = "Component", pch = 19, type = "b")
+# abline(v = 9, col = "red")
+# fa.parallel(scale(pcaDF2), fa = 'pc', n.iter = 100, show.legend = FALSE)
+
+# pca2$rotation <- -1*pca2$rotation
+# pca2$x <- -1*pca2$x
+# 
+# corrplot(t(pca2$rotation[,1:3]), is.corr=FALSE)
+
 ```
 
 2.  **Small group of attractiveness**: some important attractiveness, like area, trail miles, swimming PoolNum, spraygroundNum, tennisCourtNum, treeHeight, treeArea, programNum, and permitNum are included in the PCA. Then 6 prominent components are extracted.
@@ -2136,12 +2164,21 @@ corrplot(t(pcaSmall$rotation[,1:2]), is.corr=FALSE)
 
 # construct attractiveness matrix
 largeRetrunPCAValue <- as.data.frame(pca$x)
+largeRetrunPCAValue2 <- as.data.frame(pca2$x)
 smallRetrunPCAValue <- as.data.frame(pcaSmall$x)
 LargePCA <- largeRetrunPCAValue %>% dplyr::select(PC1,PC2,PC3)
+LargePCA2 <- largeRetrunPCAValue2 %>% dplyr::select(PC1,PC2,PC3)
 SmallPCA <- smallRetrunPCAValue %>% dplyr::select(PC1,PC2)
 
 LargePCAAttTogo <- 
   cbind(LargePCA, attracGEO %>% dplyr::select(OBJECTID)) %>% 
+  st_sf() %>% 
+  mutate(PC1 = scales::rescale(PC1, to=c(0,1)),
+         PC2 = scales::rescale(PC2, to=c(0,1)),
+         PC3 = scales::rescale(PC3, to=c(0,1)))
+
+LargePCAAttTogo2 <- 
+  cbind(LargePCA2, attracGEO %>% dplyr::select(OBJECTID)) %>% 
   st_sf() %>% 
   mutate(PC1 = scales::rescale(PC1, to=c(0,1)),
          PC2 = scales::rescale(PC2, to=c(0,1)),
@@ -2472,6 +2509,12 @@ huffDataDropNaLargeAttract <-
   huffDataDropNa %>% 
   left_join(LargePCAAttTogo %>% st_drop_geometry(),by="OBJECTID")
 
+huffDataDropNaLargeAttract_program <- 
+  huffDataDropNa %>% 
+  left_join(LargePCAAttTogo %>% st_drop_geometry(),by="OBJECTID") %>% 
+  left_join(attracGEOVISIT %>% dplyr::select(OBJECTID,programNum), by="OBJECTID") %>% 
+  mutate(programNum = as.numeric(programNum))
+
 huffDataDropNaSmallAttract <- 
   huffDataDropNa %>% 
   left_join(smallPCAAttTogo %>% st_drop_geometry(),by="OBJECTID")
@@ -2528,6 +2571,69 @@ hist(R_Square,breaks=40)
 outcomeAnalysis(parameterDrop,"sCENARIO 1: Drop NA probability and use large PCA")
 
 ```
+
+```{r export fitted data for application}
+
+# sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA
+RealModelData <- huffDataDropNaLargeAttract_program
+RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
+
+fit <- fit_parameter(data = RealModelData,
+                           places = RealModelPlaces,
+                           neighbor_data = convenientSurroundEffect,
+                           neighbor_id_column="placekey",
+                           neighbor_attr_column ="visits",
+                           id_column="OBJECTID",
+                           attr_column =c("PC1","PC2","PC3","programNum"),
+                           distance_column="distance",
+                           probability_column="probability",
+                           origin_column = "origin",
+                           k=2)
+
+parameter <- fit %>% 
+  dplyr::select(parameter) %>% 
+  unnest(cols="parameter")
+parameterDrop <- parameter %>% drop_na()
+
+dataForPrediction <- fit %>% 
+  dplyr::select(data) %>% 
+  unnest(cols="data") %>% 
+  mutate_if(is.numeric, funs(ifelse(.==0,0.0000001,.)))
+
+# replce na in parameter
+parameter <- parameter %>% 
+  mutate_all(funs(replace_na(.,0)))
+dataForPrediction <- left_join(dataForPrediction, parameter, by="origin") 
+
+#st_write(dataForPrediction, "data/output/dashboard/final/dataForPrediction.csv")
+
+
+R_Square <- parameterDrop$r2 
+hist(R_Square,breaks=40)
+
+outcomeAnalysis(parameterDrop,"sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA")
+
+
+# predict
+predictionResult <- huff_NE(destinations_name = dataForPrediction$id, 
+                        destinations_attractiveness = dataForPrediction[c("PC1","PC2",
+                                                                          "PC3","programNum")], 
+                        origins_name = dataForPrediction$origin, 
+                        destinations_centrality = dataForPrediction$centrality,
+                        distance = dataForPrediction$distance,
+                        alpha = dataForPrediction %>% dplyr::select(starts_with("alpha")),
+                        beta = dataForPrediction$beta,
+                        theta = dataForPrediction$theta)
+
+# replace with actual probability
+predictionResult <- predictionResult %>% 
+  dplyr::select(-huff_probability) %>% 
+  left_join(dataForPrediction %>% dplyr::select(origin, id, prob),
+            by=c("origins_name"="origin", "destinations_name"="id")) %>% 
+  rename("huff_probability"="prob")
+#st_write(predictionResult, "data/output/dashboard/final/predictionResult.csv")
+```
+
 
 **SCENARIO 2** Result (Drop NA probability and use small PCA)
 
