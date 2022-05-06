@@ -257,7 +257,9 @@ permit2021 <- vroom("data/FromPPR/PPR-recreation-permits-2021.csv")
 program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv")
 facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 facilityIDNOT789 <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties_NOT_789.csv")
-facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
+# facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
+# for shaun to read
+facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("FacilityID"="ï..FacilityID","PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 
 # define date, filter by attendance date
 program2021.clean <- program2021 %>% 
@@ -1653,11 +1655,15 @@ special_site <- mutate(potential_site, cluster="potential") %>%
 
 ggplot() + 
   geom_sf(data=sgIntegrated_byMonth %>% 
-            filter(cluster %in% c(1,2)) %>% 
+            # filter(cluster %in% c(1,2)) %>% 
+            left_join(propertyWithPlaceKey,by=c("OBJECTID")) %>% st_sf() %>% st_centroid(),
+          color = palette1_assist, size=5,alpha = 0.4)+
+  geom_sf(data=sgIntegrated_byMonth %>% 
+            filter(cluster %in% c(1,2)) %>%
             left_join(propertyWithPlaceKey,by=c("OBJECTID")) %>% st_sf() %>% st_centroid(),
           aes(color=as.factor(cluster)), size=5)+
-  geom_sf(data=pprDistrict,color="black",size=0.7,linetype ="dashed",fill = "transparent")+
-  geom_sf(data=pprDistrict %>% filter(DISTRICTID %in% c(7,8,9)),color="black",size=1,fill = "transparent")+
+  geom_sf(data=pprDistrict,color="black",size=0.7,fill = "transparent")+
+  # geom_sf(data=pprDistrict %>% filter(DISTRICTID %in% c(7,8,9)),color="black",size=1,fill = "transparent")+
   labs(title = "", 
        subtitle = "",
        x="",y="")+
