@@ -1501,7 +1501,7 @@ In terms of helping allocate programs and resources, we **divided all locations 
 
 ***Normal facilities***: **Orange** points are **normal** positions with foot traffic that is **consistent** with the quantity of activities.
 
-***Supportive facilities***: They are shown as **pink** points where **many permits** but **few foot traffic**, since they are usually **community centers** who support **group events**.
+***Over-programmed facilities***: They are shown as **pink** points where **many permits** but **few foot traffic**, since they are usually **community centers** who support **group events**.
 
 ```{r integrate safegraph data with permit,warning=FALSE,message=FALSE, results='hide'}
 # calculate mean dwell time
@@ -1679,7 +1679,7 @@ unique
 
 #### 4.3 Special Cases1: Thomas B. Smith Recreation Center
 
-Thomas B. Smith Recreation Center is a case of these potential center with low demand but high activity supply (pwemits) in District 9. There are several sport courts, the Smith playground, and a spray park surrounding the B. Smith Recreation Center. According to scheduled program, more activities of athletic, education, and after school take place here.
+Thomas B. Smith Recreation Center is a case of these potential center with low demand but high activity supply (permits) in District 9. There are several sport courts, the Smith playground, and a spray park surrounding the B. Smith Recreation Center. According to scheduled program, more activities of athletic, education, and after school take place here.
 
 With a certain number of permits, the visit counts there is as low as 100-300 visits per month (average devices value:426) and the short average dwell time is around one hour.
 
@@ -1786,20 +1786,48 @@ visitCount %>%
 
 According to the time trend of visits, **all the visit peaks here respond to some big sport events**, like basketball events with group size of 50. Most visits come and go from morning to evening of a day, but average dwell time is less than an hour. It presents more people stop by this recreation center but leave quickly, which means the facilities or activities are not attractive to keep them stay. So, the PPR should consider to improve the equipment and enrich the functions of this place to incorporate activities schedule.
 
-#### 4.4 Special Cases2:Girard Estates Park
+#### 4.4 Special Cases2:Albert W. Christy, Sr. Recreation Center
 
-**Girard Estates Park** is a representative case of **potential** facilities with low permits, high visits and long dwelling time. According to permit records, yoga is the only activity applied for permit 13:00-14:00 every Sunday from April to September. No other programs are scheduled by the PPR. However, it is a super active facility and important open space for local community to use. [Click for more Information](https://www.girardestateneighbors.org/events-committee)
+**Albert W. Christy, Sr. Recreation Center** is a representative case of **potential** facilities with low permits, high visits and long dwelling time.It is a neighborhood park in District 8. There are only 33 programs scheduled in the last year, but 1000+ device visits was recorded by the SafeGraph data on a single day.[Click for more Information](https://www.phila.gov/2021-09-28-new-amenities-at-christy-rec-center-attract-teens/)
 
-```{r GEP img, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
-knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined3.png"))
+```{r Christy img, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
+knitr::include_graphics(c("resources/imgaes/ChristyRec_combine1.jpg"))
 ```
 
-The Girard Estate Neighbors Association, a volunteer neighborhood organization, engages residents and plans social, recreational, and educational events. They meet once a month and as needed for each event.
+According to local news, the weekly program attracts an average of 50-100 teens a week, and is contributing to the overall increase in recreational programming now available to older youth in the West Philadelphia neighborhood. But limited types of programs were provided based on PPR record, which are athletic events and after class activities.
 
-```{r GEP temperal pattern by day ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.6 Distribution of Girard Estates Park visits in 2021'}
+```{r Christy Recreation Center dwell time ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.3.6 Christy Rec Center Activity with Total'}
+
+Christy <- program2021.join %>% 
+  filter(FacilityID == "{AC45E5EF-2467-4926-A1DA-07258305D871}")
+
+
+ChristySum <- Christy %>%
+  mutate(totalCount = as.numeric(RegisteredIndividualsCount))%>%
+  dplyr::select(totalCount, ActivityType, AttendanceWeekDate) %>% 
+  drop_na() %>% 
+  group_by(ActivityType, AttendanceWeekDate)%>%
+  summarise(totalCount=mean(totalCount)) %>% 
+  ungroup() %>% 
+  group_by(ActivityType)%>%
+  summarise(totalCount=sum(totalCount))
+
+ChristySum %>%
+  ggplot(aes(ActivityType, totalCount, fill=ActivityType)) +
+  geom_bar(position ="dodge",stat="identity",fill=palette1_main) +
+  labs(y = "Visitor Count", fill=palette1_main, title = " ")+
+  plotTheme()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom",
+        legend.text = element_text( colour = "black", size = 8))
+
+```
+Several peak visit counts show up in the middle of March, May, June, and August, but programs were scheduled in autumn. So, it is a lot of potentials to optimize program schedules in the seasons when the peak values show up.
+
+```{r Christy temperal pattern by day2 ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.7 Distribution of  Christy Recreation Center visits in 2021'}
 
 visitCount %>% 
-  filter(placekey=='zzz-222@628-pm9-jn5') %>% 
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   st_drop_geometry()%>%
   na.omit()%>%
   ggplot(aes(visitDay,visits)) + 
@@ -1810,13 +1838,13 @@ visitCount %>%
 
 ```
 
-The three peaks of visits in Figure3.3.6 above may respond to events for celebrating major festivals, like Easter Egg Hunt, Halloween and Christmas carriage rides. The spring, summer and fall children concerts also take place in May, June and September. Compared to limited PPR program/ permit records, Safegraph data can reflect better using conditions of high visits in the park.
-
-```{r GEP img3, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
-knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined.png"))
+```{r Christy img2, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
+knitr::include_graphics(c("resources/imgaes/ChristyRec_combine2.jpg"))
 ```
+A baseball court, playground, and an outdoor basketball court surround the Christy Rec Center. Interior basketball court and multi-purpose interior space are provided inside the Christy Rec Center.
 
-```{r GEP temperal pattern by hour,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.7 Temperal Vistis Pattern By Hour & Vistis Dwelling Time'}
+```{r Christy temperal pattern by hour,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.8 Temperal Vistis Pattern By Hour & Vistis Dwelling Time'}
+
 sumVisit <- visitHour %>% 
   filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
@@ -1835,7 +1863,7 @@ plot1 <- ggplot(data=sumVisit, aes(hour,visits)) +
   
 
 sumVisit3 <- dwellTime %>% 
-  filter(placekey=='zzz-222@628-pm9-jn5') %>% 
+  filter(placekey=='zzz-222@63s-dvq-5fz') %>% 
   dplyr::select(-month) %>% 
   group_by(dwellTimes) %>%
   summarise(visitors=sum(visitors)) %>% 
@@ -1853,13 +1881,12 @@ plot2 <- ggplot(data=sumVisit3, aes(dwellTimes,visitors)) +
         legend.text = element_text( colour = "black", face = "italic", size = 8))
 
 grid.arrange(plot2,plot1,ncol=2,top="")
+
 ```
 
-According to the Figure3.3.7 above, people usually dwell longer (\>240min) here, because most activities, like live concert, educational class take place during the day are long. It seems 11 am to 3 pm is the most time period with the most aggregated visits.
+According to the Figure3.3.8 above, people usually dwell longer (\>120min) here, and it seems 11 am to 3 pm is the most time period with the most aggregated visits. But most of programs were always scheduled in the evening, indicating that there is insufficient supply to meet demand of peak visit . 
 
-```{r GEP img4, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
-knitr::include_graphics(c("resources/imgaes/Stephen Girard Park9 combined2.png"))
-```
+The facility improvements in 2021 make the Christy Recreation Center a safe destination for West Philadelphia teens and young adults. It is a good opportunity to see the community and local businesses respond to violence by coming together with law enforcement and elected leaders to expand on- and off-court programs for teens and older youth. More programs related basketball and more interior activities might be suggested for future program schedules. Considering of the estimated amount of visitors and optimized time schedule, we can refer to Huff model for insights.
 
 ### 5 Huff Model with Neighbor Effect
 
