@@ -1495,13 +1495,13 @@ modelData <-
 
 #### 4.2 Conflicts between Mobility Data and Position Usage
 
-In terms of helping allocate programs and resources, we **divided all locations into 3 categories** based on their **visit data** and **activity scheduled with permits**. (The number of facilities with both of program scheduled and safegraph data available is 36). Refer to Table 3.3 and Figure3.3.1.
+In terms of helping allocate programs and resources, we **divided all locations into 3 categories** based on their **visit data** and **activity scheduled with programming**. (The number of facilities with both of program scheduled and safegraph data available is 36). Refer to Table 3.3 and Figure3.3.1.
 
-***Potential facilities***: They are shown as two **pink** points where **huge amount of visitors** who will **stay longer** than normal, but only **relatively few activity permits** here, which means there is great **potential** to develop activities, and PPR may set more programs in the future. 
+***Potential facilities***: They are shown as two **pink** points where **huge amount of visitors** who will **stay longer** than normal, but only **relatively few activity programs** here, which means there is great **potential** to develop activities, and PPR may set more programs in the future. 
 
-***Normal facilities***: 25 **Orange** points are **normal** positions with foot traffic that is **consistent** with the quantity of activities.
+***Normal facilities***: 25 **Orange** points are **normal** positions with foot traffic that is **consistent** with the quantity of programs.
 
-***Over-programmed facilities***: They are shown as nine **blue** points where **many permits** but **few foot traffic**, since they are usually **community centers** who support **group events**.
+***Over-programmed facilities***: They are shown as nine **blue** points where **many programs** but **few foot traffic**, since they are usually **community centers** who support **group events**.
 
 ```{r integrate safegraph data with permit,warning=FALSE,message=FALSE, results='hide'}
 # calculate mean dwell time
@@ -1893,7 +1893,7 @@ The original Huff Model (Huff, 1964) is designed to estimate the probability of 
 
 We will use an advanced version of Huff model to predict the probability of visitors at each census block group going to a given park facility. A socially aware Huff model include social factor and neighboring effect, based on the assumptions that: (1) People tend to choose more attractive travel destinations; (2) People tend to choose closer travel destinations; (3) People tend to choose travel destinations with more beneficial future choices. For example, a tourist at Origin O has two destination choices A and B, with equal distance to origin O. In this case, destination B should be preferred since it has more future choices in its neighborhood compared with destination A.
 
-*P*ijt represents the probability of a tourist at location *i* visiting attraction *j* at time *t*; *A*jt is the attractiveness of attraction *j* at time *t* (we will include several attractiveness in our model); *Dij* is the distance between origin *i* and attraction *j*; *C*jt is the term used to describe the neighboring effect of attraction *j* (we mainly consider convenient stores and restaurants in our model), relative to other attractions at time *t*; and *n* indicates the total number of attractions in the area. The parameters *α*, *β* and *Ө* are associated with the attractiveness, distance, and neighboring effect factors,respectively.
+*Pijt* represents the probability of a tourist at location *i* visiting attraction *j* at time *t*; *A*jt is the attractiveness of attraction *j* at time *t* (we will include several attractiveness in our model); *Dij* is the distance between origin *i* and attraction *j*; *Cjt* is the term used to describe the neighboring effect of attraction *j* (we mainly consider convenient stores and restaurants in our model), relative to other attractions at time *t*; and *n* indicates the total number of attractions in the area. The parameters *α*, *β* and *Ө* are associated with the attractiveness, distance, and neighboring effect factors,respectively.
 
 ```{r Huff Model Equation, echo=FALSE,fig.height = 2,out.width = '60%',fig.align = 'center'}
 
@@ -1903,7 +1903,7 @@ knitr::include_graphics("resources/imgaes/SA_HuffModel_Equation.jpg")
 
 #### 5.1 Attractiveness
 
-Responding to the term *A*j in Huff model, we collected many features of facilities as attractiveness, including: area, facility number, facility area, trail miles, picnic table, exercise number, swimming pool number, spray ground number, hydration number, tennis court number, playground number, tree height, tree area, program number and capacity, and permit number and capacity.
+Responding to the term *Aj* in Huff model, we collected many features of facilities as attractiveness, including: area, facility number, facility area, trail miles, picnic table, exercise number, swimming pool number, spray ground number, hydration number, tennis court number, playground number, tree height, tree area, program number and capacity, and permit number and capacity.
 
 ```{r calculate attractiveness, message=FALSE, warning=FALSE, echo=FALSE, results='hide', fig.height = 12,out.width ='200%',fig.align = 'center',fig.cap = 'Figure5.1.1 Summary of Attractiveness' }
 attractivenssData <- 
@@ -2334,7 +2334,7 @@ theDistanceMatrixWhole2 <-
 #   ungroup()
 ```
 
-#### 5.3 Probability
+#### 5.3 Observed Probability
 
 The observed probability that visitors from a census block group (CBG) choose a facility as destination can be calculated with normalized number of visitors to a facility divided by the CBG population. One limitation is that no population lives in some census data, so the probability of visitors from these CBG to a certain park will be NA (not available). The highlighted areas in figure 6.4.1 are census block groups with no population data.
 
@@ -2366,7 +2366,7 @@ ggplot() +
 
 #### 5.4 Centrality
 
-Centrality is the term used to describe the neighboring effect of attraction, responding to the term *C*j in Huff model. We ranked POIs with their NAICS codes and find the top two are convenience stores (445120) and restaurants (722513), then we will use them as two Centrality factors which affect visitors' choice the park facilities.
+Centrality is the term used to describe the neighboring effect of attraction, responding to the term *Cj* in Huff model. We ranked POIs with their NAICS codes and find the top two are convenience stores (445120) and restaurants (722513), then we will use them as two Centrality factors which affect visitors' choice the park facilities.
 
 ```{r centrality, fig.height = 3,message = FALSE, warning = FALSE, echo=FALSE, results='hide', out.width ='100%',fig.align = 'center',fig.cap = 'Figure5.4.1 Total Vistors of Related Brand With Naics'}
 # find the naics code that has most smae-day visits
@@ -2426,7 +2426,7 @@ relatedBrandWithNaics%>%
     strip.text.x = element_text( size = 10))
 ```
 
-```{r visualize centrality, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.4.2 Overlay Map of Parks(black), Restaurants(red) and Convinient Stores(orange)'}
+```{r visualize centrality, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.4.2 Overlay Map of Parks(green), Restaurants(red) and Convinient Stores(orange)'}
 # use the same naics code to get the safegraph poi data to construct naics code's location
 # 445120 - Convenience Stores
 # 722513 - 	Limited-Service Restaurants
@@ -2478,9 +2478,9 @@ parksSurroundDot <- parksSurroundEffect %>% mutate(label="park")
 
 # visualized three types of objects in one map
 ggplot() +
+  geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = "#e0f3db",fill = "#e0f3db",alpha = 1, size = 1)+
   geom_sf(data=pprServiceArea,color='black',size=0.35,fill= "transparent")+
   geom_sf(data=pprDistrict,color='black',size=0.5,fill= "transparent")+
-  geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = "black",fill = "black",alpha = 1, size = 1) +
   geom_sf(data=restSurroundDot,aes(geometry=geometry),color = palette2[2],fill = palette2[2],alpha = 0.5,size = 2) +
   geom_sf(data=convenientSurroundDot,aes(geometry=geometry),color = palette2[1],fill = palette2[1],alpha = 0.5,size = 2) +
 
@@ -2494,7 +2494,7 @@ ggplot() +
 
 #### 5.5 Test models
 
-We prepare 4 sets of data to test the Huff model:
+We prepared 4 sets of data to test the Huff model:
 
 1.  Replace NA value of probability with minimum number(4.4e-5), responding to missing population data in some Census Block Group. Use PCA from large group of attractiveness as predictors; <br>
 
@@ -3361,6 +3361,12 @@ mean(error$MAPE,na.rm=T)
 mean(error$MAE,na.rm=T)
 ```
 
+### 6 Conclusion
 
+In this research, we unveiled the conflicts between visit pattern from Safegraph device panel and scheduled programs from PPR pattern with clustering regression, which indicates imbalance between demand and supply. To provide optimized solutions, we used a novel method to predict the probability of visitors at each census block group going to a given park facility with Huff model. By changing the number of programs, the Huff model can predict future visit flow, which help PPR reallocate resources more reasonable. We divided the data based on record dates into four seasons and run individual model to predict the probability in each season. So PPR staffing can refer them to adjust number of programs, predict the trend of visitors, and arrange resources for the next season.
+
+So far, the limitation of the research is that some data is missing after assigning to four seasons due to limited device pattern from Safegraph, and the average MAPE (Mean Absolute Percentage Error) is relatively high. In general, models are more accurate for frequently visited routes, denser residential block groups, large parks, and parks in central city.
+
+Currently, we only focused on adjusting programs, one of social assets, to affect trend of visitors and market areas. There are other assets to organize civic infrastructure, like physical assets and community engagement. We could consider allocating investment in physical assets with reference to Huff model, which can be used to renovate facilities to affect visitor flow. The Huff model dashboard may also extend a communication platform of visitors’ expectations for better community engagement. Optimization schemes with Huff model can remediate these Imbalances in its distribution of resources and better address inequity, gentrification, and unequal access to urban parks and public spaces.
 
 
