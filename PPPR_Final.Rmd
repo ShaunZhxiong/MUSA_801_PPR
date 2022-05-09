@@ -33,15 +33,15 @@ body{
   font-family: Helvetica;
 }
 h3{
-  font-size: 24pt;
+  font-size: 18pt;
   font-family: Helvetica;
 }
 h4{
-  font-size: 21pt;
+  font-size: 16pt;
   font-family: Helvetica;
 }
 h5{
-  font-size: 18pt;
+  font-size: 14pt;
   font-family: Helvetica;
 }
 td{
@@ -75,7 +75,7 @@ The eventually user interface will be the [Dashboard](https://ppr-dashboard-xfw9
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 
-#windowsFonts(font = windowsFont('Helvetica'))
+windowsFonts(font = windowsFont('Helvetica'))
 crs = 4326
 library(vroom)
 library(grid)
@@ -262,7 +262,7 @@ facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 facilityIDNOT789 <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties_NOT_789.csv")
 # facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename(
-  #"FacilityID"="ï..FacilityID",
+  "FacilityID"="ï..FacilityID",
   "PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 
 # define date, filter by attendance date
@@ -3315,8 +3315,8 @@ m2 <- ggplot() +
   theme(legend.position = "bottom")
 
 plot_grid(m1, m2, 
-          # labels = c("MAPE from before-Optimized Model Cross-Validation for PPR Districts",
-          #            "MAPE from Optimized Model Cross-Validation for PPR Districts")
+          labels = c(" ",
+                     " ")
           )
 ```
 
