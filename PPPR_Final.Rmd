@@ -3038,7 +3038,30 @@ print(paste0("MAPE is ",round(mean(predictionResult_group$MAPE,na.rm=T),4)))
 
 The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. 
 
-```{r hist of MAPE for cbgS,fig.height = 8}
+```{r bar plot for errr in different frequency level,fig.height = 4,fig.cap = 'Figure Error among Different Route Visit Frequency Level'}
+p1 <- ggplot(data=melt(predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)), 
+                          id.vars = c("frequency","MAPE"), 
+                          variable.name = "var"),
+                aes(x=frequency, y=value, fill=var)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  scale_fill_manual(values = palette2, label=c("MAE", "Mean Probability"))+
+  plotTheme() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+p2 <- ggplot(data=predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)),
+                aes(x=frequency, y=MAPE)) +
+  geom_bar(stat="identity", position=position_dodge(), fill=palette1_main) +
+  plotTheme() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+plot_grid(p1, p2, 
+          # labels = c("Distribution Histogram of MAE for Different Census Block Groups",
+          #                    "Distribution Histogram of MAPE for Different Census Block Groups")
+          )
+```
+
+
+```{r hist of MAPE for cbgS,fig.height = 8,fig.cap = 'Figure MAPE Distribution Histgram for Census Block Groups'}
 p1 <- ggplot(predictionResult_group, aes(x=MAE)) + 
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
@@ -3047,22 +3070,24 @@ p2 <- ggplot(predictionResult_group, aes(x=MAPE)) +
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
      
-plot_grid(p1, p2, labels = c("Distribution Histogram of MAE for Different Census Block Groups",
-                             "Distribution Histogram of MAPE for Different Census Block Groups"))
+plot_grid(p1, p2, 
+          # labels = c("Distribution Histogram of MAE for Different Census Block Groups",
+          #                    "Distribution Histogram of MAPE for Different Census Block Groups")
+          )
 ```
 
 ```{r MAPE map for cbgs,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Census Block Groups'}
 
-  ggplot() + 
-    geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
-            color="black",size=0.05,aes(fill = q5(MAPE)))+
-    geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
-    scale_fill_manual(values = palette5, name="MAPE", label=qBr(predictionResult_group,"MAPE",F))+
-    mapTheme()+
-    theme(legend.position = "bottom")
+ggplot() + 
+  geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
+          color="black",size=0.05,aes(fill = q5(MAPE)))+
+  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
+  scale_fill_manual(values = palette5, name="MAPE", label=qBr(predictionResult_group,"MAPE",F))+
+  mapTheme()+
+  theme(legend.position = "bottom")
 ```
 
-```{r hist of MAPE for parks,fig.height = 8}
+```{r hist of MAPE for parks,fig.height = 8,fig.cap = 'Figure MAE & MAPE Distribution Histgram for Different Parks $ Rec Centers'}
 
 error_parks <- predictionResult_2 %>% 
   group_by(id) %>% 
@@ -3078,8 +3103,10 @@ p2 <- ggplot(error_parks, aes(x=MAPE)) +
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
      
-plot_grid(p1, p2, labels = c("Distribution Histogram of MAE for Different Parks $ Rec Centers",
-                             "Distribution Histogram of MAPE for Different Parks $ Rec Centers"))
+plot_grid(p1, p2, 
+          # labels = c("Distribution Histogram of MAE for Different Parks $ Rec Centers",
+          #                    "Distribution Histogram of MAPE for Different Parks $ Rec Centers")
+          )
 ```
 
 ```{r MAPE map for parks,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Parks'}
@@ -3134,6 +3161,7 @@ cv_group_result <- cv_result %>%
 
 ```
 
+
 ```{r CV after optimalization over district}
 CVModelData2 <- RealModelData_final %>% 
   left_join(., pprProperties %>% 
@@ -3183,6 +3211,53 @@ cv_group_result2 <- cv_result_clean %>%
             MAPE = MAE/mean(probability)) %>% 
   ungroup()
 
+```
+
+
+
+```{r MAPE map for cv,fig.height = 8,fig.cap = 'Figure MAPE from Cross-Validation for PPR Districts'}
+cv_group_result_dist <- cv_result %>% 
+  group_by(PPR_DISTRICT) %>% 
+  summarise(MAPE = mean(abs(error))/mean(probability)) %>% 
+  left_join(.,pprDistrict %>% mutate(DISTRICTID = as.character(DISTRICTID)),
+            by=c("PPR_DISTRICT"="DISTRICTID")) %>% 
+  st_sf()
+
+m1 <- ggplot() + 
+  geom_sf(data=cv_group_result_dist,
+          color="black",size=0.05,aes(fill=MAPE))+
+  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
+  scale_fill_gradient2(low=palette5[1], mid=palette5[3], high=palette5[5], 
+                       midpoint=6, limits=c(0,13), 
+                       breaks = c(0, 6, 13), labels = c("0", "6", "13"))+
+  mapTheme()+
+  theme(legend.position = "bottom")
+
+cv_group_result2_dist <- left_join(cv_result_clean, 
+                                   pprProperties %>% 
+                                     dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
+                                     st_drop_geometry(), 
+                                   by=c("id"="OBJECTID")) %>% 
+  group_by(PPR_DISTRICT) %>% 
+  summarise(MAPE = mean(abs(error))/mean(probability)) %>% 
+  left_join(.,pprDistrict %>% mutate(DISTRICTID = as.character(DISTRICTID)),
+            by=c("PPR_DISTRICT"="DISTRICTID")) %>% 
+  st_sf()
+
+m2 <- ggplot() + 
+  geom_sf(data=cv_group_result2_dist,
+          color="black",size=0.05,aes(fill=MAPE))+
+  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
+  scale_fill_gradient2(low=palette5[1], mid=palette5[3], high=palette5[5], 
+                       midpoint=6, limits=c(0,13), 
+                       breaks = c(0, 6, 13), labels = c("0", "6", "13"))+
+  mapTheme()+
+  theme(legend.position = "bottom")
+
+plot_grid(m1, m2, 
+          labels = c("MAPE from before-Optimized Model Cross-Validation for PPR Districts",
+                     "MAPE from Optimized Model Cross-Validation for PPR Districts")
+          )
 ```
 
 ### 8 Application & Conclusion
