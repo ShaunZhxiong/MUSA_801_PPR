@@ -3038,7 +3038,7 @@ print(paste0("MAPE is ",round(mean(predictionResult_group$MAPE,na.rm=T),4)))
 
 The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. 
 
-```{r bar plot for errr in different frequency level,fig.height = 8,fig.cap = 'Figure Error among Different Route Visit Frequency Level'}
+```{r bar plot for errr in different frequency level,fig.height = 2.5,fig.cap = 'Figure Error among Different Route Visit Frequency Level'}
 p1 <- ggplot(data=melt(predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)), 
                           id.vars = c("frequency","MAPE"), 
                           variable.name = "var"),
@@ -3046,13 +3046,13 @@ p1 <- ggplot(data=melt(predictionResult_group2 %>% mutate(frequency = fct_reorde
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_manual(values = palette2, label=c("MAE", "Mean Probability"))+
   plotTheme() + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  theme(axis.text.x = element_text(angle = 30, vjust = 1, hjust=1))
 
 p2 <- ggplot(data=predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)),
                 aes(x=frequency, y=MAPE)) +
   geom_bar(stat="identity", position=position_dodge(), fill=palette1_main) +
   plotTheme() + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  theme(axis.text.x = element_text(angle = 30, vjust = 1, hjust=1))
 
 plot_grid(p1, p2 
           # labels = c("Distribution Histogram of MAE for Different Census Block Groups",
@@ -3070,7 +3070,7 @@ p2 <- ggplot(predictionResult_group, aes(x=MAPE)) +
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
      
-plot_grid(p1, p2, 
+plot_grid(p1, p2
           # labels = c("Distribution Histogram of MAE for Different Census Block Groups",
           #                    "Distribution Histogram of MAPE for Different Census Block Groups")
           )
@@ -3103,7 +3103,7 @@ p2 <- ggplot(error_parks, aes(x=MAPE)) +
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
      
-plot_grid(p1, p2, 
+plot_grid(p1, p2
           # labels = c("Distribution Histogram of MAE for Different Parks $ Rec Centers",
           #                    "Distribution Histogram of MAPE for Different Parks $ Rec Centers")
           )
