@@ -2773,7 +2773,7 @@ error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinatio
   summarise(MAPE = mean(APE,na.rm=T),
             MAE = mean(AE,na.rm=T))
 
-scenario1FrequencyResult <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
+scenario1FrequencyResult <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>%
   mutate(frequency = case_when(
     probability > 0.5 ~ "super-high",
     probability > 0.1 & probability <= 0.5 ~ "high",
@@ -2791,7 +2791,7 @@ scenario1FrequencyResult <- left_join(huff_results, Test, by=c("origins_name"="o
   mutate(MAPE = MAE/mean_p)
 
 print(paste0("MAE for Scenario 1 is ",round(mean(error$MAE,na.rm=T),4)))
-
+print(paste0("MAPE for Scenario 1 is ",round(mean(error$MAPE,na.rm=T),4)))
 ```
 
 ##### 7.2.1 Scenario 3
@@ -2889,7 +2889,9 @@ kable(scenario1FrequencyResult,align = 'c',caption = '<center>Table 7.3.1 Predic
 
 Besides in the Table 7.2.1, we find out that MAPE increases as the frequency decreases. So in the following optimization, we will try to use categorical variables - frequency to account for these inter group error.
 
-```{r add visits frequency level into the model}
+##### 7.3.1 Training
+
+```{r add visits frequency level into the model, message=FALSE, warning=FALSE}
 # sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA
 RealModelData_final <- huffDataDropNaLargeAttract_program
 RealModelPlaces_final <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
@@ -2923,7 +2925,6 @@ Train <- Train %>%
 trainPlaces <- RealModelPlaces_final %>% 
   filter(OBJECTID %in% unique(Train$OBJECTID))
 
-
 fit <- fit_parameter_level(data = Train,
                            places = trainPlaces,
                            neighbor_data = convenientSurroundEffect,
@@ -2944,13 +2945,17 @@ parameter <- fit %>%
 parameter <- parameter %>% 
   dplyr::select(-frequencyhigh)
 
-parameterDrop <- parameter %>% drop_na()
-R_Square <- parameterDrop$r2 
-hist(R_Square,breaks=40)
+outcomeAnalysis(parameter,"Final Optimal Model:
+                Dropping NA probability, using PCA, and taking visits frequency level into consideration")
+```
 
-outcomeAnalysis(parameterDrop,"Final Optimal Model: Dropping NA probability, \n
-                using PCA, and taking visits frequency level into consideration")
+We can see that after adding the categorical variable - frequency, the R square for the training data has a huge improve, from 0.39 in the 7.1.1 Scenario 1 to 0.97 here. That means the sucess of the model optimization.
 
+In the following, we will look at the accuracy for the prediction to see if the prediction accuracy has sucessfully improve.
+
+##### 7.3.2 Prediction
+
+```{r add visits frequency level into the model2, message=FALSE, warning=FALSE}
 # avoid error:contrasts can be applied only to factors with 2 or more levels
 Test <- Test %>%
   filter(origin %in% Train$origin)
@@ -2971,18 +2976,9 @@ Test <- Test %>%
            #"super-high" = "frequencysuper.high",
             "super-low" =  "frequencysuper.low"))
 
-# attr in test cannot be 0!!!! because 0^negative => NA 
-# dataForPrediction <- dataForPrediction %>% 
-#   mutate_if(is.numeric, funs(ifelse(.==0,0.0000001,.)))
-
 # replce na in parameter
 parameter <- parameter %>% 
-  mutate_all(funs(replace_na(.,0)))
-
-# join to same index with Test Set
-# parameter_full <- left_join(Test %>% dplyr::select(origin), 
-#                             parameter, 
-#                             by="origin") 
+  mutate_all(~replace(., is.na(.), 0))
 
 predictionResult <- huff_NE_level(data = Test,
                            places = testPlaces,
@@ -3019,7 +3015,7 @@ predictionResult_2 <- predictionResult %>%
          error = probability-prob)
 
 predictionResult_3 <- predictionResult_2 %>% 
-  left_join(.,CVModelData2 %>% dplyr::select(origin, OBJECTID, frequency),
+  left_join(.,RealModelData_final %>% dplyr::select(origin, OBJECTID, frequency),
             by=c("origin"="origin","id"="OBJECTID"))
 
 predictionResult_group2 <- predictionResult_3 %>% 
@@ -3038,8 +3034,9 @@ predictionResult_group <- predictionResult_2 %>%
 
 print(paste0("MAE is ",round(mean(predictionResult_group$MAE,na.rm=T),4)))
 print(paste0("MAPE is ",round(mean(predictionResult_group$MAPE,na.rm=T),4)))
-
 ```
+
+The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. 
 
 ```{r hist of MAPE for cbgS,fig.height = 8}
 p1 <- ggplot(predictionResult_group, aes(x=MAE)) + 
@@ -3066,6 +3063,7 @@ plot_grid(p1, p2, labels = c("Distribution Histogram of MAE for Different Census
 ```
 
 ```{r hist of MAPE for parks,fig.height = 8}
+
 error_parks <- predictionResult_2 %>% 
   group_by(id) %>% 
   summarise(MAE = mean(abs(error)),
@@ -3186,3 +3184,14 @@ cv_group_result2 <- cv_result_clean %>%
   ungroup()
 
 ```
+
+### 8 Application & Conclusion
+
+For the use case, we can help PPR better understand the use of their facilities and effect of rearranging the program numbers. Each time when PPR rearrange the number of programs, the market area will accordingly change. And PPR can repeatedly attempt and find the optimized program number. The specific process is displayed in the [dashboard](https://ppr-dashboard-xfw9y.ondigitalocean.app/).
+
+In this research, we firstly analyze the PPR program data and SafeGraph Pattern data respectively. And based on the analysis, we further unveiled the conflicts between visit pattern from Safegraph device panel and scheduled programs from PPR pattern with clustering regression, which indicates imbalance between demand and supply. 
+
+To provide optimized solutions, we used huff model to predict the probability of visitors at each census block group going to a given park facility. By changing the number of programs, the Huff model can predict future visit flow, which help PPR reallocate resources more reasonable. During modeling process, we attempt different techniques including PCA, Modeling Data Selection, Temporal Model Attempt, and Adding of Frequency Level etc. Eventually, we obtain the MAE as 0.028 in cross validation. And the optimized model also displays a good generalizability with MAPE as 0.88. Compared to the initial model, the improvement is huge.
+
+Currently, we only focused on adjusting programs, one of social assets, to affect trend of visitors and market areas. There are other assets to organize civic infrastructure, like physical assets and community engagement. We could consider allocating investment in physical assets with reference to Huff model, which can be used to renovate facilities to affect visitor flow. The Huff model dashboard may also extend a communication platform of visitors’ expectations for better community engagement. Optimization schemes with Huff model can remediate these Imbalances in its distribution of resources and better address inequity, gentrification, and unequal access to urban parks and public spaces.
+
