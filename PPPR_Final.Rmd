@@ -75,7 +75,7 @@ The eventually user interface will be the [Dashboard](https://ppr-dashboard-xfw9
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 
-windowsFonts(font = windowsFont('Helvetica'))
+#windowsFonts(font = windowsFont('Helvetica'))
 crs = 4326
 library(vroom)
 library(grid)
@@ -262,7 +262,7 @@ facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 facilityIDNOT789 <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties_NOT_789.csv")
 # facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename(
-  "FacilityID"="ï..FacilityID",
+  #"FacilityID"="ï..FacilityID",
   "PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 
 # define date, filter by attendance date
@@ -1827,7 +1827,7 @@ We will use an advanced version of Huff model to predict the probability of visi
 
 (2) People tend to choose closer travel destinations; 
 
-(3) People tend to choose travel destinations with more beneficial future choices. For example, a tourist at Origin O has two destination choices A and B, with equal distance to origin O. In this case, destination B should be preferred since it has more future choices in its neighborhood compared with destination A.
+(3) People tend to choose travel destinations with more beneficial future choices. For example, a tourist at Origin O has two identical destination choices A and B, with equal distance to origin O. In this case, destination B should be preferred since it has more future choices in its neighborhood compared with destination A.
 
 The below is the equation for our Huff Model.
 
