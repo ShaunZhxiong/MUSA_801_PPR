@@ -445,6 +445,9 @@ fit_parameter_level <- function(data, places, neighbor_data, neighbor_id_column,
 
 
 
+
+
+
 #########################################################################################################################
 #                                                Function to predict prob                                               #
 #########################################################################################################################
@@ -509,6 +512,8 @@ huff_NE <- function(destinations_name, destinations_attractiveness, origins_name
   
   return(out)
 }
+
+
 
 
 
@@ -617,7 +622,7 @@ huff_NE_level <- function(data, places, neighbor_data, neighbor_id_column, neigh
   
   # predict
   predict_data <- new_data %>% 
-    dplyr::select(-origin, -r2)
+    dplyr::select(-origin, -r2) 
   
   # get category var list
   category_list <- list()
@@ -635,7 +640,7 @@ huff_NE_level <- function(data, places, neighbor_data, neighbor_id_column, neigh
     for (var in category_list) {
       if (str_detect(var, cat)) {
         result <- result %>% 
-          mutate(prob = prob + predict_data[[cat]] * predict_data[[var]])
+          mutate(prob = prob + as.numeric(predict_data[[cat]]) * predict_data[[var]])
       }
     }
   }
@@ -748,14 +753,14 @@ huff_crossValidate <- function(data, cv_id, places, neighbor_data, neighbor_id_c
 #########################################################################################################################
 huff_crossValidate_level <- function(data, cv_id, places, neighbor_data, neighbor_id_column, neighbor_attr_column, id_column, 
                                     attr_column, distance_column, probability_column,origin_column, k, 
-                                   category, parameter, prefix) {
+                                   category, category_list, parameter, prefix) {
   
   allPredictions <- data.frame()
   cvID_list <- unique(data[[cv_id]])
   
   for (i in cvID_list) {
     
-    thisFold <- 7
+    thisFold <- i
     cat("This hold out fold is", thisFold, "\n")
     
     fold.train <- filter(data, data[[cv_id]] != thisFold) %>% as.data.frame() 
@@ -790,57 +795,57 @@ huff_crossValidate_level <- function(data, cv_id, places, neighbor_data, neighbo
     parameter <- fit %>%
       dplyr::select(parameter) %>%
       unnest(cols="parameter")
+    
+    parameter <- parameter %>% 
+      dplyr::select(-frequencyhigh)
 
-# avoid error:contrasts can be applied only to factors with 2 or more levels
-fold.test <- fold.test %>%
-  filter(origin %in% fold.train$origin)
+    # avoid error:contrasts can be applied only to factors with 2 or more levels
+    fold.test <- fold.test %>%
+      filter(origin %in% fold.train$origin)
+    
+    testPlaces <- RealModelPlaces %>%
+      filter(OBJECTID %in% unique(fold.test$OBJECTID))
 
-testPlaces <- RealModelPlaces %>%
-  filter(OBJECTID %in% unique(fold.test$OBJECTID))
+    #encode category
+    dmy <- dummyVars(~ frequency, data = fold.test)
+    fold.test <- data.frame(predict(dmy,newdata = fold.test)) %>%
+      cbind(.,fold.test)
+    
+    
+    fold.test <- fold.test %>%
+      mutate(origin = as.character(origin)) %>%
+      rename(c("high" = "frequencyhigh",
+               "low" = "frequencylow",
+               "medium" = "frequencymedium",
+               "mid-low" = "frequencymid.low",
+               #"super-high" = "frequencysuper.high",
+               "super-low" =  "frequencysuper.low"))
+    
+    # replce na in parameter
+    parameter <- parameter %>%
+      mutate_all(funs(replace_na(.,0)))
+    
+    
+    thisPrediction <- huff_NE_level(data = fold.test,
+                                    places = testPlaces,
+                                    neighbor_data = neighbor_data,
+                                    neighbor_id_column=neighbor_id_column,
+                                    neighbor_attr_column =neighbor_attr_column,
+                                    id_column=id_column,
+                                    attr_column =attr_column,
+                                    distance_column=distance_column,
+                                    probability_column=probability_column,
+                                    origin_column = origin_column,
+                                    k=k,
+                                    category = category_list,
+                                    parameter = parameter,
+                                    prefix = prefix)
+    
+    
+    allPredictions <-
+      rbind(allPredictions, thisPrediction)
 
-#encode category
-# dmy <- dummyVars(" ~ .", data = fold.test %>% mutate(origin=as.numeric(origin)))
-# fold.test <- data.frame(predict(dmy,newdata = fold.test %>% mutate(origin=as.numeric(origin))))
-# 
-# fold.test <- fold.test %>%
-#   mutate(origin = as.character(origin)) %>%
-#   rename(c("high" = "frequencyhigh",
-#            "low" = "frequencylow",
-#            "medium" = "frequencymedium",
-#            "mid-low" = "frequencymid.low",
-#            "super-high" = "frequencysuper.high",
-#            "super-low" =  "frequencysuper.low"))
-# 
-# # replce na in parameter
-# parameter <- parameter %>%
-#   mutate_all(funs(replace_na(.,0)))
-# 
-# # join to same index with Test Set
-# parameter_full <- left_join(fold.test %>% dplyr::select(origin),
-#                             parameter,
-#                             by="origin")
-# 
-# 
-# thisPrediction <- huff_NE_level(data = fold.test,
-#                                 places = testPlaces,
-#                                 neighbor_data = neighbor_data,
-#                                 neighbor_id_column=neighbor_id_column,
-#                                 neighbor_attr_column =neighbor_attr_column,
-#                                 id_column=id_column,
-#                                 attr_column =attr_column,
-#                                 distance_column=distance_column,
-#                                 probability_column=probability_column,
-#                                 origin_column = origin_column,
-#                                 k=k,
-#                                 category = category,
-#                                 parameter = parameter_full,
-#                                 prefix = prefix)
-# 
-# 
-# allPredictions <-
-#   rbind(allPredictions, thisPrediction)
-#     
   }
-  return(fold.test)
+  return(allPredictions)
 }
 

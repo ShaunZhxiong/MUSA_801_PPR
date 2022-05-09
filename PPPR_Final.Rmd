@@ -3145,6 +3145,7 @@ CVModelData2 <- RealModelData_final %>%
               st_drop_geometry(),
             by = "OBJECTID")
 
+source("huffModelScripts.R")
 
 cv_result2  <- huff_crossValidate_level(data = CVModelData2,
                                          cv_id = "PPR_DISTRICT",
@@ -3158,30 +3159,32 @@ cv_result2  <- huff_crossValidate_level(data = CVModelData2,
                                          probability_column="probability",
                                          origin_column = "origin",
                                          k=2,
-                                         category = "frequency")
+                                         category = "frequency",
+                                        category_list =  c("high", "low", "medium",
+                                                          "mid-low", 
+                                                          #"super-high", 
+                                                          "super-low"),
+                                        prefix = "frequency")
 
-fit <- fit_parameter_level(data = xx,
-                           places = RealModelPlaces_final %>% filter(OBJECTID%in%unique(xx$OBJECTID)),
-                           neighbor_data = convenientSurroundEffect,
-                           neighbor_id_column="placekey",
-                           neighbor_attr_column ="visits",
-                           id_column="OBJECTID",
-                           attr_column =c("PC1","PC2","PC3","programNum"),
-                           distance_column="distance",
-                           probability_column="probability",
-                           origin_column = "origin",
-                           k=2,
-                           category = "frequency")
+cv_result_clean <- cv_result2 %>% 
+  distinct() %>% 
+  mutate(prob = exp(prob))
 
-cv_result2 <- left_join(cv_result2,
-                       CVModelData %>% dplyr::select(origin, OBJECTID, probability, PPR_DISTRICT),
-                       by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
-  mutate(error = probability - huff_probability)
+cv_result_clean <- cv_result_clean %>% 
+  group_by(origin) %>% 
+  summarise(d = sum(prob)) %>% 
+  ungroup() %>% 
+  right_join(.,cv_result_clean, by=c("origin"="origin")) %>%  # obtain prob
+  left_join(., CVModelData2 %>%  # obtain probability
+              dplyr::select(origin, OBJECTID, probability, frequency), 
+            by=c("origin"="origin", "id"="OBJECTID")) %>% 
+  mutate(prob = prob/d,
+         error = probability-prob)
 
-cv_group_result2 <- cv_result2 %>% 
-  group_by(origins_name) %>% 
-  summarise(MAE = mean(abs(error), na.rm = T),
-            MAPE = MAE/mean(probability, na.rm = T)) %>% 
+cv_group_result2 <- cv_result_clean %>% 
+  group_by(origin) %>% 
+  summarise(MAE = mean(abs(error)),
+            MAPE = MAE/mean(probability)) %>% 
   ungroup()
 
 ```
