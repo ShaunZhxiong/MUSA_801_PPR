@@ -204,7 +204,7 @@ ggmap(base_map) +
   geom_sf(data=ll(pprServiceArea),color='black',size=0.6,fill = "transparent",inherit.aes = FALSE)+
   geom_sf(data=ll(pprDistrict %>% filter(DISTRICTID %in% c(7,8,9))),color=palette1_main,size=1,fill = "transparent",inherit.aes = FALSE)+
   geom_sf(data=ll(pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9))),color=palette1_main,size=0.6,fill = "transparent",inherit.aes = FALSE)+
-  labs(title = "", 
+  labs(title = "Figure1.1.1 Location of PPR Districts and Pilot Service Areas", 
        subtitle = "",
        x="",y="")+
   mapTheme()
@@ -393,7 +393,7 @@ plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
   plotTheme()+
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-        legend.text = element_text( colour = "black", face = "italic", size = 8))
+        legend.text = element_text( colour = "black", face = "italic", size = 5))
 
 plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) + 
   geom_bar(aes(x= Facility, fill = ActivityType),position="stack")+
@@ -402,7 +402,7 @@ plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
   plotTheme()+
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-        legend.text = element_text( colour = "black", face = "italic", size = 8))
+        legend.text = element_text( colour = "black", face = "italic", size = 5))
 
 grid.arrange(plot1, plot2,ncol=2,top = "")
 ```
@@ -453,7 +453,7 @@ plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
-        legend.text = element_text( colour = "black", face = "italic", size = 8))
+        legend.text = element_text( colour = "black", face = "italic", size = 5))
 
 plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) + 
   geom_bar(aes(x= Facility, fill = ActivityType),position="stack")+
@@ -462,7 +462,7 @@ plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
-        legend.text = element_text( colour = "black", face = "italic", size = 8))
+        legend.text = element_text( colour = "black", face = "italic", size = 5))
 
 grid.arrange(plot1, plot2,ncol=2,top = "")
 ```
@@ -883,7 +883,10 @@ cluster1_mean <- aggregate(visitIntegrated %>%
               group_by(cluster) %>% 
               summarize(size = n()),
             by="cluster")
+```
 
+
+```{r cluster by data confidence2, echo=FALSE, message=FALSE, warning=FALSE}
 kable(cluster1_mean,align = 'c',caption = '<center>Table 1. Mean values of clusters for SafeGraph data <center/>') %>%
   kable_classic(full_width = T)%>%
   kable_styling(position = "center")
@@ -2976,12 +2979,11 @@ parameter <- fit %>%
 parameter <- parameter %>% 
   dplyr::select(-frequencyhigh)
 
+outcomeAnalysis(parameter,"Final Optimal Model: Dropping NA probability, using PCA, and taking visits frequency level into consideration")
 
 ggplot(parameter, aes(x=r2)) + 
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
-
-outcomeAnalysis(parameter,"Final Optimal Model: Dropping NA probability, using PCA, and taking visits frequency level into consideration")
 
 ```
 
@@ -3177,11 +3179,11 @@ Figure7.2.3.4 is the geospatial distribution of above MAPE. We can see that big 
 
 ```{r CV before optimalization over district, message=FALSE, warning=FALSE, results='hide'}
 
-# CVModelData1 <- RealModelData1 %>% 
-#   left_join(., pprProperties %>% 
-#               dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
-#               st_drop_geometry(),
-#             by = "OBJECTID")
+CVModelData1 <- RealModelData1 %>%
+  left_join(., pprProperties %>%
+              dplyr::select(OBJECTID, PPR_DISTRICT) %>%
+              st_drop_geometry(),
+            by = "OBJECTID")
 # 
 # 
 # cv_result  <- huff_crossValidate(data = CVModelData1,
@@ -3215,11 +3217,11 @@ cv_group_result <- cv_result %>%
 
 
 ```{r CV after optimalization over district, message=FALSE, warning=FALSE, results='hide'}
-# CVModelData2 <- RealModelData_final %>% 
-#   left_join(., pprProperties %>% 
-#               dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
-#               st_drop_geometry(),
-#             by = "OBJECTID")
+CVModelData2 <- RealModelData_final %>%
+  left_join(., pprProperties %>%
+              dplyr::select(OBJECTID, PPR_DISTRICT) %>%
+              st_drop_geometry(),
+            by = "OBJECTID")
 # 
 # source("huffModelScripts.R")
 # 
