@@ -2922,7 +2922,7 @@ Besides in the Table 7.2.1, we find out that MAPE increases as the frequency dec
 
 ##### 7.3.1 Training
 
-```{r add visits frequency level into the model, message=FALSE, warning=FALSE}
+```{r add visits frequency level into the model, message=FALSE, warning=FALSE,fig.height = 8,fig.cap = 'Figure R-squared Distribution Histgram for Optimized Model'}
 # sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA
 RealModelData_final <- huffDataDropNaLargeAttract_program
 RealModelPlaces_final <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
@@ -2976,7 +2976,13 @@ parameter <- fit %>%
 parameter <- parameter %>% 
   dplyr::select(-frequencyhigh)
 
+
+ggplot(parameter, aes(x=r2)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
+
 outcomeAnalysis(parameter,"Final Optimal Model: Dropping NA probability, using PCA, and taking visits frequency level into consideration")
+
 ```
 
 We can see that after adding the categorical variable - frequency, the R square for the training data has a huge improve, from 0.39 in the 7.1.1 Scenario 1 to 0.97 here. That means the sucess of the model optimization.
@@ -3071,7 +3077,7 @@ print(
 The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. The specifc distribution is shown in the Figure7.3.2.
 
 
-```{r bar plot for errr in different frequency level,fig.height = 2.5,fig.cap = 'Figure Error among Different Route Visit Frequency Level'}
+```{r bar plot for errr in different frequency level,fig.height = 8,fig.cap = 'Figure Error among Different Route Visit Frequency Level'}
 p1 <- ggplot(data=melt(predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)), 
                           id.vars = c("frequency","MAPE"), 
                           variable.name = "var"),
