@@ -7,9 +7,9 @@ This is the repository for the practicum project of MUSA.
 
 # Additional repositories
 
-Philadelphia Parks and Rec Data Dashboard: https://github.com/jeffstern/ppr-dashboard ([live link](https://ppr-dashboard-xfw9y.ondigitalocean.app/))
-PPR Interactive Huff Model Visualization: https://github.com/jeffstern/ppr_park_huffmodel ([live link](https://ppr-dashboard-xfw9y.ondigitalocean.app/huff-example)
-Huff Model NPM package: https://github.com/jeffstern/huffmodel (https://npmjs.com/package/huffmodel)
+* Philadelphia Parks and Rec Data Dashboard: https://github.com/jeffstern/ppr-dashboard ([live link](https://ppr-dashboard-xfw9y.ondigitalocean.app/))
+* PPR Interactive Huff Model Visualization: https://github.com/jeffstern/ppr_park_huffmodel ([live link](https://ppr-dashboard-xfw9y.ondigitalocean.app/huff-example)
+* Huff Model NPM package: https://github.com/jeffstern/huffmodel (https://npmjs.com/package/huffmodel)
 
 ## Project Path
 #### [Week0](Process/Week0)
