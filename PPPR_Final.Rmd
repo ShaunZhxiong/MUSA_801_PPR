@@ -3070,7 +3070,31 @@ print(
 
 The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. The specifc distribution is shown in the Figure7.3.2.
 
-```{r hist of MAPE for cbgS,,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.3.2.1 Distribution Histogram of MAE & MAPE for Different Census Block Groups'}
+
+```{r bar plot for errr in different frequency level,fig.height = 2.5,fig.cap = 'Figure Error among Different Route Visit Frequency Level'}
+p1 <- ggplot(data=melt(predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)), 
+                          id.vars = c("frequency","MAPE"), 
+                          variable.name = "var"),
+                aes(x=frequency, y=value, fill=var)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  scale_fill_manual(values = palette2, label=c("MAE", "Mean Probability"))+
+  plotTheme() + 
+  theme(axis.text.x = element_text(angle = 30, vjust = 1, hjust=1))
+
+p2 <- ggplot(data=predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)),
+                aes(x=frequency, y=MAPE)) +
+  geom_bar(stat="identity", position=position_dodge(), fill=palette1_main) +
+  plotTheme() + 
+  theme(axis.text.x = element_text(angle = 30, vjust = 1, hjust=1))
+
+plot_grid(p1, p2 
+          # labels = c("Distribution Histogram of MAE for Different Census Block Groups",
+          #                    "Distribution Histogram of MAPE for Different Census Block Groups")
+          )
+```
+
+
+```{r hist of MAPE for cbgS,fig.height = 8,fig.cap = 'Figure MAPE Distribution Histgram for Census Block Groups'}
 p1 <- ggplot(predictionResult_group, aes(x=MAE)) + 
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
@@ -3078,8 +3102,11 @@ p1 <- ggplot(predictionResult_group, aes(x=MAE)) +
 p2 <- ggplot(predictionResult_group, aes(x=MAPE)) + 
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
-
-plot_grid(p1, p2)
+     
+plot_grid(p1, p2
+          # labels = c("Distribution Histogram of MAE for Different Census Block Groups",
+          #                    "Distribution Histogram of MAPE for Different Census Block Groups")
+          )
 ```
 
 In the Figure7.3.2.2, we can see that 74 out of 1339 census block groups do not have convergent huff model. But overall, most census block groups have convergent models. And most of them have MAPE around 1.
@@ -3097,7 +3124,16 @@ In the Figure7.3.2.2, we can see that 74 out of 1339 census block groups do not 
 Even though the huff model is based on the census block group, if we aggregate the MAE & MAPE on facilities. We can find out that centers of distributions are moved to left, that means the practical accuracy regarding the use case should be even higher than the above. The MAE under this circumstance is 0.032.
 
 ```{r hist of MAPE for parks,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.3.2.3 Distribution Histogram of MAE & MAPE for Different Parks & Rec Centers'}
+ggplot() + 
+  geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
+          color="black",size=0.05,aes(fill = q5(MAPE)))+
+  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
+  scale_fill_manual(values = palette5, name="MAPE", label=qBr(predictionResult_group,"MAPE",F))+
+  mapTheme()+
+  theme(legend.position = "bottom")
+```
 
+```{r hist of MAPE for parks,fig.height = 8,fig.cap = 'Figure MAE & MAPE Distribution Histgram for Different Parks $ Rec Centers'}
 error_parks <- predictionResult_2 %>% 
   group_by(id) %>% 
   summarise(MAE = mean(abs(error)),
@@ -3112,7 +3148,10 @@ p2 <- ggplot(error_parks, aes(x=MAPE)) +
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
      
-plot_grid(p1, p2)
+plot_grid(p1, p2
+          # labels = c("Distribution Histogram of MAE for Different Parks $ Rec Centers",
+          #                    "Distribution Histogram of MAPE for Different Parks $ Rec Centers")
+          )
 ```
 
 Figure7.2.3.4 is the geospatial distribution of above MAPE. We can see that big facilities in Philadelphia have a more accurate result than those small facilities. That corresponds to the above argument that high frequency level facilities always have a more accurate result.
@@ -3151,21 +3190,21 @@ Figure7.2.3.4 is the geospatial distribution of above MAPE. We can see that big 
 #                                          probability_column="probability",
 #                                          origin_column = "origin",
 #                                          k=2)
-# 
 # cv_result <- left_join(cv_result,
 #                        CVModelData1 %>% dplyr::select(origin, OBJECTID, probability, PPR_DISTRICT),
 #                        by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
 #   mutate(error = probability - huff_probability)
 # 
-# cv_group_result <- cv_result %>% 
-#   group_by(origins_name) %>% 
-#   summarise(MAE = mean(abs(error), na.rm = T),
-#             MAPE = MAE/mean(probability, na.rm = T)) %>% 
-#   ungroup()
-# 
-# st_write(cv_group_result,"data/output/cv_group_result1.csv")
-cv_group_result <- st_read("data/output/cv_group_result1.csv")
+# st_write(cv_result,"data/output/cv_result.csv")
+cv_result <- st_read("data/output/cv_result.csv")
+cv_group_result <- cv_result %>%
+  group_by(origins_name) %>%
+  summarise(MAE = mean(abs(error), na.rm = T),
+            MAPE = MAE/mean(probability, na.rm = T)) %>%
+  ungroup()
+
 ```
+
 
 ```{r CV after optimalization over district, message=FALSE, warning=FALSE, results='hide'}
 # CVModelData2 <- RealModelData_final %>% 
@@ -3195,29 +3234,76 @@ cv_group_result <- st_read("data/output/cv_group_result1.csv")
 #                                                           "super-low"),
 #                                         prefix = "frequency")
 # 
-# cv_result_clean <- cv_result2 %>% 
-#   distinct() %>% 
-#   mutate(prob = exp(prob))
-# 
-# cv_result_clean <- cv_result_clean %>% 
-#   group_by(origin) %>% 
-#   summarise(d = sum(prob)) %>% 
-#   ungroup() %>% 
-#   right_join(.,cv_result_clean, by=c("origin"="origin")) %>%  # obtain prob
-#   left_join(., CVModelData2 %>%  # obtain probability
-#               dplyr::select(origin, OBJECTID, probability, frequency), 
-#             by=c("origin"="origin", "id"="OBJECTID")) %>% 
-#   mutate(prob = prob/d,
-#          error = probability-prob)
-# 
-# cv_group_result2 <- cv_result_clean %>% 
-#   group_by(origin) %>% 
-#   summarise(MAE = mean(abs(error)),
-#             MAPE = MAE/mean(probability)) %>% 
-#   ungroup()
+# st_write(cv_result2,"data/output/cv_result2.csv")
+cv_result2 <- st_read("data/output/cv_result2.csv")
+cv_result_clean <- cv_result2 %>%
+  distinct() %>%
+  mutate(prob = exp(prob))
 
-# st_write(cv_group_result2,"data/output/cv_group_result2.csv")
-cv_group_result2 <- st_read("data/output/cv_group_result2.csv")
+cv_result_clean <- cv_result_clean %>%
+  group_by(origin) %>%
+  summarise(d = sum(prob)) %>%
+  ungroup() %>%
+  right_join(.,cv_result_clean, by=c("origin"="origin")) %>%  # obtain prob
+  left_join(., CVModelData2 %>%  # obtain probability
+              dplyr::select(origin, OBJECTID, probability, frequency),
+            by=c("origin"="origin", "id"="OBJECTID")) %>%
+  mutate(prob = prob/d,
+         error = probability-prob)
+
+cv_group_result2 <- cv_result_clean %>%
+  group_by(origin) %>%
+  summarise(MAE = mean(abs(error)),
+            MAPE = MAE/mean(probability)) %>%
+  ungroup()
+
+```
+
+
+
+```{r MAPE map for cv,fig.height = 8,fig.cap = 'Figure MAPE from Cross-Validation for PPR Districts'}
+cv_group_result_dist <- cv_result %>% 
+  group_by(PPR_DISTRICT) %>% 
+  summarise(MAPE = mean(abs(error))/mean(probability)) %>% 
+  left_join(.,pprDistrict %>% mutate(DISTRICTID = as.character(DISTRICTID)),
+            by=c("PPR_DISTRICT"="DISTRICTID")) %>% 
+  st_sf()
+
+m1 <- ggplot() + 
+  geom_sf(data=cv_group_result_dist,
+          color="black",size=0.05,aes(fill=MAPE))+
+  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
+  scale_fill_gradient2(low=palette5[1], mid=palette5[3], high=palette5[5], 
+                       midpoint=6, limits=c(0,13), 
+                       breaks = c(0, 6, 13), labels = c("0", "6", "13"))+
+  mapTheme()+
+  theme(legend.position = "bottom")
+
+cv_group_result2_dist <- left_join(cv_result_clean, 
+                                   pprProperties %>% 
+                                     dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
+                                     st_drop_geometry(), 
+                                   by=c("id"="OBJECTID")) %>% 
+  group_by(PPR_DISTRICT) %>% 
+  summarise(MAPE = mean(abs(error))/mean(probability)) %>% 
+  left_join(.,pprDistrict %>% mutate(DISTRICTID = as.character(DISTRICTID)),
+            by=c("PPR_DISTRICT"="DISTRICTID")) %>% 
+  st_sf()
+
+m2 <- ggplot() + 
+  geom_sf(data=cv_group_result2_dist,
+          color="black",size=0.05,aes(fill=MAPE))+
+  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
+  scale_fill_gradient2(low=palette5[1], mid=palette5[3], high=palette5[5], 
+                       midpoint=6, limits=c(0,13), 
+                       breaks = c(0, 6, 13), labels = c("0", "6", "13"))+
+  mapTheme()+
+  theme(legend.position = "bottom")
+
+plot_grid(m1, m2, 
+          labels = c("MAPE from before-Optimized Model Cross-Validation for PPR Districts",
+                     "MAPE from Optimized Model Cross-Validation for PPR Districts")
+          )
 ```
 
 ### 8 Application & Conclusion
