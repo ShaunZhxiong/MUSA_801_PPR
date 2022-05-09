@@ -3040,12 +3040,12 @@ print(paste0("MAPE is ",round(mean(predictionResult_group$MAPE,na.rm=T),4)))
 
 The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. 
 
-```{r hist of MAPE for cbgS in sCENARIO 1,fig.height = 8}
+```{r hist of MAPE for cbgS,fig.height = 8}
 hist(error %>% filter(MAPE<=10) %>% pull(MAPE), breaks=100, 
      xlab="MAPE", main="Distribution Histogram of MAPE for Different Block Groups")
 ```
 
-```{r MAPE map for cbgs in sCENARIO 1,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Census Block Groups'}
+```{r MAPE map for cbgs,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Census Block Groups'}
 
   ggplot() + 
     geom_sf(data=left_join(error, CensusPoly, by=c("origins_name"="GEOID")) %>% st_sf(),
@@ -3056,7 +3056,7 @@ hist(error %>% filter(MAPE<=10) %>% pull(MAPE), breaks=100,
     theme(legend.position = "bottom")
 ```
 
-```{r hist of MAPE for parks in sCENARIO 1,fig.height = 8}
+```{r hist of MAPE for parks,fig.height = 8}
 error_parks <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
   mutate(AE = abs(huff_probability - probability),
          APE = abs(huff_probability - probability)/probability) %>% 
@@ -3086,7 +3086,7 @@ mean(error_parks_major$MAE,na.rm=T)
 hist(error_parks %>% filter(MAPE<=10) %>% pull(MAPE), breaks=100, xlab="MAPE", main="Distribution Histogram of MAPE for Parks")
 ```
 
-```{r MAPE map for parks in sCENARIO 1,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Parks'}
+```{r MAPE map for parks,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Parks'}
 
   ggplot() + 
     geom_sf(data=left_join(error_parks, pprProperties, by=c("destinations_name"="OBJECTID")) %>% st_sf(),
@@ -3189,6 +3189,13 @@ cv_group_result2 <- cv_result_clean %>%
 
 ```
 
-### 8 Application
+### 8 Application & Conclusion
 
-For the use case, we can help PPR better understand the use of their facilities and effect of rearranging the program numbers. Each time when PPR rearrange the number of programs, the market area will
+For the use case, we can help PPR better understand the use of their facilities and effect of rearranging the program numbers. Each time when PPR rearrange the number of programs, the market area will accordingly change. And PPR can repeatedly attempt and find the optimized program number. The specific process is displayed in the [dashboard](https://ppr-dashboard-xfw9y.ondigitalocean.app/).
+
+In this research, we firstly analyze the PPR program data and SafeGraph Pattern data respectively. And based on the analysis, we further unveiled the conflicts between visit pattern from Safegraph device panel and scheduled programs from PPR pattern with clustering regression, which indicates imbalance between demand and supply. 
+
+To provide optimized solutions, we used huff model to predict the probability of visitors at each census block group going to a given park facility. By changing the number of programs, the Huff model can predict future visit flow, which help PPR reallocate resources more reasonable. During modeling process, we attempt different techniques including PCA, Modeling Data Selection, Temporal Model Attempt, and Adding of Frequency Level etc. Eventually, we obtain the MAE as 0.028 in cross validation. And the optimized model also displays a good generalizability with MAPE as 0.88. Compared to the initial model, the improvement is huge.
+
+Currently, we only focused on adjusting programs, one of social assets, to affect trend of visitors and market areas. There are other assets to organize civic infrastructure, like physical assets and community engagement. We could consider allocating investment in physical assets with reference to Huff model, which can be used to renovate facilities to affect visitor flow. The Huff model dashboard may also extend a communication platform of visitors’ expectations for better community engagement. Optimization schemes with Huff model can remediate these Imbalances in its distribution of resources and better address inequity, gentrification, and unequal access to urban parks and public spaces.
+
