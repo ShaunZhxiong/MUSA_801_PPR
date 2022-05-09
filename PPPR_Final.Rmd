@@ -2446,8 +2446,6 @@ huffDataDropNaSmallAttract <-
 
 To select which data wrangling method can produce more accurate result, in the following section, we try different data sets and use fitting Rsquare to select the data set.
 
-##### 7.1.1 Annual Model
-
 ```{r general fit parameter, message = FALSE, warning = FALSE, echo=FALSE, results='hide'}
 source("huffModelScripts.R")
 
@@ -2465,9 +2463,9 @@ convenientSurroundEffect <- st_read("data/output/convenientSurroundEffect.GeoJSO
 
 ##### 7.1.1 Annual Model
 
-**SCENARIO 1** Drop NA probability and use PCA from large group of attractiveness.
+**SCENARIO 1** Drop NA probability and use PCA from the large group of attractiveness.
 
-```{r model1 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.1 Histogram of data set1'}
+```{r model1 fit parameter,message = FALSE, warning = FALSE}
 
 # SCENARIO 1: Drop NA probability and use large PCA
 RealModelData <- huffDataDropNaLargeAttract
@@ -2493,16 +2491,15 @@ parameterDrop <- parameter %>% drop_na()
 # R_Square <- parameterDrop$r2 
 # hist(R_Square,breaks=40)
 
-outcomeAnalysis(parameterDrop,"SCENARIO 1: Drop NA probability and use large PCA")
+outcomeAnalysis(parameterDrop,"SCENARIO 1: Drop NA probability and use PCA from the large group of attractiveness")
 
 ```
 
-**SCENARIO 2** Result (Drop NA probability and use small PCA)
+**SCENARIO 2** Drop NA probability and use PCA from the small group of attractiveness.
 
-```{r, 2model fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.2 Histogram of data set2'}
-# sCENARIO 2: Drop NA probability and use small PCA
+```{r, 2model fit parameter, message = FALSE, warning = FALSE}
+# SCENARIO 2: Drop NA probability and use small PCA
 RealModelData <- huffDataDropNaSmallAttract
-RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
 fit <- fit_parameter(data = RealModelData,
                            places = RealModelPlaces,
@@ -2521,18 +2518,17 @@ parameter <- fit %>%
   unnest(cols="parameter")
 
 parameterDrop <- parameter %>% drop_na()
-R_Square <- parameterDrop$r2 
-hist(R_Square,breaks=40)
+# R_Square <- parameterDrop$r2 
+# hist(R_Square,breaks=40)
 
-outcomeAnalysis(parameterDrop,"sCENARIO 2: Drop NA probability and use small PCA")
+outcomeAnalysis(parameterDrop,"SCENARIO 2: Drop NA probability and use PCA from the small group of attractiveness")
 ```
 
-**SCENARIO 3** Result (Drop NA probability and use no PCA)
+**SCENARIO 3** Drop NA probability and use no PCA
 
-```{r huff model3 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.3 Histogram of data set3'}
-# sCENARIO 3: Drop NA probability and use no PCA
+```{r huff model3 fit parameter, message = FALSE, warning = FALSE}
+# SCENARIO 3: Drop NA probability and use no PCA
 RealModelData <- huffDataDropNaNOPCA
-RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
 fit <- fit_parameter(data = RealModelData,
                            places = RealModelPlaces,
@@ -2551,23 +2547,18 @@ parameter <- fit %>%
   unnest(cols="parameter")
 
 parameterDrop <- parameter %>% drop_na()
-R_Square <- parameterDrop$r2
-hist(R_Square,breaks=40)
+# R_Square <- parameterDrop$r2
+# hist(R_Square,breaks=40)
 
-data <- fit %>% 
-  dplyr::select(data) %>% 
-  unnest(cols="data")
-
-outcomeAnalysis(parameterDrop,"sCENARIO 3: Drop NA probability and no use PCA")
+outcomeAnalysis(parameterDrop,"SCENARIO 3: Drop NA probability and use no PCA")
 ```
 
 
-**SCENARIO 4** Result (Replace NA probability and use large PCA)
+**SCENARIO 4** Replace NA probability and use PCA from the large group of variables
 
 ```{r model huff4 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.4 Histogram of data set4'}
-# sCENARIO 4: Replace NA probability and use large PCA
+# SCENARIO 4: Replace NA probability and use large PCA
 RealModelData <- huffDataReplaceNaLargeAttract
-RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
 fit <- fit_parameter(data = RealModelData,
                            places = RealModelPlaces,
@@ -2586,13 +2577,13 @@ parameter <- fit %>%
   unnest(cols="parameter")
 
 parameterDrop <- parameter %>% drop_na()
-R_Square <- parameterDrop$r2 
-hist(R_Square,breaks=40)
+# R_Square <- parameterDrop$r2 
+# hist(R_Square,breaks=40)
 
-outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large PCA")
+outcomeAnalysis(parameterDrop,"SCENARIO 4: Replace NA probability and use PCA from the large group of variables")
 ```
 
-
+In the above, we see the R square from different models. The best one is the scenario 3, where we drop NA probability and don't use PCA. But one thing needs to be noted is that scenario 1 also has a similar R square with scenario 3. 
 
 ##### 7.1.2 Seasonal Model
 
@@ -3133,7 +3124,7 @@ mean(error$MAE,na.rm=T)
 
 #### 7.3 Model Optimization
 
-```{r export fitted data for application}
+```{r programNum as independent predictor}
 
 # sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA
 RealModelData <- huffDataDropNaLargeAttract_program
@@ -3233,7 +3224,7 @@ cv_group_result <- cv_result %>%
 ```
 
 need modification
-```{r sCENARIO 1 - CV over visit frequency}
+```{r add visits frequency level into the model}
 CVModelData2 <- RealModelData %>% 
   mutate(frequency = case_when(
     probability > 0.5 ~ "super-high",
