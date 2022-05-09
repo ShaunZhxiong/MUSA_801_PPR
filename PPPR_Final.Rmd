@@ -75,7 +75,7 @@ The eventually user interface will be the [Dashboard](https://ppr-dashboard-xfw9
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 
-windowsFonts(font = windowsFont('Helvetica'))
+#windowsFonts(font = windowsFont('Helvetica'))
 crs = 4326
 library(vroom)
 library(grid)
@@ -259,7 +259,9 @@ program2021 <- vroom("data/FromPPR/PPR-programs-attended-2021-with-schedules.csv
 facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 facilityIDNOT789 <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties_NOT_789.csv")
 # facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
-facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("FacilityID"="ï..FacilityID","PPR_Properties_ObjectID"= "PPR_Properties_ID"))
+facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename(
+  #"FacilityID"="ï..FacilityID",
+  "PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 
 # define date, filter by attendance date
 program2021.clean <- program2021 %>% 
@@ -2144,17 +2146,18 @@ theDistanceMatrixWhole2 <-
   pivot_longer(!GEOID, names_to = "OBJECTID", values_to = "distance")
 
 # in PPR OBJECTID unit
-# theDistanceMatrixWhole3 <- theDistanceMatrixWhole2 %>% 
-#   left_join(.,propertyWithPlaceKey %>% 
-#               st_drop_geometry() %>% 
-#               dplyr::select(placekey, OBJECTID), by="placekey") %>% 
-#   right_join(attracGEO %>% 
-#                dplyr::select(OBJECTID) %>% st_drop_geometry(),by="OBJECTID") %>% 
-#   drop_na() %>% # delete this step in the future
-#   mutate(distance = as.numeric(distance)) %>% 
-#   group_by(GEOID, OBJECTID) %>% 
-#   summarise(distance = mean(distance)) %>% 
-#   ungroup()
+theDistanceMatrixWhole3 <- theDistanceMatrixWhole2 %>%
+  right_join(attracGEO %>%
+               dplyr::select(OBJECTID) %>% 
+               st_drop_geometry() %>% 
+               mutate(OBJECTID = as.character(OBJECTID)),
+             by="OBJECTID") %>%
+  drop_na() %>% # delete this step in the future
+  mutate(distance = as.numeric(distance)) %>%
+  group_by(GEOID, OBJECTID) %>%
+  summarise(distance = mean(distance)) %>%
+  ungroup()
+
 ```
 
 #### 5.3 Centrality
@@ -2475,11 +2478,15 @@ huffDataDropNaSmallAttract <-
 
 ```
 
+
+### 7 Huff Model - Modeling and Validation
+
+#### 7.1 Fitting Data Selection
+##### 7.1.1 Annual Model
+
 ```{r general fit parameter, message = FALSE, warning = FALSE, echo=FALSE, results='hide'}
 ##### Prepare data
 source("huffModelScripts.R")
-################# for Shaun ##############
-#source("huffModelScripts2.R")
 outcomeAnalysis <- function(df,scenario){
   print(scenario)
   print(paste("Rsquare: Mean is: ",mean(df$r2)))
@@ -2492,12 +2499,6 @@ outcomeAnalysis <- function(df,scenario){
 convenientSurroundEffect <- st_read("data/output/convenientSurroundEffect.GeoJSON")
 
 ```
-
-### 7 Huff Model - Modeling and Validation
-
-#### 7.1 Fitting Data Selection
-##### 7.1.1 Annual Model
-
 **SCENARIO 1** Result (Drop NA probability and use large PCA)
 
 ```{r model1 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.1 Histogram of data set1'}
@@ -2594,15 +2595,6 @@ data <- fit %>%
 outcomeAnalysis(parameterDrop,"sCENARIO 3: Drop NA probability and no use PCA")
 ```
 
-```{r for jeff}
-parameter_out <- parameter %>% 
-  mutate_all(~replace(., is.na(.), 0))
-
-data <- data[, c((1:3),20,(4:19))]
-
-#st_write(parameter_out,"data/output/dashboard/parameter_for_prediction.csv") 
-#st_write(data,"data/output/dashboard/data_for_prediction.csv") 
-```
 
 **SCENARIO 4** Result (Replace NA probability and use large PCA)
 
@@ -2679,7 +2671,9 @@ originCountSeasonal <- originCount %>%
   left_join(excepList,by="placekey") %>% 
   filter(is.na(OBJECTID)) %>% 
   dplyr::select(-OBJECTID) %>% 
-  group_by(placekey, origin, month) %>% 
+  left_join(.,propertyWithPlaceKey %>% dplyr::select(OBJECTID, placekey),
+            by="placekey") %>% 
+  group_by(OBJECTID, origin, month) %>% 
   summarise(visitors = sum(visitors)) %>% 
   ungroup() %>% 
   filter(origin %in% CensusData$GEOID) %>% 
@@ -2696,7 +2690,7 @@ modelDataSeasonal <-
   left_join(originCountSeasonal, propertyWithPlaceKey %>% 
               st_drop_geometry() %>% 
               filter(NESTED == "N") %>%
-              dplyr::select(placekey, ACREAGE),by="placekey") %>% 
+              dplyr::select(OBJECTID, ACREAGE),by="OBJECTID") %>% 
   rename(c("area" = "ACREAGE")) 
 ```
 
@@ -2707,7 +2701,7 @@ probSeasonal <- modelDataSeasonal %>%
   summarise(total = sum(visitors)) %>% 
   left_join(modelDataSeasonal, by=c("origin","season")) %>% 
   mutate(probability = visitors/total) %>% 
-  dplyr::select(placekey, origin, probability,season)
+  dplyr::select(OBJECTID, origin, probability,season)
 
 probSeasonal.na <- probSeasonal %>% filter(is.na(probability))
 
@@ -2731,12 +2725,16 @@ huffDataSeasonal <-
   theDistanceMatrixWhole3 %>% 
   rename("origin" = "GEOID")%>% 
   mutate(distance = as.numeric(distance)) %>% 
-  left_join(probSeasonal,by=c("placekey","origin"))
+  left_join(probSeasonal %>% 
+              mutate(OBJECTID = as.character(OBJECTID)),
+            by=c("OBJECTID","origin"))
 
 huffDataDropNaSeasonal <- 
   huffDataSeasonal %>% 
   drop_na()%>% 
-  left_join(LargePCAAttTogo %>% st_drop_geometry(),by="placekey")
+  left_join(LargePCAAttTogo %>% 
+              st_drop_geometry() %>% 
+              mutate(OBJECTID = as.character(OBJECTID)),by="OBJECTID")
 ```
 
 **Spring Model** Predict probability of visitors at each census block group going to a given park facility from March to May. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
@@ -2760,7 +2758,7 @@ modelEnsemble <- function(df,season){
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
+                           id_column="OBJECTID",
                            attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
                            distance_column="distance",
                            probability_column="probability",
@@ -2814,7 +2812,7 @@ modelEnsemble <- function(df,season){
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
+                           id_column="OBJECTID",
                            attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
                            distance_column="distance",
                            probability_column="probability",
@@ -2869,7 +2867,7 @@ modelEnsemble <- function(df,season){
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
+                           id_column="OBJECTID",
                            attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
                            distance_column="distance",
                            probability_column="probability",
@@ -2908,6 +2906,8 @@ modelEnsemble(autumnModelData,"autumn")
 
 ```{r Winter R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.6 Fit R square in Winter Model Distribution Map'}
 winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
+winterPlaces <- attracGEO %>% 
+  filter(OBJECTID %in% unique(winterModelData$OBJECTID))
 
 outcomeAnalysis <- function(df,scenario){
   print(scenario)
@@ -2920,12 +2920,12 @@ outcomeAnalysis <- function(df,scenario){
 
 modelEnsemble <- function(df,season){
   fit <- fit_parameter(data = df,
-                           places = attracGEO,
+                           places = winterPlaces,
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
                            neighbor_attr_column ="visits",
-                           id_column="placekey",
-                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
+                           id_column="OBJECTID",
+                           attr_column =c("PC1","PC2","PC3"),
                            distance_column="distance",
                            probability_column="probability",
                            origin_column = "origin",
