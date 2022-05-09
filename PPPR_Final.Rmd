@@ -469,7 +469,7 @@ grid.arrange(plot1, plot2,ncol=2,top = "Categories of Events in District8")
 
 In Figure 2.2.6 we can see that **Laura Sims Skate House** held hockey and **ice skating** activities, while **Morris Recreation Center** hosted more **cultural** activities like dance as well as **athletic** activities of gymnastics, tumbling and basketball. Overall, in District 8, **Laura Sims Skate House** held most programs. The **Morris Recreation Center** has second largest programs.
 
-```{r SA8_Events 2,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.7 Visitor Counts by Week and Activity Categories in District 8'}
+```{r SA8_Events 2,fig.height = 5,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.7 Visitor Counts by Week and Activity Categories in District 9'}
 ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
   geom_point(aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory, size = RegisteredIndividualsCount)) +
   geom_line(size=0.5,aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory)) +
@@ -507,7 +507,7 @@ In Figure 2.2.9 we can see that Athletic activities of basketball and aquatics m
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette7[2:7])+
-  labs(y = "Program Frequency", fill="Category", title = "Categories of Events in District8")+
+  labs(y = "Program Frequency", fill="Category", title = "Categories of Events in District 9")+
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
@@ -1068,7 +1068,7 @@ Through the above complicated analysis and rectification, we finally obtain **mo
 
 ##### 3.2.1 Visit Counts in Device Panel
 
-```{r visit Count map,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.1 Map of Visit Counts in Device Panel'}
+```{r visit Count map,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.1 Map of Visit Counts in Device Panel',results='hide'}
 sumVisit <- visitCount %>%
   dplyr::select(-visitDay,-day,-month) %>% 
   group_by(placekey) %>%
@@ -1080,7 +1080,7 @@ ggplot(sumVisit)+
   geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
   scale_size_continuous(range = c(1, 3),name = "Visits")+
   mapTheme()+
-  labs(title = "Map of Visit Counts in Device Panel")
+  labs(title = "Map of Visit Counts in Device Panel")+
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
         legend.key.height  = unit(0.2, 'cm'),
@@ -2721,7 +2721,10 @@ parameter <- fit %>%
   unnest(cols="parameter")
 
 outcomeAnalysis(parameter,"winter")
+```
 
+
+```{r Winter R square map2, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.6 Fitting R square Distribution Map in Winter Model',results='hide'}
 winterPlot <- 
   parameter %>% 
   drop_na() %>% 
@@ -2733,7 +2736,7 @@ ggplot() +
   geom_sf(data=winterPlot,color="black",size=0.1,fill = "transparent")+
   geom_sf(data=winterPlot,color="black",size=0.1,aes(fill = q5(r2)))+
   scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(winterPlot,"r2",F))+
-  labs(title="Fitting R square Distribution Map in Winter Model ")
+  labs(title="Fitting R square Distribution Map in Winter Model ")+
   mapTheme()+
   theme(legend.position = "bottom")
 ```
@@ -2832,8 +2835,8 @@ scenario1FrequencyResult <- left_join(huff_results, Test, by=c("origins_name"="o
   ungroup() %>% 
   mutate(MAPE = MAE/mean_p)
 
-print(paste0("MAE for Scenario 1 is ",round(mean(error$MAE,na.rm=T),4)))
-print(paste0("MAPE for Scenario 1 is ",round(mean(error$MAPE,na.rm=T),4)))
+print(c(paste0("MAE for Scenario 1 is ",round(mean(error$MAE,na.rm=T),4)),
+        paste0("MAPE for Scenario 1 is ",round(mean(error$MAPE,na.rm=T),4))))
 ```
 
 ##### 7.2.1 Scenario 3
@@ -2914,8 +2917,8 @@ error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinatio
   summarise(MAPE = mean(APE,na.rm=T),
             MAE = mean(AE,na.rm=T))
 
-print(paste0("MAE for Scenario 3 is ",round(mean(error$MAE,na.rm=T),4)))
-print(paste0("MAPE for Scenario 3 is ",round(mean(error$MAPE,na.rm=T),4)))
+print(c(paste0("MAE for Scenario 3 is ",round(mean(error$MAE,na.rm=T),4)),
+        paste0("MAPE for Scenario 3 is ",round(mean(error$MAPE,na.rm=T),4))))
 ```
 
 
@@ -2923,7 +2926,7 @@ We find out that Scenario 1 has a higher prediction accuracy than Scenario 3. Co
 
 
 ```{r scenario1FrequencyResult, message=FALSE, warning=FALSE}
-kable(scenario1FrequencyResult,align = 'c',caption = '<center>Table 7.3.1 Prediction Error of Scenario 1 in different visit frequency <center/>') %>%
+kable(scenario1FrequencyResult,align = 'c',caption = '<center>Table 7.2.1 Prediction Error of Scenario 1 in different visit frequency <center/>') %>%
   kable_classic(full_width = T)%>%
   kable_styling(position = "center")
 ```
@@ -3112,7 +3115,7 @@ plot_grid(p1, p2
 ```
 
 
-```{r hist of MAPE for cbgS,fig.height = 8,fig.cap = 'Figure7.3.2.1 MAPE Distribution Histgram for Census Block Groups'}
+```{r hist of MAPE for cbgS,fig.height = 4,fig.cap = 'Figure7.3.2.1 MAPE Distribution Histgram for Census Block Groups'}
 p1 <- ggplot(predictionResult_group, aes(x=MAE)) + 
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
@@ -3129,7 +3132,7 @@ plot_grid(p1, p2
 
 In the Figure7.3.2.2, we can see that 74 out of 1339 census block groups do not have convergent huff model. But overall, most census block groups have convergent models. And most of them have MAPE around 1.
 
-```{r MAPE map for cbgs,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure 7.3.2.2 MAPE Distribution Map for Census Block Groups'}
+```{r MAPE map for cbgs,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure 7.3.2.2 MAPE Distribution Map for Census Block Groups'}
   ggplot() + 
     geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
             color="black",size=0.05,aes(fill = q5(MAPE)))+
@@ -3275,7 +3278,7 @@ cv_group_result2 <- cv_result_clean %>%
 
 
 
-```{r MAPE map for cv,fig.height = 8, out.width ='100%',fig.cap = 'Figure 7.4.1 MAPE from Cross-Validation for PPR Districts (Left: Before-Optimization, Right:After-Optimization'}
+```{r MAPE map for cv,fig.height = 4, out.width ='100%',fig.cap = 'Figure 7.4.1 MAPE from Cross-Validation for PPR Districts (Left: Before-Optimization, Right:After-Optimization'}
 cv_group_result_dist <- cv_result %>% 
   group_by(PPR_DISTRICT) %>% 
   summarise(MAPE = mean(abs(error))/mean(probability)) %>% 
