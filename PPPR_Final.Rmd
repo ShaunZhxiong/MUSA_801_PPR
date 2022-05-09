@@ -2451,9 +2451,11 @@ source("huffModelScripts.R")
 
 outcomeAnalysis <- function(df,scenario){
   print(scenario)
-  print(paste("Rsquare: Mean is: ",mean(df$r2)))
-  print(paste("Rsquare: Minimum is: ",min(df$r2)))
-  print(paste("Rsquare: Maximum is: ",max(df$r2)))
+  dfnoNA <- df %>% drop_na()
+  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
+  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
+  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
+  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
 }
 
 ## neighbor attr and geometry - Here is convenient stores
@@ -2583,13 +2585,11 @@ parameterDrop <- parameter %>% drop_na()
 outcomeAnalysis(parameterDrop,"SCENARIO 4: Replace NA probability and use PCA from the large group of variables")
 ```
 
-In the above, we see the R square from different models. The best one is the scenario 3, where we drop NA probability and don't use PCA. But one thing needs to be noted is that scenario 1 also has a similar R square with scenario 3. 
+In the above, we see the R square from different models. The best one is the scenario 3, where we drop NA probability and don't use PCA. But one thing needs to be noted is that scenario 1 also has a similar R square with scenario 3. And the scenario 1 will have a better prediction accuracy in the test dataset.
 
 ##### 7.1.2 Seasonal Model
 
-We divide the data based on record dates into four seasons and run individual model to predict the probability in each season. The red line represent temperature while the orange line represent number of visitors. The numbers of temperature are exaggerate 500 times for visualization.
-
-With limited data pattern after assigning to four seasons, some Census Block Group shows blank areas in map in different season models. The situation is better when we aggregate results and run the Huff model for the whole year. We may consider to use warm-day model from April to October to improve the quantity of valid data. And we will discuss it with PPR staffing and see their demands of the use case.
+We also try to divide the data based on record dates into four seasons and run individual model to predict the probability in each season. The red line represent temperature while the orange line represent number of visitors. The numbers of temperature are exaggerate 500 times for visualization.
 
 ```{r temporal chart, fig.height = 4,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure5.7.1 Temporal Chart of vistor and temperature'}
 # temperature data
@@ -2650,6 +2650,8 @@ modelDataSeasonal <-
               dplyr::select(OBJECTID, ACREAGE),by="OBJECTID") %>% 
   rename(c("area" = "ACREAGE")) 
 ```
+
+With limited data pattern after assigning to four seasons, some Census Block Group can not have a convergent huff model. And these areas are blank in the map. Finally we decide to give up the seasonal model for now since we only have one year SafeGraph data. But in the future, the seasonal model can be attempted if we get more data. The following is the illustration of the progress and displays the areas can't have a convergent huff model.
 
 ```{r missing data for model, fig.height = 6,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure5.7.2 Census Block Group with Missing Probability'}
 # calculate probability 
@@ -2865,15 +2867,6 @@ modelEnsemble(autumnModelData,"autumn")
 winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
 winterPlaces <- attracGEO %>% 
   filter(OBJECTID %in% unique(winterModelData$OBJECTID))
-
-outcomeAnalysis <- function(df,scenario){
-  print(scenario)
-  dfnoNA <- df %>% drop_na()
-  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
-  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
-  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
-  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
-}
 
 modelEnsemble <- function(df,season){
   fit <- fit_parameter(data = df,
