@@ -445,7 +445,7 @@ fit_parameter_level <- function(data, places, neighbor_data, neighbor_id_column,
 #                                                Function to predict prob                                               #
 #########################################################################################################################
 huff_NE <- function(destinations_name, destinations_attractiveness, origins_name, destinations_centrality, 
-                    category, distance, alpha, beta, theta, pi){
+                    category, distance, alpha, beta, theta){
   
   ############################################### Functions #############################################################
   huff_numerator_basic <- function(destinations_attractiveness, distance, destinations_centrality, alpha, beta, theta){
@@ -564,6 +564,7 @@ huff_NE_level <- function(data, places, neighbor_data, neighbor_id_column, neigh
     dplyr::select(id, centrality) %>% 
     distinct() %>% 
     summarise(centrality_m = mean(centrality))
+  
   # mean of attractiveness
   foreach (attr=attr_column, i = (1:length(attr_column))) %do% {
     distict_data <- data[c("id", attr)] %>% 
@@ -604,7 +605,7 @@ huff_NE_level <- function(data, places, neighbor_data, neighbor_id_column, neigh
     cbind(new_data[category])
   
   new_data <- new_data %>% 
-    left_join(parameter, by=origin_column) %>% 
+    left_join(.,parameter, by=origin_column) %>% 
     mutate(prob=0)
   ###########################################################
   #      change into sth like nan_to_num in the future      #
@@ -750,7 +751,7 @@ huff_crossValidate_level <- function(data, cv_id, places, neighbor_data, neighbo
   
   for (i in cvID_list) {
     
-    thisFold <- i
+    thisFold <- 7
     cat("This hold out fold is", thisFold, "\n")
     
     fold.train <- filter(data, data[[cv_id]] != thisFold) %>% as.data.frame() 
@@ -767,78 +768,75 @@ huff_crossValidate_level <- function(data, cv_id, places, neighbor_data, neighbo
       filter(!origin %in% drop_list2$origin)
     
     trainPlaces <- places %>% 
-      filter(OBJECTID %in% unique(Train$OBJECTID))
-    
+      filter(OBJECTID %in% unique(fold.train$OBJECTID))
+
     fit <- fit_parameter_level(data = fold.train,
-                               places = trainPlace,
-                               neighbor_data = neighbor_data,
-                               neighbor_id_column = neighbor_id_column,
-                               neighbor_attr_column = neighbor_attr_column,
-                               id_column = id_column,
-                               attr_column = attr_column,
-                               distance_column = distance_column,
-                               probability_column = probability_column,
-                               origin_column = origin_column,
-                               k=k,
-                               category = category,
-                               parameter = parameter,
-                               prefix = prefix)
+                               places = trainPlaces,
+                               neighbor_data = convenientSurroundEffect,
+                              neighbor_id_column="placekey",
+                              neighbor_attr_column ="visits",
+                              id_column="OBJECTID",
+                              attr_column =c("PC1","PC2","PC3","programNum"),
+                              distance_column="distance",
+                              probability_column="probability",
+                              origin_column = "origin",
+                              k=2,
+                              category = "frequency")
     
-    parameter <- fit %>% 
-      dplyr::select(parameter) %>% 
+    parameter <- fit %>%
+      dplyr::select(parameter) %>%
       unnest(cols="parameter")
-    
-    # avoid error:contrasts can be applied only to factors with 2 or more levels
-    fold.test <- fold.test %>%
-      filter(origin %in% fold.train$origin)
-    
-    testPlaces <- RealModelPlaces %>% 
-      filter(OBJECTID %in% unique(Train$OBJECTID))
-    
-    #encode category
-    dmy <- dummyVars(" ~ .", data = fold.test %>% mutate(origin=as.numeric(origin)))
-    fold.test <- data.frame(predict(dmy, 
-                               newdata = fold.test %>% mutate(origin=as.numeric(origin))))
-    
-    fold.test <- fold.test %>% 
-      mutate(origin = as.character(origin)) %>% 
-      rename(c("high" = "frequencyhigh",
-               "low" = "frequencylow",
-               "medium" = "frequencymedium",
-               "mid-low" = "frequencymid.low",
-               #"super-high" = "frequencysuper.high",
-               "super-low" =  "frequencysuper.low"))
-    
-    # replce na in parameter
-    parameter <- parameter %>% 
-      mutate_all(funs(replace_na(.,0)))
-    
-    # join to same index with Test Set
-    parameter_full <- left_join(fold.test %>% dplyr::select(origin), 
-                                parameter, 
-                                by="origin")
-    
-    
-    thisPrediction <- huff_NE_level(data = fold.test,
-                                    places = testPlaces,
-                                    neighbor_data = neighbor_data,
-                                    neighbor_id_column=neighbor_id_column,
-                                    neighbor_attr_column =neighbor_attr_column,
-                                    id_column=id_column,
-                                    attr_column =attr_column,
-                                    distance_column=distance_column,
-                                    probability_column=probability_column,
-                                    origin_column = origin_column,
-                                    k=k,
-                                    category = category,
-                                    parameter = parameter_full,
-                                    prefix = prefix)
-    
-    
-    allPredictions <-
-      rbind(allPredictions, thisPrediction)
-    
+
+# avoid error:contrasts can be applied only to factors with 2 or more levels
+fold.test <- fold.test %>%
+  filter(origin %in% fold.train$origin)
+
+testPlaces <- RealModelPlaces %>%
+  filter(OBJECTID %in% unique(fold.test$OBJECTID))
+
+#encode category
+# dmy <- dummyVars(" ~ .", data = fold.test %>% mutate(origin=as.numeric(origin)))
+# fold.test <- data.frame(predict(dmy,newdata = fold.test %>% mutate(origin=as.numeric(origin))))
+# 
+# fold.test <- fold.test %>%
+#   mutate(origin = as.character(origin)) %>%
+#   rename(c("high" = "frequencyhigh",
+#            "low" = "frequencylow",
+#            "medium" = "frequencymedium",
+#            "mid-low" = "frequencymid.low",
+#            "super-high" = "frequencysuper.high",
+#            "super-low" =  "frequencysuper.low"))
+# 
+# # replce na in parameter
+# parameter <- parameter %>%
+#   mutate_all(funs(replace_na(.,0)))
+# 
+# # join to same index with Test Set
+# parameter_full <- left_join(fold.test %>% dplyr::select(origin),
+#                             parameter,
+#                             by="origin")
+# 
+# 
+# thisPrediction <- huff_NE_level(data = fold.test,
+#                                 places = testPlaces,
+#                                 neighbor_data = neighbor_data,
+#                                 neighbor_id_column=neighbor_id_column,
+#                                 neighbor_attr_column =neighbor_attr_column,
+#                                 id_column=id_column,
+#                                 attr_column =attr_column,
+#                                 distance_column=distance_column,
+#                                 probability_column=probability_column,
+#                                 origin_column = origin_column,
+#                                 k=k,
+#                                 category = category,
+#                                 parameter = parameter_full,
+#                                 prefix = prefix)
+# 
+# 
+# allPredictions <-
+#   rbind(allPredictions, thisPrediction)
+#     
   }
-  return(allPredictions)
+  return(fold.test)
 }
 

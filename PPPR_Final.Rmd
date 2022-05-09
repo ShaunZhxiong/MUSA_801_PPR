@@ -2968,7 +2968,7 @@ fit <- fit_parameter_level(data = Train,
                            probability_column="probability",
                            origin_column = "origin",
                            k=2,
-                     category = "frequency")
+                           category = "frequency")
 
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
@@ -3010,9 +3010,9 @@ parameter <- parameter %>%
   mutate_all(funs(replace_na(.,0)))
 
 # join to same index with Test Set
-parameter_full <- left_join(Test %>% dplyr::select(origin), 
-                            parameter, 
-                            by="origin") 
+# parameter_full <- left_join(Test %>% dplyr::select(origin), 
+#                             parameter, 
+#                             by="origin") 
 
 predictionResult <- huff_NE_level(data = Test,
                            places = testPlaces,
@@ -3025,12 +3025,12 @@ predictionResult <- huff_NE_level(data = Test,
                            probability_column="probability",
                            origin_column = "origin",
                            k=2,
-                     category = c("high", "low", "medium",
+                           category = c("high", "low", "medium",
                                   "mid-low", 
                                   #"super-high", 
                                   "super-low"),
-                     parameter = parameter_full,
-                     prefix = "frequency")
+                           parameter = parameter,
+                           prefix = "frequency")
 
 predictionResult <- predictionResult %>% 
   distinct() %>% 
@@ -3135,15 +3135,50 @@ hist(error_parks %>% filter(MAPE<=10) %>% pull(MAPE), breaks=100, xlab="MAPE", m
 
 need modification
 
-```{r sCENARIO 1 - CV over district}
-CVModelData <- RealModelData_final %>% 
+```{r CV before optimalization over district}
+
+CVModelData1 <- RealModelData1 %>% 
   left_join(., pprProperties %>% 
               dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
               st_drop_geometry(),
             by = "OBJECTID")
 
 
-cv_result  <- huff_crossValidate(data = CVModelData,
+cv_result  <- huff_crossValidate(data = CVModelData1,
+                                         cv_id = "PPR_DISTRICT",
+                                         places = RealModelPlaces1,
+                                         neighbor_data = convenientSurroundEffect,
+                                         neighbor_id_column="placekey",
+                                         neighbor_attr_column ="visits",
+                                         id_column="OBJECTID",
+                                         attr_column =c("PC1","PC2","PC3"),
+                                         distance_column="distance",
+                                         probability_column="probability",
+                                         origin_column = "origin",
+                                         k=2)
+
+cv_result <- left_join(cv_result,
+                       CVModelData1 %>% dplyr::select(origin, OBJECTID, probability, PPR_DISTRICT),
+                       by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
+  mutate(error = probability - huff_probability)
+
+cv_group_result <- cv_result %>% 
+  group_by(origins_name) %>% 
+  summarise(MAE = mean(abs(error), na.rm = T),
+            MAPE = MAE/mean(probability, na.rm = T)) %>% 
+  ungroup()
+
+```
+
+```{r CV after optimalization over district}
+CVModelData2 <- RealModelData_final %>% 
+  left_join(., pprProperties %>% 
+              dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
+              st_drop_geometry(),
+            by = "OBJECTID")
+
+
+cv_result2  <- huff_crossValidate_level(data = CVModelData2,
                                          cv_id = "PPR_DISTRICT",
                                          places = RealModelPlaces_final,
                                          neighbor_data = convenientSurroundEffect,
@@ -3154,20 +3189,31 @@ cv_result  <- huff_crossValidate(data = CVModelData,
                                          distance_column="distance",
                                          probability_column="probability",
                                          origin_column = "origin",
-                                         k=2)
+                                         k=2,
+                                         category = "frequency")
 
-cv_result <- left_join(cv_result,
+fit <- fit_parameter_level(data = xx,
+                           places = RealModelPlaces_final %>% filter(OBJECTID%in%unique(xx$OBJECTID)),
+                           neighbor_data = convenientSurroundEffect,
+                           neighbor_id_column="placekey",
+                           neighbor_attr_column ="visits",
+                           id_column="OBJECTID",
+                           attr_column =c("PC1","PC2","PC3","programNum"),
+                           distance_column="distance",
+                           probability_column="probability",
+                           origin_column = "origin",
+                           k=2,
+                           category = "frequency")
+
+cv_result2 <- left_join(cv_result2,
                        CVModelData %>% dplyr::select(origin, OBJECTID, probability, PPR_DISTRICT),
                        by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
   mutate(error = probability - huff_probability)
 
-cv_group_result <- cv_result %>% 
-  group_by(PPR_DISTRICT) %>% 
+cv_group_result2 <- cv_result2 %>% 
+  group_by(origins_name) %>% 
   summarise(MAE = mean(abs(error), na.rm = T),
             MAPE = MAE/mean(probability, na.rm = T)) %>% 
   ungroup()
 
-```
-
-```{}
 ```
