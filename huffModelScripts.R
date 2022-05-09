@@ -395,7 +395,7 @@ fit_parameter_level <- function(data, places, neighbor_data, neighbor_id_column,
     pi_list <- unique(data[[category]])
     for (pi_n in pi_list) {
       pi_name <- paste0(category,pi_n)
-      if (pi_name %in% names(fit2$coefficients)) {
+      if (pi_name %in% names(fit$coefficients)) {
         pi_value <- as.numeric(fit$coefficients[pi_name])
         pi_part <- data.frame(x = pi_value)
         colnames(pi_part) <- c(pi_name)
@@ -404,7 +404,12 @@ fit_parameter_level <- function(data, places, neighbor_data, neighbor_id_column,
         # pi_p_part <- data.frame(x = pi_p_value)
         # colnames(pi_p_part) <- c(paste0("pi_p", i))
         # pi_p <- cbind(pi_p, pi_p_part)
+      } else {
+        pi_part <- data.frame(pi_name = 0)
+        colnames(pi_part) <- c(pi_name)
+        pi <- cbind(pi, pi_part)
       }
+    pi[,sort(names(pi))]
     }
 
     # if(!is.na(fit$coefficients["x1"])) {alpha_p <- as.numeric(summary(fit)$coefficients["x1",4])}
@@ -424,7 +429,6 @@ fit_parameter_level <- function(data, places, neighbor_data, neighbor_id_column,
         cbind(alpha) %>%
         cbind(pi) %>%
         rbind(resultt)
-        
     } 
   resultt2 <- tibble(resultt) %>% 
     nest(data = everything()) %>% 

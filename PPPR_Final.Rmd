@@ -2921,7 +2921,8 @@ Train <- Train %>%
 
 trainPlaces <- RealModelPlaces_final %>% 
   filter(OBJECTID %in% unique(Train$OBJECTID))
-  
+
+source("huffModelScripts.R")
 fit <- fit_parameter_level(data = Train,
                            places = trainPlaces,
                            neighbor_data = convenientSurroundEffect,
@@ -2937,7 +2938,10 @@ fit <- fit_parameter_level(data = Train,
 
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
-  unnest(cols="parameter")
+  unnest(cols="parameter") 
+
+parameter <- parameter %>% 
+  dplyr::select(-frequencyhigh)
 
 parameterDrop <- parameter %>% drop_na()
 R_Square <- parameterDrop$r2 
