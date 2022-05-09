@@ -113,6 +113,7 @@ library(scales)
 library(stringr) 
 library(FNN)
 library(caret)
+library(cowplot)
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
 census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
@@ -3035,64 +3036,58 @@ predictionResult_group <- predictionResult_2 %>%
   ungroup() %>% 
   mutate(MAPE = MAE/mean_p)
 
-predictionResult_group <- predictionResult_group %>% 
-  filter(MAPE<100)
-
 print(paste0("MAE is ",round(mean(predictionResult_group$MAE,na.rm=T),4)))
 print(paste0("MAPE is ",round(mean(predictionResult_group$MAPE,na.rm=T),4)))
 
 ```
 
-```{r hist of MAPE for cbgS in sCENARIO 1,fig.height = 8}
-hist(error %>% filter(MAPE<=10) %>% pull(MAPE), breaks=100, 
-     xlab="MAPE", main="Distribution Histogram of MAPE for Different Block Groups")
+```{r hist of MAPE for cbgS,fig.height = 8}
+p1 <- ggplot(predictionResult_group, aes(x=MAE)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
+
+p2 <- ggplot(predictionResult_group, aes(x=MAPE)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
+     
+plot_grid(p1, p2, labels = c("Distribution Histogram of MAE for Different Census Block Groups",
+                             "Distribution Histogram of MAPE for Different Census Block Groups"))
 ```
 
-```{r MAPE map for cbgs in sCENARIO 1,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Census Block Groups'}
+```{r MAPE map for cbgs,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Census Block Groups'}
 
   ggplot() + 
-    geom_sf(data=left_join(error, CensusPoly, by=c("origins_name"="GEOID")) %>% st_sf(),
+    geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
             color="black",size=0.05,aes(fill = q5(MAPE)))+
     geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
-    scale_fill_manual(values = palette5, name="MAPE", label=qBr(error,"MAPE",F))+
+    scale_fill_manual(values = palette5, name="MAPE", label=qBr(predictionResult_group,"MAPE",F))+
     mapTheme()+
     theme(legend.position = "bottom")
 ```
 
-```{r hist of MAPE for parks in sCENARIO 1,fig.height = 8}
-error_parks <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
-  mutate(AE = abs(huff_probability - probability),
-         APE = abs(huff_probability - probability)/probability) %>% 
-  group_by(destinations_name) %>% 
-  summarise(MAPE = mean(APE,na.rm=T),
-            MAE = mean(AE,na.rm=T))
+```{r hist of MAPE for parks,fig.height = 8}
+error_parks <- predictionResult_2 %>% 
+  group_by(id) %>% 
+  summarise(MAE = mean(abs(error)),
+            mean_p = mean(probability)) %>% 
+  mutate(MAPE = MAE/mean_p)
 
-mean(error_parks$MAPE,na.rm=T)
-mean(error_parks$MAE,na.rm=T)
+p1 <- ggplot(error_parks, aes(x=MAE)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
 
-error_parks_major <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
-  mutate(AE = abs(huff_probability - probability),
-         APE = abs(huff_probability - probability)/probability) %>% 
-  filter(probability>0.1) %>% 
-  group_by(destinations_name) %>% 
-  summarise(MAPE = mean(APE,na.rm=T),
-            MAE = mean(AE,na.rm=T))
-
-
-mean(error_parks$MAPE,na.rm=T)
-mean(error_parks$MAE,na.rm=T)
-
-mean(error_parks_major$MAPE,na.rm=T)
-mean(error_parks_major$MAE,na.rm=T)
-
-
-hist(error_parks %>% filter(MAPE<=10) %>% pull(MAPE), breaks=100, xlab="MAPE", main="Distribution Histogram of MAPE for Parks")
+p2 <- ggplot(error_parks, aes(x=MAPE)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
+     
+plot_grid(p1, p2, labels = c("Distribution Histogram of MAE for Different Parks $ Rec Centers",
+                             "Distribution Histogram of MAPE for Different Parks $ Rec Centers"))
 ```
 
-```{r MAPE map for parks in sCENARIO 1,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Parks'}
+```{r MAPE map for parks,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Parks'}
 
   ggplot() + 
-    geom_sf(data=left_join(error_parks, pprProperties, by=c("destinations_name"="OBJECTID")) %>% st_sf(),
+    geom_sf(data=left_join(error_parks, pprProperties, by=c("id"="OBJECTID")) %>% st_sf(),
             color="black",size=0.05,aes(fill = q5(MAPE)))+
     geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
     scale_fill_manual(values = palette5, name="MAPE", label=qBr(error_parks,"MAPE",F))+
