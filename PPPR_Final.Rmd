@@ -3123,7 +3123,7 @@ In the Figure7.3.2.2, we can see that 74 out of 1339 census block groups do not 
 
 Even though the huff model is based on the census block group, if we aggregate the MAE & MAPE on facilities. We can find out that centers of distributions are moved to left, that means the practical accuracy regarding the use case should be even higher than the above. The MAE under this circumstance is 0.032.
 
-```{r hist of MAPE for parks,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.3.2.3 Distribution Histogram of MAE & MAPE for Different Parks & Rec Centers'}
+```{r map of MAPE for parks,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.3.2.3 Distribution Histogram of MAE & MAPE for Different Parks & Rec Centers'}
 ggplot() + 
   geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
           color="black",size=0.05,aes(fill = q5(MAPE)))+
@@ -3197,6 +3197,8 @@ Figure7.2.3.4 is the geospatial distribution of above MAPE. We can see that big 
 # 
 # st_write(cv_result,"data/output/cv_result.csv")
 cv_result <- st_read("data/output/cv_result.csv")
+cv_result$error <- as.numeric(cv_result$error)
+cv_result$probability <- as.numeric(cv_result$probability)
 cv_group_result <- cv_result %>%
   group_by(origins_name) %>%
   summarise(MAE = mean(abs(error), na.rm = T),
@@ -3236,6 +3238,8 @@ cv_group_result <- cv_result %>%
 # 
 # st_write(cv_result2,"data/output/cv_result2.csv")
 cv_result2 <- st_read("data/output/cv_result2.csv")
+cv_result2$prob <- as.numeric(cv_result2$prob)
+cv_result2$id <- as.numeric(cv_result2$id)
 cv_result_clean <- cv_result2 %>%
   distinct() %>%
   mutate(prob = exp(prob))
@@ -3271,8 +3275,8 @@ cv_group_result_dist <- cv_result %>%
 
 m1 <- ggplot() + 
   geom_sf(data=cv_group_result_dist,
-          color="black",size=0.05,aes(fill=MAPE))+
-  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
+          color="white",size=0.05,aes(fill=MAPE))+
+  geom_sf(data=pprDistrict %>% st_union(),color="white",size=0.5,fill = "transparent")+
   scale_fill_gradient2(low=palette5[1], mid=palette5[3], high=palette5[5], 
                        midpoint=6, limits=c(0,13), 
                        breaks = c(0, 6, 13), labels = c("0", "6", "13"))+
@@ -3292,8 +3296,8 @@ cv_group_result2_dist <- left_join(cv_result_clean,
 
 m2 <- ggplot() + 
   geom_sf(data=cv_group_result2_dist,
-          color="black",size=0.05,aes(fill=MAPE))+
-  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
+          color="white",size=0.05,aes(fill=MAPE))+
+  geom_sf(data=pprDistrict %>% st_union(),color="white",size=0.5,fill = "transparent")+
   scale_fill_gradient2(low=palette5[1], mid=palette5[3], high=palette5[5], 
                        midpoint=6, limits=c(0,13), 
                        breaks = c(0, 6, 13), labels = c("0", "6", "13"))+
