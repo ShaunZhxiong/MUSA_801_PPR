@@ -261,7 +261,7 @@ facilityID <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties.csv")
 facilityIDNOT789 <- read.csv("data/FromPPR/tblFacility_to_PPR_Properties_NOT_789.csv")
 # facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename("PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 facilityID <- facilityID %>% rbind(facilityIDNOT789 %>% rename(
-  #"FacilityID"="ï..FacilityID",
+  "FacilityID"="ï..FacilityID",
   "PPR_Properties_ObjectID"= "PPR_Properties_ID"))
 
 # define date, filter by attendance date
@@ -2358,21 +2358,12 @@ corrplot(t(pcaSmall$rotation[,1:2]), is.corr=FALSE)
 ```{r noPCATogo}
 # construct attractiveness matrix
 largeRetrunPCAValue <- as.data.frame(pca$x)
-largeRetrunPCAValue2 <- as.data.frame(pca2$x)
 smallRetrunPCAValue <- as.data.frame(pcaSmall$x)
 LargePCA <- largeRetrunPCAValue %>% dplyr::select(PC1,PC2,PC3)
-LargePCA2 <- largeRetrunPCAValue2 %>% dplyr::select(PC1,PC2,PC3)
 SmallPCA <- smallRetrunPCAValue %>% dplyr::select(PC1,PC2)
 
 LargePCAAttTogo <- 
   cbind(LargePCA, attracGEO %>% dplyr::select(OBJECTID)) %>% 
-  st_sf() %>% 
-  mutate(PC1 = scales::rescale(PC1, to=c(0,1)),
-         PC2 = scales::rescale(PC2, to=c(0,1)),
-         PC3 = scales::rescale(PC3, to=c(0,1)))
-
-LargePCAAttTogo2 <- 
-  cbind(LargePCA2, attracGEO %>% dplyr::select(OBJECTID)) %>% 
   st_sf() %>% 
   mutate(PC1 = scales::rescale(PC1, to=c(0,1)),
          PC2 = scales::rescale(PC2, to=c(0,1)),
@@ -2445,7 +2436,7 @@ huffDataDropNaSmallAttract <-
 
 To select which data wrangling method can produce more accurate result, in the following section, we try different data sets and use fitting Rsquare to select the data set.
 
-```{r general fit parameter, message = FALSE, warning = FALSE, echo=FALSE, results='hide'}
+```{r general fit parameter, message = FALSE, warning = FALSE, results='hide'}
 source("huffModelScripts.R")
 
 outcomeAnalysis <- function(df,scenario){
@@ -2488,11 +2479,7 @@ parameter <- fit %>%
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
 
-parameterDrop <- parameter %>% drop_na()
-# R_Square <- parameterDrop$r2 
-# hist(R_Square,breaks=40)
-
-outcomeAnalysis(parameterDrop,"SCENARIO 1: Drop NA probability and use PCA from the large group of attractiveness")
+outcomeAnalysis(parameter,"SCENARIO 1: Drop NA probability and use PCA from the large group of attractiveness")
 
 ```
 
@@ -2518,11 +2505,7 @@ parameter <- fit %>%
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
 
-parameterDrop <- parameter %>% drop_na()
-# R_Square <- parameterDrop$r2 
-# hist(R_Square,breaks=40)
-
-outcomeAnalysis(parameterDrop,"SCENARIO 2: Drop NA probability and use PCA from the small group of attractiveness")
+outcomeAnalysis(parameter,"SCENARIO 2: Drop NA probability and use PCA from the small group of attractiveness")
 ```
 
 **SCENARIO 3** Drop NA probability and use no PCA
@@ -2547,11 +2530,7 @@ parameter <- fit %>%
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
 
-parameterDrop <- parameter %>% drop_na()
-# R_Square <- parameterDrop$r2
-# hist(R_Square,breaks=40)
-
-outcomeAnalysis(parameterDrop,"SCENARIO 3: Drop NA probability and use no PCA")
+outcomeAnalysis(parameter,"SCENARIO 3: Drop NA probability and use no PCA")
 ```
 
 **SCENARIO 4** Replace NA probability and use PCA from the large group of variables
@@ -2576,14 +2555,10 @@ parameter <- fit %>%
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
 
-parameterDrop <- parameter %>% drop_na()
-# R_Square <- parameterDrop$r2 
-# hist(R_Square,breaks=40)
-
-outcomeAnalysis(parameterDrop,"SCENARIO 4: Replace NA probability and use PCA from the large group of variables")
+outcomeAnalysis(parameter,"SCENARIO 4: Replace NA probability and use PCA from the large group of variables")
 ```
 
-In the above, we see the R square from different models. The best one is the scenario 3, where we drop NA probability and don't use PCA. But one thing needs to be noted is that scenario 1 also has a similar R square with scenario 3. And the scenario 1 will have a better prediction accuracy in the test dataset.
+In the above, we see the R square from different models. The best one is the scenario 3, where we drop NA probability and don't use PCA. But one thing needs to be noted is that there are many lost origins in scenario 3. The reason is that as the number of the predictors increase, the corresponding least training data points should increase. Besides, we should also notice that scenario 1 also has a similar R square with scenario 3. And the scenario 1 will have a better prediction accuracy in the test dataset.
 
 
 ##### 7.1.2 Seasonal Model
@@ -2618,9 +2593,7 @@ ggplot(data = visitCountForPlot, aes(x=visitDay))+
   labs(title = '',x="Visit Date")+
   plotTheme()+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
-```
 
-```{r allocate season, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # allocate the season
 originCountSeasonal <- originCount %>% 
   st_drop_geometry() %>% 
@@ -2663,21 +2636,6 @@ probSeasonal <- modelDataSeasonal %>%
 
 probSeasonal.na <- probSeasonal %>% filter(is.na(probability))
 
-CensusPoly <-
-  get_acs(geography = "block group",
-          variables = c("B01003_001E"),
-          year=2019, state="PA", county="Philadelphia", geometry=T, output="wide") %>%
-  st_transform(crs=4326) %>%
-  dplyr::select(-NAME,-starts_with('B'))
-
-ggplot() +
-  geom_sf(data=pprServiceArea,color='black',size=0.25,linetype ="dashed", fill= "transparent")+
-  geom_sf(data=pprDistrict,color="black",size=1,fill = "transparent")+
-  geom_sf(data=CensusPoly %>% filter(GEOID %in% unique(probSeasonal.na$origin)),color=palette1_main,size=1,fill = "transparent")+
-  mapTheme()
-```
-
-```{r distance panel, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 # Based on the distance panel
 huffDataSeasonal <- 
   theDistanceMatrixWhole3 %>% 
@@ -2695,7 +2653,7 @@ huffDataDropNaSeasonal <-
               mutate(OBJECTID = as.character(OBJECTID)),by="OBJECTID")
 ```
 
-**Winter Model** Predict probability of visitors at each census block group going to a given park facility from December to February. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
+The example will be the **Winter Model**. We predict probability of visitors at each census block group going to a given park facility from December to February. We can see that there are 393 Census Block Groups are blank areas in map due to limited visit data from SafeGraph.
 
 ```{r Winter R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.6 Fit R square in Winter Model Distribution Map'}
 winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
@@ -2704,51 +2662,48 @@ winterPlaces <- attracGEO %>%
   mutate(OBJECTID = as.character(OBJECTID)) %>% 
   st_centroid()
 
-modelEnsemble <- function(df,season){
-  fit <- fit_parameter(data = df,
-                           places = winterPlaces,
-                           neighbor_data = convenientSurroundEffect,
-                           neighbor_id_column="placekey",
-                           neighbor_attr_column ="visits",
-                           id_column="OBJECTID",
-                           attr_column =c("PC1","PC2","PC3"),
-                           distance_column="distance",
-                           probability_column="probability",
-                           origin_column = "origin",
-                           k=2)
+fit <- fit_parameter(data = winterModelData,
+                         places = winterPlaces,
+                         neighbor_data = convenientSurroundEffect,
+                         neighbor_id_column="placekey",
+                         neighbor_attr_column ="visits",
+                         id_column="OBJECTID",
+                         attr_column =c("PC1","PC2","PC3"),
+                         distance_column="distance",
+                         probability_column="probability",
+                         origin_column = "origin",
+                         k=2)
 
-  parameter <- fit %>% 
-    dplyr::select(parameter) %>% 
-    unnest(cols="parameter")
+parameter <- fit %>% 
+  dplyr::select(parameter) %>% 
+  unnest(cols="parameter")
 
-  parameterDrop <- parameter %>% drop_na()
-  
-  outcomeAnalysis(parameter,season)
+outcomeAnalysis(parameter,"winter")
 
-  hist(parameterDrop$r2,breaks=40)
-
-  attempt <- 
-  parameterDrop %>% 
+winterPlot <- 
+  parameter %>% 
+  drop_na() %>% 
   dplyr::select(origin,r2) %>% 
   left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
   st_sf()
 
-  ggplot() + 
-    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
-    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
-    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
-    mapTheme()+
-    theme(legend.position = "bottom")
-}
-
-
-modelEnsemble(winterModelData,"winter")
+ggplot() + 
+  geom_sf(data=winterPlot,color="black",size=0.1,fill = "transparent")+
+  geom_sf(data=winterPlot,color="black",size=0.1,aes(fill = q5(r2)))+
+  scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(winterPlot,"r2",F))+
+  mapTheme()+
+  theme(legend.position = "bottom")
 ```
+
 
 #### 7.2 Train and Test
 
-```{r predict in sCENARIO 1}
-# sCENARIO 1: Drop NA probability and use large PCA
+As we mentioned above, the Scenario 3 had a better fitting R square. But it has many lost regions. And Scenrio 1 has a similar fitting R square but has way less lost regions. In the following, we test the prediction accuracy for Scenario 1 and 3.
+
+##### 7.2.1 Scenario 1
+
+```{r predict in SCENARIO 1, message=FALSE, warning=FALSE}
+# SCENARIO 1: Drop NA probability and use large PCA
 RealModelData1 <- huffDataDropNaLargeAttract
 RealModelPlaces1 <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
@@ -2759,7 +2714,6 @@ RealModelData1 <- RealModelData1 %>%
 # Split data
 set.seed(3456)
 split <- partition(RealModelData1$origin, p=c(train=0.5, test=0.5))
-
 Train <- RealModelData1[split$train,]
 Test <- RealModelData1[split$test,]
 
@@ -2778,18 +2732,15 @@ fit <- fit_parameter(data = Train,
 parameter1 <- fit %>% 
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
-
 # replce na in parameter
 parameter1 <- parameter1 %>% 
-  mutate_all(funs(replace_na(.,0)))
-
+  mutate_all(~replace(., is.na(.), 0))
 # join to same index with Test Set
 parameter_full1 <- left_join(Test, parameter1, by="origin") 
 
 # centrality
 TestPlaces <- RealModelPlaces1 %>% 
   filter(OBJECTID %in% as.list(Test$OBJECTID))
-
 Test <- centrality_to_df(data = Test, 
                          places = TestPlaces, 
                          neighbor_data = convenientSurroundEffect, 
@@ -2813,8 +2764,6 @@ huff_results <- huff_NE(destinations_name = Test$id,
                         beta = parameter_full1$beta,
                         theta = parameter_full1$theta)
 
-# 0*Inf => NA
-
 error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
   mutate(AE = abs(huff_probability - probability),
          APE = abs(huff_probability - probability)/probability) %>% 
@@ -2823,21 +2772,36 @@ error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinatio
   summarise(MAPE = mean(APE,na.rm=T),
             MAE = mean(AE,na.rm=T))
 
-print(paste0("MAE is ",round(mean(error$MAE,na.rm=T),4)))
+scenario1FrequencyResult <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
+  mutate(frequency = case_when(
+    probability > 0.5 ~ "super-high",
+    probability > 0.1 & probability <= 0.5 ~ "high",
+    probability > 0.03 & probability <= 0.1 ~ "medium",
+    probability > 0.015 & probability <= 0.03 ~ "mid-low",
+    probability > 0.009 & probability <= 0.015 ~ "low",
+    probability <= 0.009 ~ "super-low"
+  )) %>% 
+  drop_na() %>% 
+  mutate(error = probability - huff_probability) %>% 
+  group_by(frequency) %>% 
+  summarise(MAE = mean(abs(error)),
+            mean_p = mean(probability)) %>% 
+  ungroup() %>% 
+  mutate(MAPE = MAE/mean_p)
+
+print(paste0("MAE for Scenario 1 is ",round(mean(error$MAE,na.rm=T),4)))
 
 ```
 
-SCENARIO 3
+##### 7.2.1 Scenario 3
 
-```{r predict in sCENARIO 3}
+```{r predict in sCENARIO 3, message=FALSE, warning=FALSE}
 
 # sCENARIO 3: Drop NA probability and use no PCA
-#mutateList <- colnames(huffDataDropNaNOPCA %>% dplyr::select(-origin, -OBJECTID, -probability))
-
 RealModelData3 <- huffDataDropNaNOPCA %>% 
   dplyr::select(-origin, -OBJECTID, -probability) %>% 
   mutate_all(funs(scales::rescale(., to=c(0,1)))) %>% 
-  cbind(huffDataDropNaNOPCA %>% dplyr::select(origin, OBJECTID, probability)) 
+  cbind(huffDataDropNaNOPCA %>% dplyr::select(origin, OBJECTID, probability))
 
 RealModelPlaces3 <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
@@ -2848,10 +2812,8 @@ RealModelData3 <- RealModelData3 %>%
 # Split data
 set.seed(3456)
 split <- partition(RealModelData3$origin, p=c(train=0.5, test=0.5))
-
 Train <- RealModelData3[split$train,]
 Test <- RealModelData3[split$test,]
-
 colnames <- c("area", "facilityNum", "facilityArea","hydrationNum","tennisCourtNum",
               "playgroundNum","treeHeight","programNum","permitNum")
 
@@ -2871,18 +2833,15 @@ fit <- fit_parameter(data = Train,
 parameter3 <- fit %>% 
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
-
 # replce na in parameter
 parameter3 <- parameter3 %>% 
-  mutate_all(funs(replace_na(.,0)))
-
+  mutate_all(~replace(., is.na(.), 0))
 # join to same index with Test Set
 parameter_full3 <- left_join(Test, parameter3, by="origin") 
 
 # centrality
 TestPlaces <- RealModelPlaces3 %>% 
   filter(OBJECTID %in% as.list(Test$OBJECTID))
-
 Test <- centrality_to_df(data = Test, 
                          places = TestPlaces, 
                          neighbor_data = convenientSurroundEffect, 
@@ -2895,7 +2854,6 @@ Test <- centrality_to_df(data = Test,
 Test <- Test %>% 
   mutate_if(is.numeric, funs(ifelse(.==0,0.0000001,.)))
 
-
 # predict
 huff_results <- huff_NE(destinations_name = Test$id, 
                         destinations_attractiveness = Test[colnames], 
@@ -2906,8 +2864,6 @@ huff_results <- huff_NE(destinations_name = Test$id,
                         beta = parameter_full3$beta,
                         theta = parameter_full3$theta)
 
-# 0*Inf => NA
-
 error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
   mutate(AE = abs(huff_probability - probability),
          APE = abs(huff_probability - probability)/probability) %>% 
@@ -2915,13 +2871,22 @@ error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinatio
   summarise(MAPE = mean(APE,na.rm=T),
             MAE = mean(AE,na.rm=T))
 
-
-print(paste0("MAE is ",round(mean(error$MAE,na.rm=T),4)))
+print(paste0("MAE for Scenario 3 is ",round(mean(error$MAE,na.rm=T),4)))
 ```
+
+
+We find out that Scenario 1 has a higher prediction accuracy than Scenario 3. Considering the number of lost regions, we decide to stick to the Scenario 1 to further improve the model.
 
 #### 7.3 Model Optimization
 
-need modification
+
+```{r scenario1FrequencyResult, message=FALSE, warning=FALSE}
+kable(scenario1FrequencyResult,align = 'c',caption = '<center>Table 7.3.1 Prediction Error of Scenario 1 in different visit frequency <center/>') %>%
+  kable_classic(full_width = T)%>%
+  kable_styling(position = "center")
+```
+
+Besides in the Table 7.2.1, we find out that MAPE increases as the frequency decreases. So in the following optimization, we will try to use categorical variables - frequency to account for these inter group error.
 
 ```{r add visits frequency level into the model}
 # sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA
@@ -3130,6 +3095,8 @@ hist(error_parks %>% filter(MAPE<=10) %>% pull(MAPE), breaks=100, xlab="MAPE", m
     mapTheme()+
     theme(legend.position = "bottom")
 ```
+
+In the above, we can see that as we introduce the frequency categorical variable into the model, the accuracy improves a lot. 
 
 #### 7.4 Cross Validation - Spatial Genaralizability
 
