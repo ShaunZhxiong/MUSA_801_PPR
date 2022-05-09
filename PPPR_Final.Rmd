@@ -204,7 +204,7 @@ ggmap(base_map) +
   geom_sf(data=ll(pprServiceArea),color='black',size=0.6,fill = "transparent",inherit.aes = FALSE)+
   geom_sf(data=ll(pprDistrict %>% filter(DISTRICTID %in% c(7,8,9))),color=palette1_main,size=1,fill = "transparent",inherit.aes = FALSE)+
   geom_sf(data=ll(pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9))),color=palette1_main,size=0.6,fill = "transparent",inherit.aes = FALSE)+
-  labs(title = "Figure1.1.1 Location of PPR Districts and Pilot Service Areas", 
+  labs(title = "Location of PPR Districts and Pilot Service Areas", 
        subtitle = "",
        x="",y="")+
   mapTheme()
@@ -234,7 +234,7 @@ ggplot() +
   geom_sf(data=st_union(pprDistrict),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprDistrict,color="black",size=0.7,linetype ="dashed",fill = "transparent")+
   geom_sf(data=pprDistrict %>% filter(DISTRICTID %in% c(7,8,9)),color="black",size=1,fill = "transparent")+
-  labs(title = "", 
+  labs(title = "Locations of PPR Properties", 
        subtitle = "",
        x="",y="")+
   mapTheme()
@@ -363,7 +363,7 @@ ggplot()+
   geom_sf(data=pprDistrict,color="black",size=1,fill = "transparent")+
   geom_sf(data=permit2021.join,aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
   geom_sf(data=program2021.join,aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
-  labs(title="")+
+  labs(title="Facilities w/ Programmed (red) & Permited (orange) Activities")+
   mapTheme()
 ```
 
@@ -371,7 +371,7 @@ ggplot()+
 
 In the following section, we will focus on the district 7,8,9 as requested in the proposal. Permits in each facility are not discussed in Chapter 2.
 
-##### District 7
+##### 2.2.1 District 7
 
 There are three facilities with programs scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center.
 
@@ -381,7 +381,7 @@ ggplot()+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==7),color="black",linetype ="dashed",size=1,fill = "transparent")+
   geom_sf(data=permit2021.join%>% filter(PPR_DISTRICT ==7),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
   geom_sf(data=program2021.join%>% filter(PPR_DISTRICT ==7),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
-  labs(title="")+
+  labs(title="Facilities w/ Programed (red) & Permitted (orange) Activities in District 7")+
   mapTheme()
 ```
 
@@ -404,7 +404,7 @@ plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 7)) +
         axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.text = element_text( colour = "black", face = "italic", size = 5))
 
-grid.arrange(plot1, plot2,ncol=2,top = "")
+grid.arrange(plot1, plot2,ncol=2,top = "Categories of Events in District7")
 ```
 
 In Figure 2.2.3, we can see that **Marian Anderson Recreation Center** held more programs mainly focus on the **athletic** category, like soccer and baseball. **The other two** facilities hold more **cultural** activities, like art and music. But overall, the number of programs in Marian Anderson Recreation Center is way more larger than the other two facilities.
@@ -415,7 +415,7 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
   geom_point(aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory, size = RegisteredIndividualsCount)) +
   scale_color_manual(values = palette5)+
   scale_size_continuous(range = c(2, 4))+
-  labs(title = "",
+  labs(title = "Visitor Counts by Week and Activity Categories in District 7",
        color = "Program Category",
        size="Visitor Counts",
        x = "Week of the Year",
@@ -431,7 +431,7 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 7)) +
 
 In the Figure 2.2.4, we can see that **Athletic** activities were hold from **March to November** while **cultural** and **after school** activities mostly took place in **fall**.
 
-##### District 8
+##### 2.2.2 District 8
 
 There are five facilities with programs scheduled in District 8 shown in the Figure2.2.5: 48th & Woodland Playground, Christy Recreation Center, Howards S. Morris Recreation Center, Laura Sims Skate House, and Shepard Recreation Center.
 
@@ -441,7 +441,7 @@ ggplot()+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==8),color="black",linetype ="dashed",size=1,fill = "transparent")+
   geom_sf(data=permit2021.join%>% filter(PPR_DISTRICT ==8),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
   geom_sf(data=program2021.join%>% filter(PPR_DISTRICT ==8),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
-  labs(title="")+
+  labs(title="Facilities w/ Programed (red) & Permitted (orange) Activities in District 8")+
   mapTheme()
 ```
 
@@ -458,13 +458,13 @@ plot1 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) +
 plot2 <- ggplot(Facility_Program %>%filter(PPR_DISTRICT == 8)) + 
   geom_bar(aes(x= Facility, fill = ActivityType),position="stack")+
   scale_fill_manual(values = palette9)+
-  labs(y = "Program Frequency", fill="sub-Category", title = "")+ 
+  labs(y = "Program Frequency", fill="sub-Category", title = "Categories of Events in District8")+ 
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
         legend.text = element_text( colour = "black", face = "italic", size = 5))
 
-grid.arrange(plot1, plot2,ncol=2,top = "")
+grid.arrange(plot1, plot2,ncol=2,top = "Categories of Events in District8")
 ```
 
 In Figure 2.2.6 we can see that **Laura Sims Skate House** held hockey and **ice skating** activities, while **Morris Recreation Center** hosted more **cultural** activities like dance as well as **athletic** activities of gymnastics, tumbling and basketball. Overall, in District 8, **Laura Sims Skate House** held most programs. The **Morris Recreation Center** has second largest programs.
@@ -475,7 +475,7 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
   geom_line(size=0.5,aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory)) +
   scale_color_manual(values = palette5)+
   scale_size_continuous(range = c(2, 4))+
-  labs(title = "",
+  labs(title = "Visitor Counts by Week and Activity Categories in District 8",
        color = "Program Category",
        size="Visitor Counts",
        x = "Week of the Year",
@@ -486,7 +486,7 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 8)) +
 
 In Figure 2.2.7 we can see that **Hockey and ice skating** activities take place in **fall, winter and spring**, while **cultural and after school** activities are mainly held in **fall**.
 
-##### District 9
+##### 2.2.3 District 9
 
 There are 7 facilities with programs scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center.
 
@@ -497,7 +497,7 @@ ggplot()+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==9),color="black",linetype ="dashed",size=1,fill = "transparent")+
   geom_sf(data=permit2021.join%>% filter(PPR_DISTRICT ==9 & FacilityName != "FDR Park"),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
   geom_sf(data=program2021.join%>% filter(PPR_DISTRICT ==9),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
-  labs(title="")+
+  labs(title="Facilities w/ Programed (red) & Permitted (orange) Activities in Disdrict 9")+
   mapTheme()
 ```
 
@@ -507,7 +507,7 @@ In Figure 2.2.9 we can see that Athletic activities of basketball and aquatics m
 ggplot(Facility_Program %>%filter(PPR_DISTRICT == 9)) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette7[2:7])+
-  labs(y = "Program Frequency", fill="Category", title = "")+
+  labs(y = "Program Frequency", fill="Category", title = "Categories of Events in District8")+
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
@@ -520,7 +520,7 @@ ggplot(WeekVisit %>%filter(PPR_DISTRICT == 9)) +
   geom_line(size=0.5,aes(x = AttendanceWeekDate, y = RegisteredIndividualsCount, group = ActvityTypeCategory, colour = ActvityTypeCategory)) +
   scale_color_manual(values = palette7[2:7])+
   scale_size_continuous(range = c(2, 4))+
-  labs(title = "",
+  labs(title = "Visitor Counts by Week and Activity Categories in District 9",
        color = "Program Category",
        size="Visitor Counts",
        x = "Week of the Year",
@@ -540,7 +540,7 @@ In Figure2.3.1 there are 27 facilities with programs scheduled in other district
 ggplot(Facility_Program_otherDistricts) +
   geom_bar(aes(x= Facility,fill = ActvityTypeCategory),position="stack")+
   scale_fill_manual(values = palette7)+
-  labs(y = "Program Frequency", fill="Program Category", title = "")+
+  labs(y = "Program Frequency", fill="Program Category", title = "Categories of Events in Other Districts")+
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
@@ -1080,6 +1080,7 @@ ggplot(sumVisit)+
   geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
   scale_size_continuous(range = c(1, 3),name = "Visits")+
   mapTheme()+
+  labs(title = "Map of Visit Counts in Device Panel")
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
         legend.key.height  = unit(0.2, 'cm'),
@@ -1104,6 +1105,7 @@ ggplot(sumVisitServiceArea)+
   geom_sf(aes(fill = q5(totalVisits)),color = 'white',size=0.5) +
   scale_fill_manual(values = palette5,labels = qBr(sumVisitServiceArea,'totalVisits'),name = "Total Device Visits") +
   mapTheme()+
+  labs(title = "Map of total device visits")+
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
         legend.key.height  = unit(0.2, 'cm'),
@@ -1164,7 +1166,7 @@ ggplot(data = orgCountPlot2) +
   scale_color_manual(values = palette5,
                      labels = qBr(orgCountPlot2,"visitors"),
                      name = "Device Visits (Quintile Breaks)") +
-  labs(x="",y="")+
+  labs(x="",y="",title="Flow map of parks and origins")+
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
         legend.key.width = unit(0.5, 'cm'),
@@ -1180,7 +1182,7 @@ ggplot(data = orgCountPlotHF) +
   geom_curve(aes(x = origin.x,y = origin.y,xend = park.x,yend = park.y),
              # arrow = arrow(length = unit(0.01, "npc"), type="closed"),
              size = 0.75,color = palette1_main,curvature = -0.2, alpha = 0.7)+
-  labs(x="",y="")+
+  labs(x="",y="",title="Flow map of parks and origins - routes have more than 5000 device visits in 2021")+
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
         legend.key.width = unit(0.5, 'cm'),
@@ -1230,7 +1232,7 @@ ggplot(data = depaCountPlot2) +
   scale_color_manual(values = palette5,
                      labels = qBr(depaCountPlot2,"visitors"),
                      name = "Device Visits (Quintile Breaks)") +
-  labs(x="",y="")+
+  labs(x="",y="",title="Flow map of parks and departure points")+
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
         legend.key.width = unit(0.5, 'cm'),
@@ -1261,7 +1263,7 @@ ggplot(data = depaCountPlotHF) +
   scale_color_manual(values = palette5,
                      labels = qBr(depaCountPlot2,"visitors"),
                      name = "Device Visits (Quintile Breaks)") +
-  labs(x="",y="")+
+  labs(x="",y="",title="Flow map of most popular parks and its departure")+
   mapTheme()+
   theme(legend.position = "bottom",panel.spacing = unit(6, 'lines'),
         legend.key.width = unit(0.5, 'cm'),
@@ -1290,6 +1292,7 @@ VisitWeekdaybyServiceArea%>%
   labs(x="Weekday", y="Aggregated Visits in device panel") +
   facet_wrap(~NAME, ncol = 8, scales = "fixed")+
   plotTheme(5,5)+
+  labs(title="Distribution of weekday pattern by service area level")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         strip.text = element_text( size=6),
         axis.text = element_text( size=6),
@@ -1313,7 +1316,7 @@ VisitHourbyServiceArea <- pprServiceArea %>%
 VisitHourbyServiceArea%>%
   ggplot(aes(hour,totalVisit)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
-  labs(x="hour", y="Aggregated Visits in device panel") +
+  labs(x="hour", y="Aggregated Visits in device panel",title="Distribution of hour pattern by service area level") +
   facet_wrap(~NAME, ncol = 8, scales = "fixed")+
   plotTheme(5,5)+
   theme(axis.text = element_text( size=6),strip.text = element_text( size=8),strip.text.x = element_text( size = 6))
@@ -1348,6 +1351,7 @@ ggplot(dwellTimeForPlot)+
   scale_size_continuous(range = c(0,2),name = "avgDwellTime")+
   scale_color_continuous(low = '#FFDEDB',high ='#FF2903',
                      name = "avgDwellTime") +
+  labs(title="Map of dwelling time")+
   mapTheme()+
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
@@ -1371,6 +1375,7 @@ dwellTImePlotServiceArea <- pprServiceArea %>%
 ggplot(dwellTImePlotServiceArea)+
   geom_sf(aes(fill = q5(avgDwellTime)),color = 'white',size=0.5) +
   scale_fill_manual(values = palette5,labels = qBr(dwellTImePlotServiceArea,'avgDwellTime'),name = "Average Device Dwelling Time") +
+  labs(title="Map of average dwelling time")+
   mapTheme()+
   theme(legend.position = "bottom",
         legend.key.width = unit(0.5, 'cm'),
@@ -1577,7 +1582,7 @@ kable(cluster2_mean %>%
   kable_styling(position = "center")
 ```
 
-```{r spatially distribution of sg bias clusters,fig.height = 12,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure4.1.2 Map of Bias Type of SafeGraph Data'}
+```{r spatially distribution of sg bias clusters,fig.height = 12,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure 4.1.2 Map of Bias Type of SafeGraph Data'}
 
 ggplot() + 
   geom_sf(data=sgIntegrated_byMonth %>% 
@@ -1592,6 +1597,7 @@ ggplot() +
                      label=c("Normal (Visitors correspond to program numbers)",
                              "Potetial (many visitors few programs)",
                              "Over-programmed (few visitors many programs)")) +
+  labs(title="4.1.2 Map of Bias Type of SafeGraph Data")+
   mapTheme()+
   theme(legend.position = "bottom",
         legend.text = element_text( colour = "black", size = 8))
@@ -1633,7 +1639,7 @@ SmithSum <- Smith %>%
 SmithSum %>%
   ggplot(aes(ActivityType, totalCount, fill=ActivityType)) +
   geom_bar(position ="dodge",stat="identity",fill=palette1_main) +
-  labs(y = "Visitor Count", fill=palette1_main, title = " ")+
+  labs(y = "Visitor Count", fill=palette1_main, title = "Smith Rec Center Visits in Program Level (data from PPR)")+
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom",
@@ -1673,7 +1679,7 @@ plot2 <- sumVisit%>%
   ggplot(aes(hour,visits)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="hour", y="Aggregated Visits",
-       title ='') +
+       title ='Dwelling time and time distribution of Smith Rec Center Activity (data from SafeGraph)') +
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
@@ -1695,7 +1701,7 @@ visitCount %>%
   geom_line(color=palette1_main,size=0.75)+
   geom_vline(xintercept = smithProgramDate$AttendenceRealDate , colour=palette1_assist, size=0.35,linetype = "longdash")+
   geom_vline(xintercept = (smithProgramDate%>% filter(month %in% c(7,10,11)))$AttendenceRealDate , colour=palette1_assist, size=0.35)+
-  labs(title = '',x="Visit Date",y="Safegraph Visit")+
+  labs(title = 'Distribution of Smith Rec Center visits in 2021',x="Visit Date",y="Safegraph Visit")+
   plotTheme()+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
@@ -1732,7 +1738,7 @@ ChristySum <- Christy %>%
 ChristySum %>%
   ggplot(aes(ActivityType, totalCount, fill=ActivityType)) +
   geom_bar(position ="dodge",stat="identity",fill=palette1_main) +
-  labs(y = "Visitor Count", fill=palette1_main, title = " ")+
+  labs(y = "Visitor Count", fill=palette1_main, title = "Christy Rec Center Activity with Total")+
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom",
@@ -1754,7 +1760,7 @@ visitCount %>%
   ggplot(aes(visitDay,visits)) + 
   geom_line(color=palette1_main,size=0.75)+
   geom_vline(xintercept = christyProgramDate$AttendenceRealDate , colour=palette1_assist, size=0.5,linetype = "longdash")+
-  labs(title = '',x="Visit Date",y="Safegraph Visit")+
+  labs(title = 'Distribution of  Christy Recreation Center visits in 2021',x="Visit Date",y="Safegraph Visit")+
   plotTheme()+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
@@ -1797,7 +1803,7 @@ sumVisit3$dwellTimes <- factor(sumVisit3$dwellTimes, levels= c("<5","5-10","11-2
 plot2 <- ggplot(data=sumVisit3, aes(dwellTimes,visitors)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
   labs(x="Dwell Time", y="Aggregated Visitors",
-       title ='') +
+       title ='Temporal Vistis Pattern By Hour & Vistis Dwelling Time') +
   plotTheme()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
         legend.position = "bottom",
@@ -2018,6 +2024,7 @@ attractivenssDataOutput %>%
   geom_sf(data=pprDistrict,color='black',size=0.35,fill='transparent')+
   geom_sf(size = 0.5,color=palette1_main)+
   facet_wrap(~attractivenessCatog, ncol = 3)+
+  labs(title="Summary of Attractiveness")+
   mapTheme(5,5)+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         strip.text = element_text( size=5),
@@ -2223,7 +2230,7 @@ relatedBrandWithNaics%>%
   mutate(naics_code = factor(naics_code, naics_code)) %>%
   ggplot(aes(x=naics_code, y=totalVisitors)) +
   geom_bar(position ="dodge",fill = palette1_main,stat='identity') +
-  labs(x="Naics Code", y="Total Visitors", size = 10) +
+  labs(x="Naics Code", y="Total Visitors", title="Total Vistors of Related Brand With Naics",size = 10) +
   plotTheme(5,5)+
   theme(
     axis.text = element_text( size=5,angle = 90),
@@ -2279,6 +2286,7 @@ ggplot() +
   geom_sf(data=pprDistrict,color='black',size=0.5,fill= "transparent")+
   geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = "black",fill = "grey",alpha = 1, size = 0.35) +
   geom_sf(data=convenientSurroundDot,aes(geometry=geometry),color = palette2[1],fill = palette2[1],alpha = 1,size = 1.5) +
+  labs(title="Overlay Map of Parks(black), Convinient Stores(orange)")+
   mapTheme()
 ```
 
@@ -2624,7 +2632,7 @@ ggplot(data = visitCountForPlot, aes(x=visitDay))+
   scale_y_continuous(
     name = "Safegraph Visit",
     sec.axis = sec_axis(~ ., name="500*Daily Temp"))+
-  labs(title = '',x="Visit Date")+
+  labs(title = 'Temporal Chart of vistor and temperature',x="Visit Date")+
   plotTheme()+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
@@ -2689,7 +2697,7 @@ huffDataDropNaSeasonal <-
 
 The example will be the **Winter Model**. We predict probability of visitors at each census block group going to a given park facility from December to February. We can see that there are 393 Census Block Groups are blank areas in map due to limited visit data from SafeGraph.
 
-```{r Winter R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.6 Fit R square in Winter Model Distribution Map'}
+```{r Winter R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.6 Fitting R square Distribution Map in Winter Model'}
 winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
 winterPlaces <- attracGEO %>% 
   filter(OBJECTID %in% unique(winterModelData$OBJECTID)) %>% 
@@ -2725,6 +2733,7 @@ ggplot() +
   geom_sf(data=winterPlot,color="black",size=0.1,fill = "transparent")+
   geom_sf(data=winterPlot,color="black",size=0.1,aes(fill = q5(r2)))+
   scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(winterPlot,"r2",F))+
+  labs(title="Fitting R square Distribution Map in Winter Model ")
   mapTheme()+
   theme(legend.position = "bottom")
 ```
@@ -2925,7 +2934,7 @@ Besides in the Table 7.2.1, we find out that MAPE increases as the frequency dec
 
 ##### 7.3.1 Training
 
-```{r add visits frequency level into the model, message=FALSE, warning=FALSE,fig.height = 8,fig.cap = 'Figure R-squared Distribution Histgram for Optimized Model'}
+```{r add visits frequency level into the model, message=FALSE, warning=FALSE,fig.height = 4,fig.cap = 'Figure 7.3.1 R-squared Distribution Histgram for Optimized Model'}
 # sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA
 RealModelData_final <- huffDataDropNaLargeAttract_program
 RealModelPlaces_final <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
@@ -2983,6 +2992,7 @@ outcomeAnalysis(parameter,"Final Optimal Model: Dropping NA probability, using P
 
 ggplot(parameter, aes(x=r2)) + 
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  labs(title="R-squared Distribution Histgram for Optimized Model")+
   plotTheme()
 
 ```
@@ -3079,7 +3089,7 @@ print(
 The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. The specifc distribution is shown in the Figure7.3.2.
 
 
-```{r bar plot for errr in different frequency level,fig.height = 8,fig.cap = 'Figure Error among Different Route Visit Frequency Level'}
+```{r bar plot for errr in different frequency level, fig.cap='Figure 7.3.2 Error among Different Route Visit Frequency Level', fig.height=4, message=FALSE, warning=FALSE}
 p1 <- ggplot(data=melt(predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)), 
                           id.vars = c("frequency","MAPE"), 
                           variable.name = "var"),
@@ -3087,7 +3097,7 @@ p1 <- ggplot(data=melt(predictionResult_group2 %>% mutate(frequency = fct_reorde
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_manual(values = palette2, label=c("MAE", "Mean Probability"))+
   plotTheme() + 
-  theme(axis.text.x = element_text(angle = 30, vjust = 1, hjust=1))
+  theme(legend.position = "bottom",axis.text.x = element_text(angle = 30, vjust = 1, hjust=1))
 
 p2 <- ggplot(data=predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)),
                 aes(x=frequency, y=MAPE)) +
@@ -3102,7 +3112,7 @@ plot_grid(p1, p2
 ```
 
 
-```{r hist of MAPE for cbgS,fig.height = 8,fig.cap = 'Figure MAPE Distribution Histgram for Census Block Groups'}
+```{r hist of MAPE for cbgS,fig.height = 8,fig.cap = 'Figure7.3.2.1 MAPE Distribution Histgram for Census Block Groups'}
 p1 <- ggplot(predictionResult_group, aes(x=MAE)) + 
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
@@ -3119,29 +3129,21 @@ plot_grid(p1, p2
 
 In the Figure7.3.2.2, we can see that 74 out of 1339 census block groups do not have convergent huff model. But overall, most census block groups have convergent models. And most of them have MAPE around 1.
 
-```{r MAPE map for cbgs,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.3.2.2 MAPE Distribution Map for Census Block Groups'}
+```{r MAPE map for cbgs,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure 7.3.2.2 MAPE Distribution Map for Census Block Groups'}
   ggplot() + 
     geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
             color="black",size=0.05,aes(fill = q5(MAPE)))+
     geom_sf(data=pprDistrict %>% st_union(),color="black",size=1,fill = "transparent")+
     scale_fill_manual(values = palette5, name="MAPE", label=qBr(predictionResult_group,"MAPE",F))+
+  labs(title="MAPE Distribution Map for Census Block Groups")+
     mapTheme()+
     theme(legend.position = "bottom")
 ```
 
 Even though the huff model is based on the census block group, if we aggregate the MAE & MAPE on facilities. We can find out that centers of distributions are moved to left, that means the practical accuracy regarding the use case should be even higher than the above. The MAE under this circumstance is 0.032.
 
-```{r map of MAPE for parks,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.3.2.3 Distribution Histogram of MAE & MAPE for Different Parks & Rec Centers'}
-ggplot() + 
-  geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
-          color="black",size=0.05,aes(fill = q5(MAPE)))+
-  geom_sf(data=pprDistrict %>% st_union(),color="black",size=0.5,fill = "transparent")+
-  scale_fill_manual(values = palette5, name="MAPE", label=qBr(predictionResult_group,"MAPE",F))+
-  mapTheme()+
-  theme(legend.position = "bottom")
-```
 
-```{r hist of MAPE for parks,fig.height = 8,fig.cap = 'Figure MAE & MAPE Distribution Histgram for Different Parks $ Rec Centers'}
+```{r hist of MAPE for parks,fig.height = 4,fig.cap = 'Figure 7.3.2.3 MAE & MAPE Distribution Histgram for Different Parks & Rec Centers'}
 error_parks <- predictionResult_2 %>% 
   group_by(id) %>% 
   summarise(MAE = mean(abs(error)),
@@ -3273,7 +3275,7 @@ cv_group_result2 <- cv_result_clean %>%
 
 
 
-```{r MAPE map for cv,fig.height = 8,fig.cap = 'Figure MAPE from Cross-Validation for PPR Districts'}
+```{r MAPE map for cv,fig.height = 8, out.width ='100%',fig.cap = 'Figure 7.4.1 MAPE from Cross-Validation for PPR Districts (Left: Before-Optimization, Right:After-Optimization'}
 cv_group_result_dist <- cv_result %>% 
   group_by(PPR_DISTRICT) %>% 
   summarise(MAPE = mean(abs(error))/mean(probability)) %>% 
@@ -3313,14 +3315,22 @@ m2 <- ggplot() +
   theme(legend.position = "bottom")
 
 plot_grid(m1, m2, 
-          labels = c("MAPE from before-Optimized Model Cross-Validation for PPR Districts",
-                     "MAPE from Optimized Model Cross-Validation for PPR Districts")
+          # labels = c("MAPE from before-Optimized Model Cross-Validation for PPR Districts",
+          #            "MAPE from Optimized Model Cross-Validation for PPR Districts")
           )
 ```
 
-### 8 Application & Conclusion
+### 8 Conclusion
+
+#### 8.1 Application
 
 For the use case, we can help PPR better understand the use of their facilities and effect of rearranging the program numbers. Each time when PPR rearrange the number of programs, the market area will accordingly change. And PPR can repeatedly attempt and find the optimized program number. The specific process is displayed in the [dashboard](https://ppr-dashboard-xfw9y.ondigitalocean.app/).
+
+#### 8.2 Limitation
+
+Since Huff model is predicting the probabilities which are always smaller than 1, the MAPE will be inevitably high. (The denominator is small leading to the outcome become large.) And if we multiple the prediction outcome by the total visits in each census block, the error of predicted visits from each census block group to each facility will even become larger. This is a dominant limitation of Huff model. Further more, time lag variables will always be helpful in predicting the temporal visits. Maybe time lag variables will further improve the model. But we only have 2021 SafeGraph data, this method can not be attempted.
+
+#### 8.3 Conclusion
 
 In this research, we firstly analyze the PPR program data and SafeGraph Pattern data respectively. And based on the analysis, we further unveiled the conflicts between visit pattern from Safegraph device panel and scheduled programs from PPR pattern with clustering regression, which indicates imbalance between demand and supply. 
 
