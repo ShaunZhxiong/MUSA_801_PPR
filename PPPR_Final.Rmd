@@ -61,7 +61,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### 1 Introduction
 
-Currently, the Philadelphia Department of Parks & Recreation (PPR) owns 524 facilities across the city and host thousands of programs and events every year that contribute to the wellness of people.From top down, the hierarchy of their service system is: Districts -> Service Areas -> Facilities -> Programs and Permits.
+Currently, the Philadelphia Department of Parks & Recreation (PPR) owns 524 facilities across the city and host thousands of programs and events every year that contribute to the wellness of people.From top down, the hierarchy of their service system is: Districts -\> Service Areas -\> Facilities -\> Programs and Permits.
 
 In the past, staffing in PPR estimates the demand for its programming based on program data (like registered attendance) and other proxy measures about park visits (e.g. total trash collected). However, these measures may not be fully reliable and accurate. How can PPR make smarter decisions about allocating programs in the parks and recreation facilities? We will refer to a data-driven approach to help them find the dynamic relationship between planned activities and visitors.
 
@@ -75,7 +75,7 @@ The eventually user interface will be the [Dashboard](https://ppr-dashboard-xfw9
 
 ```{r library, message=FALSE, warning=FALSE, results='hide'}
 
-#windowsFonts(font = windowsFont('Helvetica'))
+windowsFonts(font = windowsFont('Helvetica'))
 crs = 4326
 library(vroom)
 library(grid)
@@ -112,6 +112,7 @@ library(splitTools)
 library(scales)
 library(stringr) 
 library(FNN)
+library(caret)
 ll <- function(dat, proj4 = 4326){st_transform(dat, proj4)}
 
 census_api_key("b33ec1cb4da108659efd12b3c15412988646cbd8", overwrite = TRUE)
@@ -371,7 +372,7 @@ In the following section, we will focus on the district 7,8,9 as requested in th
 
 ##### District 7
 
-There are three facilities with programs scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center. 
+There are three facilities with programs scheduled in District 7: Athletic Recreation Center, Mander Playground, and Marian Anderson Recreation Center.
 
 ```{r SA7_programNpermit,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.2 Facilities w/ Programed (red) & Permitted (orange) Activities in District 7'}
 ggplot()+
@@ -486,7 +487,7 @@ In Figure 2.2.7 we can see that **Hockey and ice skating** activities take place
 
 ##### District 9
 
-There are 7 facilities with programs scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center. 
+There are 7 facilities with programs scheduled in District 9: Barry Playground and Pool, Cibotti Recreation Center, DiSilvestro Playground, East Passyunk Community Center, Eastwick Regional Playground, and Thomas B. Smith Recreation Center.
 
 ```{r SA9_programNpermit,fig.height = 8,message = FALSE, warning = FALSE, results='hide',out.width = '80%',fig.align = 'center',fig.cap = 'Figure2.2.8 Facilities w/ Programed (red) & Permitted (orange) Activities in Disdrict 9'}
 
@@ -1350,7 +1351,7 @@ ggplot(dwellTimeForPlot)+
         legend.text = element_text( colour = "black", size = 8))
 ```
 
-In Figure 3.2.9, we calculate the average dwelling time for each facility. From the map, we can find out that the **longest dwelling** time happes at the placekey (zzw-222@628-pg9-tg), the **Clemente Park Playground**.
+In Figure 3.2.9, we calculate the average dwelling time for each facility. From the map, we can find out that the **longest dwelling** time happes at the placekey ([zzw-222\@628-pg9-tg](mailto:zzw-222@628-pg9-tg){.email}), the **Clemente Park Playground**.
 
 ```{r dwell time distribution,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.10 Map of average dwelling time'}
 dwellTImePlotServiceArea <- pprServiceArea %>%
@@ -1467,7 +1468,6 @@ modelData <-
             area = max(area))
 ```
 
-
 #### 4.2 Imbalance between Mobility Data and Position Usage
 
 In terms of helping allocate programs and resources, we **divided all locations into 3 categories** based on their **visit data** and **program data**. (The number of facilities with both of program scheduled and safegraph data available is limited, only 14 facilities, so we use facilities with programs in each month to do analyses below).
@@ -1522,12 +1522,11 @@ sgIntegrated_byMonth$programs = sgIntegrated_byMonth$programs %>% replace_na(0)
 
 ```
 
+***Potential facilities\~month***: 12 out of 380, have **huge amount of visitors** who will **stay longer** than normal, but only **relatively few activity programs** here, which means there is great **potential** to develop activities, and PPR may set more programs in the future. 
 
-***Potential facilities~month***: 12 out of 380, have **huge amount of visitors** who will **stay longer** than normal, but only **relatively few activity programs** here, which means there is great **potential** to develop activities, and PPR may set more programs in the future. 
+***Normal facilities\~month***: These facilities' programs are **consistent** with the visits. The size in this clustering is 333.
 
-***Normal facilities~month***: These facilities' programs are **consistent** with the visits. The size in this clustering is 333.
-
-***Over-programmed facilities~month***: 35 out of 380 have **many programs** but **few foot traffic**, which means there is over-programming, and PPR may reduce the number of programs in the future.
+***Over-programmed facilities\~month***: 35 out of 380 have **many programs** but **few foot traffic**, which means there is over-programming, and PPR may reduce the number of programs in the future.
 
 ```{r cluster by dwell visitors and permit,warning=FALSE,message=FALSE, results='hide'}
 # normalize
@@ -1573,7 +1572,6 @@ kable(cluster2_mean %>%
   kable_classic(full_width = T)%>%
   kable_styling(position = "center")
 ```
-
 
 ```{r spatially distribution of sg bias clusters,fig.height = 16,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure4.1.2 Map of Bias Type of SafeGraph Data'}
 
@@ -1737,6 +1735,7 @@ ChristySum %>%
         legend.text = element_text( colour = "black", size = 8))
 
 ```
+
 Several peak visit counts show up in the middle of March, May, June, and August, but programs were scheduled in autumn. So, it is a lot of potentials to optimize program schedules in the seasons when the peak values show up.
 
 ```{r Christy temperal pattern by day2 ,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.7 Distribution of  Christy Recreation Center visits in 2021'}
@@ -1760,6 +1759,7 @@ visitCount %>%
 ```{r Christy img2, echo=FALSE,fig.height = 2,out.width = '80%',fig.align = 'center'}
 knitr::include_graphics(c("resources/imgaes/ChristyRec_combine2.jpg"))
 ```
+
 A baseball court, playground, and an outdoor basketball court surround the Christy Rec Center. Interior basketball court and multi-purpose interior space are provided inside the Christy Rec Center.
 
 ```{r Christy temperal pattern by hour,fig.height = 3,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.3.8 Temperal Vistis Pattern By Hour & Vistis Dwelling Time'}
@@ -1803,7 +1803,7 @@ grid.arrange(plot2,plot1,ncol=2,top="")
 
 ```
 
-According to the Figure3.3.8 above, people usually dwell longer (\>120min) here, and it seems 11 am to 3 pm is the most time period with the most aggregated visits. But most of programs were always scheduled in the evening, indicating that there is insufficient supply to meet demand of peak visit . 
+According to the Figure3.3.8 above, people usually dwell longer (\>120min) here, and it seems 11 am to 3 pm is the most time period with the most aggregated visits. But most of programs were always scheduled in the evening, indicating that there is insufficient supply to meet demand of peak visit .
 
 The facility improvements in 2021 make the Christy Recreation Center a safe destination for West Philadelphia teens and young adults. It is a good opportunity to see the community and local businesses respond to violence by coming together with law enforcement and elected leaders to expand on- and off-court programs for teens and older youth. More programs related basketball and more interior activities might be suggested for future program schedules. Considering of the estimated amount of visitors and optimized time schedule, we can refer to Huff model for insights.
 
@@ -2478,15 +2478,14 @@ huffDataDropNaSmallAttract <-
 
 ```
 
-
 ### 7 Huff Model - Modeling and Validation
 
 #### 7.1 Fitting Data Selection
+
 ##### 7.1.1 Annual Model
 
 ```{r general fit parameter, message = FALSE, warning = FALSE, echo=FALSE, results='hide'}
 ##### Prepare data
-source("huffModelScripts.R")
 outcomeAnalysis <- function(df,scenario){
   print(scenario)
   print(paste("Rsquare: Mean is: ",mean(df$r2)))
@@ -2498,7 +2497,9 @@ outcomeAnalysis <- function(df,scenario){
 ## neighbor attr and geometry - Here is convenient stores
 convenientSurroundEffect <- st_read("data/output/convenientSurroundEffect.GeoJSON")
 
+source("huffModelScripts.R")
 ```
+
 **SCENARIO 1** Result (Drop NA probability and use large PCA)
 
 ```{r model1 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.1 Histogram of data set1'}
@@ -2595,7 +2596,6 @@ data <- fit %>%
 outcomeAnalysis(parameterDrop,"sCENARIO 3: Drop NA probability and no use PCA")
 ```
 
-
 **SCENARIO 4** Result (Replace NA probability and use large PCA)
 
 ```{r model huff4 fit parameter, fig.height = 3,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure5.6.4 Histogram of data set4'}
@@ -2625,8 +2625,6 @@ hist(R_Square,breaks=40)
 
 outcomeAnalysis(parameterDrop,"sCENARIO 4: Replace NA probability and use large PCA")
 ```
-
-
 
 ##### 7.1.2 Seasonal Model
 
@@ -2737,177 +2735,14 @@ huffDataDropNaSeasonal <-
               mutate(OBJECTID = as.character(OBJECTID)),by="OBJECTID")
 ```
 
-**Spring Model** Predict probability of visitors at each census block group going to a given park facility from March to May. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
-
-```{r Spring R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.3 Fit R square in Spring Model Distribution Map'}
-# seperatly get 4 season data
-springModelData <- huffDataDropNaSeasonal %>% filter(season=="spring") %>% dplyr::select(-season)
-
-outcomeAnalysis <- function(df,scenario){
-  print(scenario)
-  dfnoNA <- df %>% drop_na()
-  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
-  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
-  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
-  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
-}
-
-modelEnsemble <- function(df,season){
-  fit <- fit_parameter(data = df,
-                           places = attracGEO,
-                           neighbor_data = convenientSurroundEffect,
-                           neighbor_id_column="placekey",
-                           neighbor_attr_column ="visits",
-                           id_column="OBJECTID",
-                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
-                           distance_column="distance",
-                           probability_column="probability",
-                           origin_column = "origin",
-                           k=2)
-
-  parameter <- fit %>% 
-    dplyr::select(parameter) %>% 
-    unnest(cols="parameter")
-
-  parameterDrop <- parameter %>% drop_na()
-  
-  outcomeAnalysis(parameter,season)
-
-  hist(parameterDrop$r2,breaks=40)
-
-  attempt <- 
-  parameterDrop %>% 
-  dplyr::select(origin,r2) %>% 
-  left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
-  st_sf()
-
-  ggplot() + 
-    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
-    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
-    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
-    mapTheme()+
-    theme(legend.position = "bottom")
-}
-
-modelEnsemble(springModelData,"spring")
-```
-
-**Summer Model** Predict probability of visitors at each census block group going to a given park facility from June to August. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
-
-```{r Summer R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.4 Fit R square in Summer Model Distribution Map'}
-summerModelData <- huffDataDropNaSeasonal %>% filter(season=="summer") %>% dplyr::select(-season)
-
-outcomeAnalysis <- function(df,scenario){
-  print(scenario)
-  dfnoNA <- df %>% drop_na()
-  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
-  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
-  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
-  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
-}
-
-modelEnsemble <- function(df,season){
-  fit <- fit_parameter(data = df,
-                           places = attracGEO,
-                           neighbor_data = convenientSurroundEffect,
-                           neighbor_id_column="placekey",
-                           neighbor_attr_column ="visits",
-                           id_column="OBJECTID",
-                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
-                           distance_column="distance",
-                           probability_column="probability",
-                           origin_column = "origin",
-                           k=2)
-
-  parameter <- fit %>% 
-    dplyr::select(parameter) %>% 
-    unnest(cols="parameter")
-
-  parameterDrop <- parameter %>% drop_na()
-  
-  outcomeAnalysis(parameter,season)
-
-  hist(parameterDrop$r2,breaks=40)
-
-  attempt <- 
-  parameterDrop %>% 
-  dplyr::select(origin,r2) %>% 
-  left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
-  st_sf()
-
-  ggplot() + 
-    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
-    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
-    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
-    mapTheme()+
-    theme(legend.position = "bottom")
-}
-
-
-modelEnsemble(summerModelData,"summer")
-```
-
-**Autumn Model** Predict probability of visitors at each census block group going to a given park facility from September to November. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
-
-```{r Autumn R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.5 Fit R square in Autumn Model Distribution Map'}
-autumnModelData <- huffDataDropNaSeasonal %>% filter(season=="autumn") %>% dplyr::select(-season)
-
-outcomeAnalysis <- function(df,scenario){
-  print(scenario)
-  dfnoNA <- df %>% drop_na()
-  print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
-  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
-  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
-  print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
-}
-
-modelEnsemble <- function(df,season){
-  fit <- fit_parameter(data = df,
-                           places = attracGEO,
-                           neighbor_data = convenientSurroundEffect,
-                           neighbor_id_column="placekey",
-                           neighbor_attr_column ="visits",
-                           id_column="OBJECTID",
-                           attr_column =c("PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8","PC9"),
-                           distance_column="distance",
-                           probability_column="probability",
-                           origin_column = "origin",
-                           k=2)
-
-  parameter <- fit %>% 
-    dplyr::select(parameter) %>% 
-    unnest(cols="parameter")
-
-  parameterDrop <- parameter %>% drop_na()
-  
-  outcomeAnalysis(parameter,season)
-
-  hist(parameterDrop$r2,breaks=40)
-
-  attempt <- 
-  parameterDrop %>% 
-  dplyr::select(origin,r2) %>% 
-  left_join(CensusPoly, by=c("origin" = "GEOID")) %>% 
-  st_sf()
-
-  ggplot() + 
-    geom_sf(data=attempt,color="black",size=0.1,fill = "transparent")+
-    geom_sf(data=attempt,color="black",size=0.1,aes(fill = q5(r2)))+
-    scale_fill_manual(values = palette5 %>% rev(), name="Fitting R2", label=qBr(attempt,"r2",F))+
-    mapTheme()+
-    theme(legend.position = "bottom")
-}
-
-
-modelEnsemble(autumnModelData,"autumn")
-```
-
 **Winter Model** Predict probability of visitors at each census block group going to a given park facility from December to February. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
 
 ```{r Winter R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.6 Fit R square in Winter Model Distribution Map'}
 winterModelData <- huffDataDropNaSeasonal %>% filter(season=="winter") %>% dplyr::select(-season)
 winterPlaces <- attracGEO %>% 
-  filter(OBJECTID %in% unique(winterModelData$OBJECTID))
+  filter(OBJECTID %in% unique(winterModelData$OBJECTID)) %>% 
+  mutate(OBJECTID = as.character(OBJECTID)) %>% 
+  st_centroid()
 
 outcomeAnalysis <- function(df,scenario){
   print(scenario)
@@ -2959,21 +2794,9 @@ modelEnsemble <- function(df,season){
 modelEnsemble(winterModelData,"winter")
 ```
 
-**Annual Model** Predict probability of visitors at each census block group going to a given park facility for whole year. Some Census Block Group shows blank areas in map due to limited visit data from SafeGraph.
-
-```{r annual R square map, fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.7.7 Fit R square in Annual Model Distribution Map'}
-
-modelEnsemble(huffDataDropNaLargeAttract,"Drop Na & Large Attractiveness")
-
-```
-
-
 #### 7.2 Train and Test
 
 ```{r predict in sCENARIO 1}
-
-source("huffModelScripts.R")
-
 # sCENARIO 1: Drop NA probability and use large PCA
 RealModelData1 <- huffDataDropNaLargeAttract
 RealModelPlaces1 <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
@@ -3049,29 +2872,13 @@ error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinatio
   summarise(MAPE = mean(APE,na.rm=T),
             MAE = mean(AE,na.rm=T))
 
-error_major <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinations_name"="id") ) %>% 
-  mutate(AE = abs(huff_probability - probability),
-         APE = abs(huff_probability - probability)/probability) %>% 
-  filter(probability>0.1) %>% 
-  group_by(origins_name) %>% 
-  summarise(MAPE = mean(APE,na.rm=T),
-            MAE = mean(AE,na.rm=T))
-
-mean(error$MAPE,na.rm=T)
-mean(error$MAE,na.rm=T)
-
-mean(error_major$MAPE,na.rm=T)
-mean(error_major$MAE,na.rm=T)
+print(paste0("MAE is ",round(mean(error$MAE,na.rm=T),4)))
 
 ```
 
 SCENARIO 3
 
 ```{r predict in sCENARIO 3}
-
-source("huffModelScripts.R")
-library(splitTools)
-library(scales)
 
 # sCENARIO 3: Drop NA probability and use no PCA
 #mutateList <- colnames(huffDataDropNaNOPCA %>% dplyr::select(-origin, -OBJECTID, -probability))
@@ -3157,118 +2964,20 @@ error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinatio
   summarise(MAPE = mean(APE,na.rm=T),
             MAE = mean(AE,na.rm=T))
 
-error2 <- error %>% 
-  filter(MAPE<10)
 
-mean(error$MAPE,na.rm=T)
-
-mean(error$MAE,na.rm=T)
+print(paste0("MAE is ",round(mean(error$MAE,na.rm=T),4)))
 ```
 
 #### 7.3 Model Optimization
 
-```{r export fitted data for application}
+need modification
 
+```{r add visits frequency level into the model}
 # sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA
-RealModelData <- huffDataDropNaLargeAttract_program
-RealModelPlaces <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
+RealModelData_fina <- huffDataDropNaLargeAttract_program
+RealModelPlaces_fina <- attracGEO %>% dplyr::select(OBJECTID) %>% st_centroid()
 
-fit <- fit_parameter(data = RealModelData,
-                           places = RealModelPlaces,
-                           neighbor_data = convenientSurroundEffect,
-                           neighbor_id_column="placekey",
-                           neighbor_attr_column ="visits",
-                           id_column="OBJECTID",
-                           attr_column =c("PC1","PC2","PC3","programNum"),
-                           distance_column="distance",
-                           probability_column="probability",
-                           origin_column = "origin",
-                           k=2)
-
-parameter <- fit %>% 
-  dplyr::select(parameter) %>% 
-  unnest(cols="parameter")
-parameterDrop <- parameter %>% drop_na()
-
-dataForPrediction <- fit %>% 
-  dplyr::select(data) %>% 
-  unnest(cols="data") %>% 
-  mutate_if(is.numeric, funs(ifelse(.==0,0.0000001,.)))
-
-# replce na in parameter
-parameter <- parameter %>% 
-  mutate_all(funs(replace_na(.,0)))
-dataForPrediction <- left_join(dataForPrediction, parameter, by="origin") 
-
-#st_write(dataForPrediction, "data/output/dashboard/final/dataForPrediction.csv")
-
-
-R_Square <- parameterDrop$r2 
-hist(R_Square,breaks=40)
-
-outcomeAnalysis(parameterDrop,"sCENARIO 1 variant: Drop NA probability and use large PCA with programNum outside PCA")
-
-
-# predict
-predictionResult <- huff_NE(destinations_name = dataForPrediction$id, 
-                        destinations_attractiveness = dataForPrediction[c("PC1","PC2",
-                                                                          "PC3","programNum")], 
-                        origins_name = dataForPrediction$origin, 
-                        destinations_centrality = dataForPrediction$centrality,
-                        distance = dataForPrediction$distance,
-                        alpha = dataForPrediction %>% dplyr::select(starts_with("alpha")),
-                        beta = dataForPrediction$beta,
-                        theta = dataForPrediction$theta)
-
-# replace with actual probability
-predictionResult <- predictionResult %>% 
-  dplyr::select(-huff_probability) %>% 
-  left_join(dataForPrediction %>% dplyr::select(origin, id, prob),
-            by=c("origins_name"="origin", "destinations_name"="id")) %>% 
-  rename("huff_probability"="prob")
-#st_write(predictionResult, "data/output/dashboard/final/predictionResult.csv")
-```
-
-need modification
-```{r sCENARIO 1 - CV over district}
-source("huffModelScripts.R")
-
-CVModelData <- RealModelData %>% 
-  left_join(., pprProperties %>% 
-              dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
-              st_drop_geometry(),
-            by = "OBJECTID")
-
-
-cv_result  <- huff_crossValidate(data = CVModelData,
-                                         cv_id = "PPR_DISTRICT",
-                                         places = RealModelPlaces,
-                                         neighbor_data = convenientSurroundEffect,
-                                         neighbor_id_column="placekey",
-                                         neighbor_attr_column ="visits",
-                                         id_column="OBJECTID",
-                                         attr_column =c("PC1","PC2","PC3","programNum"),
-                                         distance_column="distance",
-                                         probability_column="probability",
-                                         origin_column = "origin",
-                                         k=2)
-
-cv_result <- left_join(cv_result,
-                       CVModelData %>% dplyr::select(origin, OBJECTID, probability, PPR_DISTRICT),
-                       by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
-  mutate(error = probability - huff_probability)
-
-cv_group_result <- cv_result %>% 
-  group_by(PPR_DISTRICT) %>% 
-  summarise(MAE = mean(abs(error), na.rm = T),
-            MAPE = MAE/mean(probability, na.rm = T)) %>% 
-  ungroup()
-
-```
-
-need modification
-```{r sCENARIO 1 - CV over visit frequency}
-CVModelData2 <- RealModelData %>% 
+RealModelData_final <- RealModelData_final %>% 
   mutate(frequency = case_when(
     probability > 0.5 ~ "super-high",
     probability > 0.1 & probability <= 0.5 ~ "high",
@@ -3278,28 +2987,11 @@ CVModelData2 <- RealModelData %>%
     probability <= 0.009 ~ "super-low"
   ))
 
-# # avoid error:contrasts can be applied only to factors with 2 or more levels
-# drop_list <- CVModelData2 %>% 
-#   group_by(origin) %>% 
-#   summarise(n_program = n_distinct(programNum),
-#             n_frequency = n_distinct(frequency)) %>% 
-#   filter(n_program < 2 | n_frequency < 2)
-# 
-# CVModelData2 <- CVModelData2 %>% 
-#   filter(!origin %in% drop_list$origin)
-
 # Split data
 set.seed(3456)
-split <- partition(CVModelData2$origin, p=c(train=0.5, test=0.5))
-Train <- CVModelData2[split$train,]
-Test <- CVModelData2[split$test,]
-
-set.seed(3456)
-inTrain <- createDataPartition(
-              y = paste(CVModelData2$origin, CVModelData2$frequency, CVModelData2$programNum), 
-              p = .50, list = FALSE)
-Train <- CVModelData2[inTrain,] 
-Test <- CVModelData2[-inTrain,]  
+split <- partition(RealModelData_final$origin, p=c(train=0.5, test=0.5))
+Train <- RealModelData_final[split$train,]
+Test <- RealModelData_final[split$test,]
 
 # avoid error:contrasts can be applied only to factors with 2 or more levels
 drop_list2 <- Train %>%
@@ -3311,10 +3003,10 @@ drop_list2 <- Train %>%
 Train <- Train %>%
   filter(!origin %in% drop_list2$origin)
 
-trainPlaces <- RealModelPlaces %>% 
+trainPlaces <- RealModelPlaces_final %>% 
   filter(OBJECTID %in% unique(Train$OBJECTID))
   
-fit <- fit_parameter(data = Train,
+fit <- fit_parameter_level(data = Train,
                            places = trainPlaces,
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
@@ -3335,15 +3027,17 @@ parameterDrop <- parameter %>% drop_na()
 R_Square <- parameterDrop$r2 
 hist(R_Square,breaks=40)
 
+outcomeAnalysis(parameterDrop,"Final Optimal Model: Dropping NA probability, \n
+                using PCA, and taking visits frequency level into consideration")
+
 # avoid error:contrasts can be applied only to factors with 2 or more levels
 Test <- Test %>%
   filter(origin %in% Train$origin)
 
-testPlaces <- RealModelPlaces %>% 
+testPlaces <- RealModelPlaces_final %>% 
   filter(OBJECTID %in% unique(Train$OBJECTID))
 
 #encode category
-library(caret)
 dmy <- dummyVars(" ~ .", data = Test %>% mutate(origin=as.numeric(origin)))
 Test <- data.frame(predict(dmy, 
                                         newdata = Test %>% mutate(origin=as.numeric(origin))))
@@ -3369,8 +3063,7 @@ parameter_full <- left_join(Test %>% dplyr::select(origin),
                             parameter, 
                             by="origin") 
 
-source("huffModelScripts.R")
-predictionResult <- huff_predict(data = Test,
+predictionResult <- huff_NE_level(data = Test,
                            places = testPlaces,
                            neighbor_data = convenientSurroundEffect,
                            neighbor_id_column="placekey",
@@ -3425,30 +3118,8 @@ predictionResult_group <- predictionResult_2 %>%
 predictionResult_group <- predictionResult_group %>% 
   filter(MAPE<100)
 
-cv_result  <- huff_crossValidate(data = CVModelData2,
-                                         cv_id = "frequency",
-                                         places = RealModelPlaces,
-                                         neighbor_data = convenientSurroundEffect,
-                                         neighbor_id_column="placekey",
-                                         neighbor_attr_column ="visits",
-                                         id_column="OBJECTID",
-                                         attr_column =c("PC1","PC2","PC3","programNum"),
-                                         distance_column="distance",
-                                         probability_column="probability",
-                                         origin_column = "origin",
-                                         k=2,
-                                 category = "frequency")
-
-cv_result <- left_join(cv_result,
-                       CVModelData2 %>% dplyr::select(origin, OBJECTID, probability, frequency),
-                       by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
-  mutate(error = probability - huff_probability)
-
-cv_group_result <- cv_result %>% 
-  group_by(frequency) %>% 
-  summarise(MAE = mean(abs(error), na.rm = T),
-            MAPE = MAE/mean(probability, na.rm = T)) %>% 
-  ungroup()
+print(paste0("MAE is ",round(mean(predictionResult_group$MAE,na.rm=T),4)))
+print(paste0("MAPE is ",round(mean(predictionResult_group$MAPE,na.rm=T),4)))
 
 ```
 
@@ -3509,3 +3180,43 @@ hist(error_parks %>% filter(MAPE<=10) %>% pull(MAPE), breaks=100, xlab="MAPE", m
     theme(legend.position = "bottom")
 ```
 
+#### 7.4 Cross Validation - Spatial Genaralizability
+
+need modification
+
+```{r sCENARIO 1 - CV over district}
+CVModelData <- RealModelData_final %>% 
+  left_join(., pprProperties %>% 
+              dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
+              st_drop_geometry(),
+            by = "OBJECTID")
+
+
+cv_result  <- huff_crossValidate(data = CVModelData,
+                                         cv_id = "PPR_DISTRICT",
+                                         places = RealModelPlaces_final,
+                                         neighbor_data = convenientSurroundEffect,
+                                         neighbor_id_column="placekey",
+                                         neighbor_attr_column ="visits",
+                                         id_column="OBJECTID",
+                                         attr_column =c("PC1","PC2","PC3","programNum"),
+                                         distance_column="distance",
+                                         probability_column="probability",
+                                         origin_column = "origin",
+                                         k=2)
+
+cv_result <- left_join(cv_result,
+                       CVModelData %>% dplyr::select(origin, OBJECTID, probability, PPR_DISTRICT),
+                       by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
+  mutate(error = probability - huff_probability)
+
+cv_group_result <- cv_result %>% 
+  group_by(PPR_DISTRICT) %>% 
+  summarise(MAE = mean(abs(error), na.rm = T),
+            MAPE = MAE/mean(probability, na.rm = T)) %>% 
+  ungroup()
+
+```
+
+```{}
+```
