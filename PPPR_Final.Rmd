@@ -495,7 +495,7 @@ There are 7 facilities with programs scheduled in District 9: Barry Playground a
 ggplot()+
   geom_sf(data=st_union(pprServiceArea %>% filter(PPR_DIST ==9)),color="black",size=1,fill = "transparent")+
   geom_sf(data=pprServiceArea %>% filter(PPR_DIST ==9),color="black",linetype ="dashed",size=1,fill = "transparent")+
-  geom_sf(data=permit2021.join%>% filter(PPR_DISTRICT ==9),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
+  geom_sf(data=permit2021.join%>% filter(PPR_DISTRICT ==9 & FacilityName != "FDR Park"),aes(geometry = geometry),color =palette1_assist,fill = palette1_assist, alpha = 0.7) +
   geom_sf(data=program2021.join%>% filter(PPR_DISTRICT ==9),aes(geometry = geometry),color = palette1_main,fill = palette1_main,alpha = 0.7)+
   labs(title="")+
   mapTheme()
@@ -1063,7 +1063,7 @@ Based on the bias analysis above, we **rectify SafeGraph data** depending on its
 
 Through the above complicated analysis and rectification, we finally obtain **more reliable SafeGraph data**. In the following section, we attempt to draw insights from the SafeGraph data in 5 aspects: visit counts in device panel, origins of visits in device panel, departure of visits in device panel, weekday pattern of device panel visits, dwelling time of device panel visits, and related brands of device panel visits at the same day.
 
-##### Visit Counts in Device Panel
+##### 3.2.1 Visit Counts in Device Panel
 
 ```{r visit Count map,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.1 Map of Visit Counts in Device Panel'}
 sumVisit <- visitCount %>%
@@ -1072,8 +1072,8 @@ sumVisit <- visitCount %>%
   summarise(visits=sum(visits))
 
 ggplot(sumVisit)+
-  geom_sf(data=pprServiceArea,color='black',size=0.35,fill= "transparent")+
-  geom_sf(data=pprServiceArea %>% filter(PPR_DIST %in% c(7,8,9)),color='black',size=0.5,fill= "transparent")+
+  geom_sf(data=pprServiceArea,color='black',size=0.5,fill= "transparent")+
+  geom_sf(data=pprDistrict,color='black',size=1,fill= "transparent")+
   geom_sf(aes(size = visits),color = palette1_main,fill = palette1_main,alpha = 0.3) +
   scale_size_continuous(range = c(1, 3),name = "Visits")+
   mapTheme()+
@@ -1109,7 +1109,7 @@ ggplot(sumVisitServiceArea)+
 
 We aggregate the visits into service area level on Figure3.2.2. Overall, service areas in the Center City where locates dense facilities will attract larger visits.
 
-##### Origins of Visits in Device Panel
+##### 3.2.2 Origins of Visits in Device Panel
 
 ```{r origine Count plot, fig.height = 8,message = FALSE, warning = FALSE, results='hide', out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.3 Flow map of parks and origins'}
 CensusData <-
@@ -1189,7 +1189,7 @@ In the Figure 3.2.3, we plot the **origins/homes of visitors** for each PPR site
 
 One possible cause maybe that special groups have a stronger need for public resources. These public resources may make up their unsatisfying living environment. They can have social connections, taken part in the training program and even have free food there.
 
-##### Departure of visits in device panel
+##### 3.2.3 Departure of visits in device panel
 
 ```{r deaprture plot, fig.height = 8,message = FALSE, warning = FALSE, results='hide', out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.5 Flow map of parks and departure points'}
 # depaCountPlot <- departCount %>%
@@ -1268,7 +1268,7 @@ ggplot(data = depaCountPlotHF) +
 
 Figure 3.2.5 and Figure 3.2.6 are the maps of the **departure block group of visitors** for each PPR site. From Figure 3.2.5, we can further dive into each specific facility. For example, in Figure3.2.6 we can see that people who like to go to the PPR facility **Charles playgroud** are mainly from these three communities: A ST, Chinatown, and Rittenhouse Square.
 
-##### Weekday Pattern of Device Panel Visits
+##### 3.2.4 Weekday Pattern of Device Panel Visits
 
 ```{r temperal pattern by weekday,fig.height = 5,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.2.7 Distribution of weekday pattern by service area level'}
 VisitWeekdaybyServiceArea <- pprServiceArea %>% 
@@ -1296,7 +1296,7 @@ VisitWeekdaybyServiceArea%>%
 
 In Figure 3.2.7, we group the data by weekday to see their weekday distribution pattern. Apart from their own difference in total visit counts, there are three types of distribution. One is that **similar** total visit counts in device panel occur on every day of a week. The second is that the **peak appears on weekend**. And the third is that the **peak happens during weekdays**.
 
-##### Hour Pattern of Device Panel Visits
+##### 3.2.5 Hour Pattern of Device Panel Visits
 
 ```{r temperal pattern by hour,fig.height = 5,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure3.2.8 Distribution of hour pattern by service area level'}
 VisitHourbyServiceArea <- pprServiceArea %>% 
@@ -1318,7 +1318,7 @@ VisitHourbyServiceArea%>%
 
 After the rectification above, we finally obtain the common sensible hour pattern. In the Figure3.2.8, we group the data by hour to see their hour distribution pattern. Apart from their own difference in total visit counts, there are two types of distribution. One is that there is **no obvious hourly pattern** during the day. The other one has obvious **peak time happening at the mid-day**.
 
-##### Dwelling Time of Device Panel Visits
+##### 3.2.6 Dwelling Time of Device Panel Visits
 
 ```{r dwell time ,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure3.2.9 Map of dwelling time'}
 dwellTimeForPlot <- dwellTime %>% 
@@ -1385,7 +1385,7 @@ With SafeGraph's Pattern dataset, we can find visit counts from device paenl are
 
 The number of device residing from the SafeGraph data is a sample of device users tracked by SafeGraph, which cannot be considered as all the visitors to certain park facilities from a census block group. According to [SafeGraph's guidelines for normalizing Patterns data](https://colab.research.google.com/drive/1lTi8JXfX9rh2mnuFjgYgKsIcMcDI3EG_?usp=sharing#scrollTo=aHTXQFdA7A2y), we normalized the number of devices residing by multiplying a parameter of total census block group (CBG) population divided by average device residing in this CBG. In that case, the outcome can estimate all the visitors from a CBG to certain park facilities. Since the PPR doesn't schedule programs in some facilities, we exclude them (168 out of 524 facilities) on the exception list in our further analysis.
 
-```{r exceptionProperty, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+```{r exceptionProperty, message=FALSE, warning=FALSE, results='hide'}
 excepListog <- st_read("data/FromPPR/exceptionListPPR_Properties.csv")
 excepList <- excepListog %>% filter(Exclude=="Yes")
 excepList$OBJECTID <- as.numeric(excepList$OBJECTID)
@@ -1574,12 +1574,12 @@ kable(cluster2_mean %>%
   kable_styling(position = "center")
 ```
 
-```{r spatially distribution of sg bias clusters,fig.height = 16,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure4.1.2 Map of Bias Type of SafeGraph Data'}
+```{r spatially distribution of sg bias clusters,fig.height = 12,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure4.1.2 Map of Bias Type of SafeGraph Data'}
 
 ggplot() + 
   geom_sf(data=sgIntegrated_byMonth %>% 
             left_join(propertyWithPlaceKey,by=c("OBJECTID")) %>% st_sf() %>% st_centroid(),
-          aes(color=as.factor(cluster)), size=5)+
+          aes(color=as.factor(cluster)), size=1)+
   geom_sf(data=pprDistrict,color="black",size=0.7,fill = "transparent")+
   facet_wrap(~month, ncol = 3)+
   labs(title = "", 
@@ -1691,7 +1691,7 @@ visitCount %>%
   ggplot(aes(visitDay,visits)) + 
   geom_line(color=palette1_main,size=0.75)+
   geom_vline(xintercept = smithProgramDate$AttendenceRealDate , colour=palette1_assist, size=0.35,linetype = "longdash")+
-  geom_vline(xintercept = (smithProgramDate%>% filter(month %in% c(7,10,11)))$AttendenceRealDate , colour=palette1_assist, size=0.5)+
+  geom_vline(xintercept = (smithProgramDate%>% filter(month %in% c(7,10,11)))$AttendenceRealDate , colour=palette1_assist, size=0.35)+
   labs(title = '',x="Visit Date",y="Safegraph Visit")+
   plotTheme()+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
@@ -1812,7 +1812,13 @@ The facility improvements in 2021 make the Christy Recreation Center a safe dest
 
 The original Huff Model (Huff, 1964) is designed to estimate the probability of customers at each origin patronizing a given store among all stores as their destination choices. Two factors are taken into account: 1. Attractiveness 2. Distance. Attractiveness can be computed as a function of many attributes of a store, including the store size, number of parking spaces, customer reviews, etc.
 
-We will use an advanced version of Huff model to predict the probability of visitors at each census block group going to a given park facility. Our Huff model includes neighboring effect, based on the assumptions that: (1) People tend to choose more attractive travel destinations; (2) People tend to choose closer travel destinations; (3) People tend to choose travel destinations with more beneficial future choices. For example, a tourist at Origin O has two destination choices A and B, with equal distance to origin O. In this case, destination B should be preferred since it has more future choices in its neighborhood compared with destination A.
+We will use an advanced version of Huff model to predict the probability of visitors at each census block group going to a given park facility. Our Huff model includes neighboring effect, based on the assumptions that: 
+
+(1) People tend to choose more attractive travel destinations; 
+
+(2) People tend to choose closer travel destinations; 
+
+(3) People tend to choose travel destinations with more beneficial future choices. For example, a tourist at Origin O has two destination choices A and B, with equal distance to origin O. In this case, destination B should be preferred since it has more future choices in its neighborhood compared with destination A.
 
 The below is the equation for our Huff Model.
 
@@ -2009,7 +2015,7 @@ attractivenssDataOutput %>%
   geom_sf(data=pprDistrict,color='black',size=0.35,fill='transparent')+
   geom_sf(size = 0.5,color=palette1_main)+
   facet_wrap(~attractivenessCatog, ncol = 3)+
-  plotTheme(5,5)+
+  mapTheme(5,5)+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         strip.text = element_text( size=5),
         axis.text = element_text( size=5),
@@ -2054,7 +2060,7 @@ corrplot(attracGEO.cor,method="number", tl.cex = 0.75, type = "lower")
 
 OSRM (Open Source Routing Machine) is a C++ implementation of a high performance route search engine to obtain the shortest driving paths in a road network. Responding to the term $D_{ij}$ in Huff model, we use it to calculate the shortest driving distance from origin places to destination facilities.
 
-```{r calculate distance,  message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+```{r calculate distance,  message=FALSE, warning=FALSE, results='hide'}
 # # parks
 # modelPlaces<- as.character(attracGEO$geometry %>% st_centroid())
 # 
@@ -2164,7 +2170,7 @@ theDistanceMatrixWhole3 <- theDistanceMatrixWhole2 %>%
 
 Centrality is the term used to describe the neighboring effect of attraction, responding to the term $C_j$ in Huff model. We ranked POIs with their NAICS codes and find the top one is convenience stores (445120), then we will use it as the Centrality factors which affect visitors' choice the park facilities.
 
-```{r centrality, fig.height = 3,message = FALSE, warning = FALSE, echo=FALSE, results='hide', out.width ='100%',fig.align = 'center',fig.cap = 'Figure5.5.1 Total Vistors of Related Brand With Naics'}
+```{r centrality, fig.height = 3,message = FALSE, warning = FALSE, results='hide', out.width ='100%',fig.align = 'center',fig.cap = 'Figure5.5.1 Total Vistors of Related Brand With Naics'}
 # find the naics code that has most smae-day visits
 
 # unnest the related_same_day_brand
@@ -2268,8 +2274,8 @@ parksSurroundDot <- parksSurroundEffect %>% mutate(label="park")
 ggplot() +
   geom_sf(data=pprServiceArea,color='black',size=0.35,fill= "transparent")+
   geom_sf(data=pprDistrict,color='black',size=0.5,fill= "transparent")+
-  geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = "black",fill = "grey",alpha = 1, size = 1) +
-  geom_sf(data=convenientSurroundDot,aes(geometry=geometry),color = palette2[1],fill = palette2[1],alpha = 1,size = 2) +
+  geom_sf(data=parksSurroundDot,aes(geometry=geometry),color = "black",fill = "grey",alpha = 1, size = 0.35) +
+  geom_sf(data=convenientSurroundDot,aes(geometry=geometry),color = palette2[1],fill = palette2[1],alpha = 1,size = 1.5) +
   mapTheme()
 ```
 
@@ -2289,12 +2295,12 @@ prob <- modelData %>%
 prob.na <- prob %>% 
   filter(is.na(prob$probability))
 
-# CensusPoly <-
-#   get_acs(geography = "block group",
-#           variables = c("B01003_001E"),
-#           year=2019, state="PA", county="Philadelphia", geometry=T, output="wide") %>%
-#   st_transform(crs=4326) %>%
-#   dplyr::select(-NAME,-starts_with('B'))
+CensusPoly <-
+  get_acs(geography = "block group",
+          variables = c("B01003_001E"),
+          year=2019, state="PA", county="Philadelphia", geometry=T, output="wide") %>%
+  st_transform(crs=4326) %>%
+  dplyr::select(-NAME,-starts_with('B'))
 ```
 
 ### 6 Huff Model - Preprocessing
@@ -2317,7 +2323,7 @@ We will use two methods to do feature extraction.
 
 1.  **Large group of attractiveness**: all 17 attractiveness are included in PCA and 3 prominent components are extracted.
 
-```{r calculate Large attractiveness PCA, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.3 Primary Components of Large Attractiveness'}
+```{r calculate Large attractiveness PCA, fig.height = 3,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.3 Primary Components of Large Attractiveness'}
 # -----------Large Attractiveness----------------
 pcaDF <- attracGEOVISIT %>% 
   dplyr::select(-visitors,-OBJECTID, -PPR_DISTRICT) %>% 
@@ -2337,7 +2343,7 @@ corrplot(t(pca$rotation[,1:3]), is.corr=FALSE)
 
 2.  **Small group of attractiveness**: some important attractiveness, like area, trail miles, swimming PoolNum, spraygroundNum, tennisCourtNum, treeHeight, treeArea, programNum, and permitNum are included in the PCA. Then 2 prominent components are extracted.
 
-```{r calculate Small attractiveness PCA, fig.height = 8,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.3 Primary Components of Small Attractiveness'}
+```{r calculate Small attractiveness PCA, fig.height = 3,message = FALSE, warning = FALSE, echo=FALSE, out.width ='80%',fig.align = 'center',fig.cap = 'Figure6.2.3 Primary Components of Small Attractiveness'}
 # -----------Small Attractiveness--------------
 pcaDFSmall <- 
   attracGEOVISIT %>% 
@@ -2356,7 +2362,7 @@ pcaSmall$x <- -1*pcaSmall$x
 corrplot(t(pcaSmall$rotation[,1:2]), is.corr=FALSE)
 ```
 
-```{r noPCATogo}
+```{r noPCATogo, message=FALSE, warning=FALSE}
 # construct attractiveness matrix
 largeRetrunPCAValue <- as.data.frame(pca$x)
 smallRetrunPCAValue <- as.data.frame(pcaSmall$x)
@@ -2387,7 +2393,7 @@ noPCATogo <- attracGEO %>% dplyr::select(-PPR_DISTRICT) %>% st_sf()
 
 As we mentioned before, there is no record for some origin~destination combinations. So the probability of these routes will be missining. Here, we try two ways to wrangle the data. First one is that we replace the na value with 4.4e-5. The second one is that we just drop the na value. 
 
-```{r combined three parameters, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+```{r combined three parameters, message=FALSE, warning=FALSE, results='hide'}
 # Based on the distance panel
 huffData <- 
   theDistanceMatrixWhole2 %>% 
@@ -2444,8 +2450,6 @@ outcomeAnalysis <- function(df,scenario){
   print(scenario)
   dfnoNA <- df %>% drop_na()
   print(paste("Rsquare: Mean is: ",mean(dfnoNA$r2)))
-  print(paste("Rsquare: Minimum is: ",min(dfnoNA$r2)))
-  print(paste("Rsquare: Maximum is: ",max(dfnoNA$r2)))
   print(paste("# of lost origins is: ",nrow(df) - nrow(dfnoNA)))
 }
 
@@ -2479,10 +2483,12 @@ fit <- fit_parameter(data = RealModelData,
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
-
+s1R2 <- parameter[['r2']]
 outcomeAnalysis(parameter,"SCENARIO 1: Drop NA probability and use PCA from the large group of attractiveness")
 
 ```
+
+<br>
 
 **SCENARIO 2** Drop NA probability and use PCA from the small group of attractiveness.
 
@@ -2505,9 +2511,11 @@ fit <- fit_parameter(data = RealModelData,
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
-
+s2R2 <- parameter[['r2']]
 outcomeAnalysis(parameter,"SCENARIO 2: Drop NA probability and use PCA from the small group of attractiveness")
 ```
+
+<br>
 
 **SCENARIO 3** Drop NA probability and use no PCA
 
@@ -2530,9 +2538,11 @@ fit <- fit_parameter(data = RealModelData,
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
-
+s3R2 <- parameter[['r2']]
 outcomeAnalysis(parameter,"SCENARIO 3: Drop NA probability and use no PCA")
 ```
+
+<br>
 
 **SCENARIO 4** Replace NA probability and use PCA from the large group of variables
 
@@ -2555,8 +2565,28 @@ fit <- fit_parameter(data = RealModelData,
 parameter <- fit %>% 
   dplyr::select(parameter) %>% 
   unnest(cols="parameter")
-
+s4R2 <- parameter[['r2']]
 outcomeAnalysis(parameter,"SCENARIO 4: Replace NA probability and use PCA from the large group of variables")
+```
+
+```{r annualModelPlot, fig.height = 6,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure7.1.1 Histograms of R square in different scenarios'}
+p1 <- ggplot(as.data.frame(s1R2), aes(x=s1R2)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
+
+p2 <- ggplot(as.data.frame(s2R2), aes(x=s2R2)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
+
+p3 <- ggplot(as.data.frame(s3R2), aes(x=s3R2)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
+
+p4 <- ggplot(as.data.frame(s4R2), aes(x=s4R2)) + 
+  geom_histogram(color=palette1_main, fill="white",bins = 50) +
+  plotTheme()
+
+plot_grid(p1, p2, p3, p4, ncol = 2)
 ```
 
 In the above, we see the R square from different models. The best one is the scenario 3, where we drop NA probability and don't use PCA. But one thing needs to be noted is that there are many lost origins in scenario 3. The reason is that as the number of the predictors increase, the corresponding least training data points should increase. Besides, we should also notice that scenario 1 also has a similar R square with scenario 3. And the scenario 1 will have a better prediction accuracy in the test dataset.
@@ -2566,7 +2596,7 @@ In the above, we see the R square from different models. The best one is the sce
 
 We also try to divide the data based on record dates into four seasons and run individual model to predict the probability in each season. The red line represent temperature while the orange line represent number of visitors. The numbers of temperature are exaggerate 500 times for visualization.
 
-```{r temporal chart, fig.height = 4,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure5.7.1 Temporal Chart of vistor and temperature'}
+```{r temporal chart, fig.height = 2,message = FALSE, warning = FALSE,out.width ='100%',fig.align = 'center',fig.cap = 'Figure5.7.1 Temporal Chart of vistor and temperature'}
 # temperature data
 weather.Data <-
   riem_measures(station = "PHL", date_start = "2021-01-01",
@@ -2586,8 +2616,8 @@ visitCountForPlot <-
   left_join(weather.Data,by=c("visitDay" = "day"))
 
 ggplot(data = visitCountForPlot, aes(x=visitDay))+
-  geom_line(aes(y=dayVisits),color=palette1_main,size=0.75)+
-  geom_line(aes(y=avgTmp),color=palette1_assist,size=0.75)+
+  geom_line(aes(y=dayVisits),color=palette1_main,size=0.5)+
+  geom_line(aes(y=avgTmp),color=palette1_assist,size=0.5)+
   scale_y_continuous(
     name = "Safegraph Visit",
     sec.axis = sec_axis(~ ., name="500*Daily Temp"))+
@@ -2873,12 +2903,11 @@ error <- left_join(huff_results, Test, by=c("origins_name"="origin", "destinatio
             MAE = mean(AE,na.rm=T))
 
 print(paste0("MAE for Scenario 3 is ",round(mean(error$MAE,na.rm=T),4)))
+print(paste0("MAPE for Scenario 3 is ",round(mean(error$MAPE,na.rm=T),4)))
 ```
 
 
 We find out that Scenario 1 has a higher prediction accuracy than Scenario 3. Considering the number of lost regions, we decide to stick to the Scenario 1 to further improve the model.
-
-#### 7.3 Model Optimization
 
 
 ```{r scenario1FrequencyResult, message=FALSE, warning=FALSE}
@@ -2888,6 +2917,8 @@ kable(scenario1FrequencyResult,align = 'c',caption = '<center>Table 7.3.1 Predic
 ```
 
 Besides in the Table 7.2.1, we find out that MAPE increases as the frequency decreases. So in the following optimization, we will try to use categorical variables - frequency to account for these inter group error.
+
+#### 7.3 Model Optimization
 
 ##### 7.3.1 Training
 
@@ -2945,17 +2976,18 @@ parameter <- fit %>%
 parameter <- parameter %>% 
   dplyr::select(-frequencyhigh)
 
+
 ggplot(parameter, aes(x=r2)) + 
   geom_histogram(color=palette1_main, fill="white",bins = 50) +
   plotTheme()
 
-outcomeAnalysis(parameter,"Final Optimal Model:
-                Dropping NA probability, using PCA, and taking visits frequency level into consideration")
+outcomeAnalysis(parameter,"Final Optimal Model: Dropping NA probability, using PCA, and taking visits frequency level into consideration")
+
 ```
 
 We can see that after adding the categorical variable - frequency, the R square for the training data has a huge improve, from 0.39 in the 7.1.1 Scenario 1 to 0.97 here. That means the sucess of the model optimization.
 
-In the following, we will look at the accuracy for the prediction to see if the prediction accuracy has sucessfully improve.
+In the following, we will look at the accuracy for the prediction to see if the prediction accuracy has successfully improve.
 
 ##### 7.3.2 Prediction
 
@@ -3036,11 +3068,14 @@ predictionResult_group <- predictionResult_2 %>%
   ungroup() %>% 
   mutate(MAPE = MAE/mean_p)
 
-print(paste0("MAE is ",round(mean(predictionResult_group$MAE,na.rm=T),4)))
-print(paste0("MAPE is ",round(mean(predictionResult_group$MAPE,na.rm=T),4)))
+print(
+  c(
+    paste0("MAE is ",round(mean(predictionResult_group$MAE,na.rm=T),4)),
+  paste0("MAPE is ",round(mean(predictionResult_group$MAPE,na.rm=T),4))))
 ```
 
-The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. 
+The MAE has decreased from 0.06 to 0.044, that is a impressing improve. And the MAPE also decreases from 3.34 in 7.2.1 to 1.46. The testing accuracy means that the model optimization also helps improve the prediction accuracy. The specifc distribution is shown in the Figure7.3.2.
+
 
 ```{r bar plot for errr in different frequency level,fig.height = 8,fig.cap = 'Figure Error among Different Route Visit Frequency Level'}
 p1 <- ggplot(data=melt(predictionResult_group2 %>% mutate(frequency = fct_reorder(frequency, mean_p)), 
@@ -3080,8 +3115,21 @@ plot_grid(p1, p2
           )
 ```
 
-```{r MAPE map for cbgs,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Census Block Groups'}
+In the Figure7.3.2.2, we can see that 74 out of 1339 census block groups do not have convergent huff model. But overall, most census block groups have convergent models. And most of them have MAPE around 1.
 
+```{r MAPE map for cbgs,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.3.2.2 MAPE Distribution Map for Census Block Groups'}
+  ggplot() + 
+    geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
+            color="black",size=0.05,aes(fill = q5(MAPE)))+
+    geom_sf(data=pprDistrict %>% st_union(),color="black",size=1,fill = "transparent")+
+    scale_fill_manual(values = palette5, name="MAPE", label=qBr(predictionResult_group,"MAPE",F))+
+    mapTheme()+
+    theme(legend.position = "bottom")
+```
+
+Even though the huff model is based on the census block group, if we aggregate the MAE & MAPE on facilities. We can find out that centers of distributions are moved to left, that means the practical accuracy regarding the use case should be even higher than the above. The MAE under this circumstance is 0.032.
+
+```{r hist of MAPE for parks,fig.height = 4,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.3.2.3 Distribution Histogram of MAE & MAPE for Different Parks & Rec Centers'}
 ggplot() + 
   geom_sf(data=left_join(predictionResult_group, CensusPoly, by=c("origin"="GEOID")) %>% st_sf(),
           color="black",size=0.05,aes(fill = q5(MAPE)))+
@@ -3092,7 +3140,6 @@ ggplot() +
 ```
 
 ```{r hist of MAPE for parks,fig.height = 8,fig.cap = 'Figure MAE & MAPE Distribution Histgram for Different Parks $ Rec Centers'}
-
 error_parks <- predictionResult_2 %>% 
   group_by(id) %>% 
   summarise(MAE = mean(abs(error)),
@@ -3113,8 +3160,9 @@ plot_grid(p1, p2
           )
 ```
 
-```{r MAPE map for parks,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure MAPE Distribution Map for Parks'}
+Figure7.2.3.4 is the geospatial distribution of above MAPE. We can see that big facilities in Philadelphia have a more accurate result than those small facilities. That corresponds to the above argument that high frequency level facilities always have a more accurate result.
 
+```{r MAPE map for parks,fig.height = 8,message = FALSE, warning = FALSE,out.width ='80%',fig.align = 'center',fig.cap = 'Figure7.2.3.4 MAPE Distribution Map for Parks'}
   ggplot() + 
     geom_sf(data=left_join(error_parks, pprProperties, by=c("id"="OBJECTID")) %>% st_sf(),
             color="black",size=0.05,aes(fill = q5(MAPE)))+
@@ -3124,95 +3172,95 @@ plot_grid(p1, p2
     theme(legend.position = "bottom")
 ```
 
-In the above, we can see that as we introduce the frequency categorical variable into the model, the accuracy improves a lot. 
 
 #### 7.4 Cross Validation - Spatial Genaralizability
 
-need modification
+```{r CV before optimalization over district, message=FALSE, warning=FALSE, results='hide'}
 
-```{r CV before optimalization over district}
-
-CVModelData1 <- RealModelData1 %>% 
-  left_join(., pprProperties %>% 
-              dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
-              st_drop_geometry(),
-            by = "OBJECTID")
-
-
-cv_result  <- huff_crossValidate(data = CVModelData1,
-                                         cv_id = "PPR_DISTRICT",
-                                         places = RealModelPlaces1,
-                                         neighbor_data = convenientSurroundEffect,
-                                         neighbor_id_column="placekey",
-                                         neighbor_attr_column ="visits",
-                                         id_column="OBJECTID",
-                                         attr_column =c("PC1","PC2","PC3"),
-                                         distance_column="distance",
-                                         probability_column="probability",
-                                         origin_column = "origin",
-                                         k=2)
-
-cv_result <- left_join(cv_result,
-                       CVModelData1 %>% dplyr::select(origin, OBJECTID, probability, PPR_DISTRICT),
-                       by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
-  mutate(error = probability - huff_probability)
-
-cv_group_result <- cv_result %>% 
-  group_by(origins_name) %>% 
+# CVModelData1 <- RealModelData1 %>% 
+#   left_join(., pprProperties %>% 
+#               dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
+#               st_drop_geometry(),
+#             by = "OBJECTID")
+# 
+# 
+# cv_result  <- huff_crossValidate(data = CVModelData1,
+#                                          cv_id = "PPR_DISTRICT",
+#                                          places = RealModelPlaces1,
+#                                          neighbor_data = convenientSurroundEffect,
+#                                          neighbor_id_column="placekey",
+#                                          neighbor_attr_column ="visits",
+#                                          id_column="OBJECTID",
+#                                          attr_column =c("PC1","PC2","PC3"),
+#                                          distance_column="distance",
+#                                          probability_column="probability",
+#                                          origin_column = "origin",
+#                                          k=2)
+# cv_result <- left_join(cv_result,
+#                        CVModelData1 %>% dplyr::select(origin, OBJECTID, probability, PPR_DISTRICT),
+#                        by = c("origins_name"="origin", "destinations_name"="OBJECTID")) %>% 
+#   mutate(error = probability - huff_probability)
+# 
+# st_write(cv_result,"data/output/cv_result.csv")
+cv_result <- st_read("data/output/cv_result.csv")
+cv_group_result <- cv_result %>%
+  group_by(origins_name) %>%
   summarise(MAE = mean(abs(error), na.rm = T),
-            MAPE = MAE/mean(probability, na.rm = T)) %>% 
+            MAPE = MAE/mean(probability, na.rm = T)) %>%
   ungroup()
 
 ```
 
 
-```{r CV after optimalization over district}
-CVModelData2 <- RealModelData_final %>% 
-  left_join(., pprProperties %>% 
-              dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
-              st_drop_geometry(),
-            by = "OBJECTID")
-
-source("huffModelScripts.R")
-
-cv_result2  <- huff_crossValidate_level(data = CVModelData2,
-                                         cv_id = "PPR_DISTRICT",
-                                         places = RealModelPlaces_final,
-                                         neighbor_data = convenientSurroundEffect,
-                                         neighbor_id_column="placekey",
-                                         neighbor_attr_column ="visits",
-                                         id_column="OBJECTID",
-                                         attr_column =c("PC1","PC2","PC3","programNum"),
-                                         distance_column="distance",
-                                         probability_column="probability",
-                                         origin_column = "origin",
-                                         k=2,
-                                         category = "frequency",
-                                        category_list =  c("high", "low", "medium",
-                                                          "mid-low", 
-                                                          #"super-high", 
-                                                          "super-low"),
-                                        prefix = "frequency")
-
-cv_result_clean <- cv_result2 %>% 
-  distinct() %>% 
+```{r CV after optimalization over district, message=FALSE, warning=FALSE, results='hide'}
+# CVModelData2 <- RealModelData_final %>% 
+#   left_join(., pprProperties %>% 
+#               dplyr::select(OBJECTID, PPR_DISTRICT) %>% 
+#               st_drop_geometry(),
+#             by = "OBJECTID")
+# 
+# source("huffModelScripts.R")
+# 
+# cv_result2  <- huff_crossValidate_level(data = CVModelData2,
+#                                          cv_id = "PPR_DISTRICT",
+#                                          places = RealModelPlaces_final,
+#                                          neighbor_data = convenientSurroundEffect,
+#                                          neighbor_id_column="placekey",
+#                                          neighbor_attr_column ="visits",
+#                                          id_column="OBJECTID",
+#                                          attr_column =c("PC1","PC2","PC3","programNum"),
+#                                          distance_column="distance",
+#                                          probability_column="probability",
+#                                          origin_column = "origin",
+#                                          k=2,
+#                                          category = "frequency",
+#                                         category_list =  c("high", "low", "medium",
+#                                                           "mid-low", 
+#                                                           #"super-high", 
+#                                                           "super-low"),
+#                                         prefix = "frequency")
+# 
+# st_write(cv_result2,"data/output/cv_result2.csv")
+cv_result2 <- st_read("data/output/cv_result2.csv")
+cv_result_clean <- cv_result2 %>%
+  distinct() %>%
   mutate(prob = exp(prob))
 
-cv_result_clean <- cv_result_clean %>% 
-  group_by(origin) %>% 
-  summarise(d = sum(prob)) %>% 
-  ungroup() %>% 
+cv_result_clean <- cv_result_clean %>%
+  group_by(origin) %>%
+  summarise(d = sum(prob)) %>%
+  ungroup() %>%
   right_join(.,cv_result_clean, by=c("origin"="origin")) %>%  # obtain prob
   left_join(., CVModelData2 %>%  # obtain probability
-              dplyr::select(origin, OBJECTID, probability, frequency), 
-            by=c("origin"="origin", "id"="OBJECTID")) %>% 
+              dplyr::select(origin, OBJECTID, probability, frequency),
+            by=c("origin"="origin", "id"="OBJECTID")) %>%
   mutate(prob = prob/d,
          error = probability-prob)
 
-cv_group_result2 <- cv_result_clean %>% 
-  group_by(origin) %>% 
+cv_group_result2 <- cv_result_clean %>%
+  group_by(origin) %>%
   summarise(MAE = mean(abs(error)),
-            MAPE = MAE/mean(probability)) %>% 
+            MAPE = MAE/mean(probability)) %>%
   ungroup()
 
 ```

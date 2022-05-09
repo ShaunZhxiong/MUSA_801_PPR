@@ -709,7 +709,7 @@ huff_crossValidate <- function(data, cv_id, places, neighbor_data, neighbor_id_c
     
     # replce na in parameter
     parameter <- parameter %>% 
-      mutate_all(funs(replace_na(.,0)))
+      mutate_all(~replace(., is.na(.), 0))
     
     # join to same index with Test Set
     parameter_full <- left_join(fold.test, parameter, by=origin_column)
@@ -823,7 +823,7 @@ huff_crossValidate_level <- function(data, cv_id, places, neighbor_data, neighbo
     
     # replce na in parameter
     parameter <- parameter %>%
-      mutate_all(funs(replace_na(.,0)))
+      mutate_all(~replace(., is.na(.), 0))
     
     
     thisPrediction <- huff_NE_level(data = fold.test,
