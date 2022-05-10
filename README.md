@@ -1,210 +1,40 @@
-# MUSA_801_PPR
-This is the repository for the practicum project of MUSA.
+# Allocating Programming Resources Using A Mobility-Based Information System
 
-[Notes for the class](notes.md) (Keep Updating till the end of the project)
+Team: Shaun Zheng, Lan Xiao, Jeff Stern, Hui Tian
 
+[Markdown](Submission/phillyPark.html)
 [Management Plan](https://docs.google.com/spreadsheets/d/1FgCO618cihtmxwfZZv87nweTDBh2rQip/edit?usp=sharing&ouid=107802804023877926203&rtpof=true&sd=true) (Keep Updating till the end of the project)
 
 # Additional repositories
-
 * Philadelphia Parks and Rec Data Dashboard: https://github.com/jeffstern/ppr-dashboard ([live link](https://ppr-dashboard-xfw9y.ondigitalocean.app/))
 * PPR Interactive Huff Model Visualization: https://github.com/jeffstern/ppr_park_huffmodel ([live link](https://ppr-dashboard-xfw9y.ondigitalocean.app/huff-example)
 * Huff Model NPM package: https://github.com/jeffstern/huffmodel (https://npmjs.com/package/huffmodel)
 
-## Project Path
-#### [Week0](Process/Week0)
+# Abstract
+Currently, the Philadelphia Department of Parks & Recreation (PPR) owns 524 facilities across the city and host thousands of programs and events every year that contribute to the wellness of people.From top down, the hierarchy of their service system is: Districts -> Service Areas -> Facilities -> Programs and Permits.
 
-Read the SOP and project materials
+In the past, staffing in PPR estimates the demand for its programming based on program data (like registered attendance) and other proxy measures about park visits (e.g. total trash collected). However, these measures may not be fully reliable and accurate. How can PPR make smarter decisions about allocating programs in the parks and recreation facilities? We will refer to a data-driven approach to help them find the dynamic relationship between planned activities and visitors.
 
-Fist Kick-off meeting with client - [Interview Notes](Process/Week0/interviewnotes_0118.md)
+Only recently, with the dynamic data collected by SafeGraph and other cell phone data carriers, it is now possible to analyze large data sets of cell phone location activity, including where people are traveling and how long they stay. SafeGraph’s mobile device panels get anonymous data about users’ foot traffic from numerous smartphone apps and could be considered as a selected sample to understand people’s travel pattern. These data are further aggregated to answer a series questions like how often do people visit a location or how long do they stay in a location.
 
-Download all available [datasets](data/open-data-philly/00-sources-and-metadata.md) into [R](Process/Week0/PPPR.html)
+By incorporating this novel dataset, we can help the PPR to analyze if their programming meet citizens’ demands and to better assign their program resources with SafeGraph’s Pattern data. With understanding of the imbalance between demand and supply, we can adjust the quantity of programs and events, like increasing number in low-supplied facilities and reducing number in over-supplied facilities. The prediction outcome of market area can be used to suggest PPR’s future programming strategies
 
-#### [Week1](Process/Week1)
+In order to know how many additional programs are needed and how the adjustment will affect other facilities, we will refer to the Huff Model. In spatial analysis, the Huff model is a widely used tool for predicting the probability of a consumer visiting a site, as a function of the distance from the origin to the destination, its attractiveness, and the relative attractiveness of alternatives. With the predicted probability of a consumer visiting a facility, we could interpret and normalize it to reflect the quantity of visitors from a census block group to a certain facility. In that case, we can help the PPR better understand the use of their facilities and provide recommendations on how to allocate programming resources better within Program Service Areas and the types of programs they should offer to meet diverse user demands.
 
-[Data Relationship](/Process/Week1/dataRelationship/note_Database_Relationship.md)
+The eventually user interface will be the Dashboard. That will convey the PPR related information, useful exploratory analysis, and the outcome of market area from the huff model in the end. This dashboard will provide data visualization of their existing programs, permits and estimated number of visits in each facility, service area, and district, as well as display proposed activities to visitors in the future.
 
-[SOP- Metrics](Process/Week1/sopMetrics/sucessfulMetrics.md)
+# Images
 
-[App Sketches](Process/Week1/appSketches/README.md)
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220509211111701.png" width=60%>
 
-[Safegraph & gravity model Reference Summary](Process/Week1/dataAndModelReference/ModelReference.md) 
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220509210934833.png" width=60%>
 
-#### Week2
-PPR SafeGraph Data Wragnling and [Mapping](demo/) (First Version)
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220509211203820.png" width=60%>
 
-[R Huff package Review](https://raw.githubusercontent.com/alexsingleton/Huff-Tools/master/huff-tools.r)
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220509211257829.png" width=60%>
 
-[Huff Model literature review & Safegraph Metadata](Process/Week1/dataAndModelReference/Huff Model Reference.docx)
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220509211635047.png" width=60%>
 
-[Safegraph literature review](resources/related-research/Safegraph Literature Review.md)
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220509211721926.png" width=60%>
 
-#### Week3
-
-[Current Facility & Programming Analysis](Process\Week3\PPPR-Program.html) 
-
-[Unnest Safegraph Data & Visualization](PPPR.html)
-
-[Census Data Analysis based on PPR Service Areas](https://ppr-dashboard-xfw9y.ondigitalocean.app/)
-
-[Questions](notes.md)
-
-#### Week4
-
-The most popular facility Analysis (by # of visits and by dwelling time)
-
-The most strange facility Analysis
-
-Categorized Properties into several types
-
-Origin Flow Map and Departure Flow Map
-
-[Further Development on Dashboard and Census Analysis](https://ppr-dashboard-xfw9y.ondigitalocean.app/)
-
-Further Analysis of Programs organized by PPR
-
-[Questions](notes.md)
-
-#### Week5 - Midterm
-
-[PPT](https://docs.google.com/presentation/d/1bBRV1WXwandpqySlg-J_grMCS6epUF8gNEZjnMhIpu8/edit) 
-
-[Markdown](PPPR_Midterm.html)
-
-[Feedback](midtermfeedback.md)
-
-#### Week6
-
-Program further division
-
-Python scripts of Huff model
-
-#### Week7 & 8 & 9 （Spring Break）
-
-Huff Model Understanding
-
-> 1. Essentially, it is OLS model like this!
->
-> <img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/img/image-20220312183108213.png" width=20%>
->
-> The below is just another form of this OLS model![image-20220312183224405](https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/img/image-20220312183224405.png)
->
-> 2. The alpha, beta, theta are just the coefficients of this OLS model. (because it do the log transformation in the code)
->
-> 3. The misunderstanding (maybe just for me) of Socially Aware Huff Model is that the "Socially Aware" just means it uses the "Flicker Photo Indicator"(which is public on the Internet and socially aware) as the attractiveness metric. That is.
-
-The limitation of Current Huff Model
-
-> 1. The original model didn't take temporal into account, therefore we need to change the model. Just like we did in the simple OLS model.
-> 2. The original model just takes one attractiveness into account, but there should be more.
-
-For our project
-
-> 1. The assumption of the huff model, is that the "Attractiveness - here is the number of program " always have positive or negative relationships with "Y - # of Visits". However, through the K-means clustering, we find out some outliers, which demands exceed supplies or vice versa. How to give specific suggestions like in which month the programs should be deleted, or what programs should be deleted.
-> 2. We can calculate the market area using huff model based on the assumption that (Attractiveness always have positive or negative relationships with # of visits). And then compare the huff model market area with service area to see the conflict zones.
-> 3. If the assumptions are correct then the outliers in the K-Means should have the biggest conflict zones. So we can according to the difference to draw the specific suggestions.
-> 4. Because our data is just for 2021, and we include the temporal term"Month", so we can not test the model. (if we do not include spatial fixed effect, then we can do the validation)
-
-#### Week10
-
-Distance Matrix
-
-Options to build Attractiveness Matrix
-
-![image-20220321213645366](https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/img/image-20220321213645366.png)
-
-#### April 4.11
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121144061.png" width=40%>
-
-```
-[1] "Drop NA probability and use small PCA"
-[1] "Rsquare: Mean is:  0.368691627547928"
-[1] "Rsquare: Minimum is:  0.0234715185627968"
-[1] "Rsquare: Maximum is:  1"
-
-```
-
-```
-[1] "Drop NA probability and no use PCA"
-[1] "Rsquare: Mean is:  0.445271042578286"
-[1] "Rsquare: Minimum is:  0.0962978360417454"
-[1] "Rsquare: Maximum is:  0.948240340493002"
-
-```
-
-```
-[1] "Replace NA probability and use large PCA"
-[1] "Rsquare: Mean is:  0.137651934260834"
-[1] "Rsquare: Minimum is:  0.0090492210729412"
-[1] "Rsquare: Maximum is:  0.500526340048496"
-
-```
-
-```
-[1] "Drop Na & Large Attractiveness"
-[1] "Rsquare: Mean is:  0.42837896018574"
-[1] "Rsquare: Minimum is:  0.0321102719050275"
-[1] "Rsquare: Maximum is:  1"
-[1] "# of lost origins is:  53"
-```
-
-
-
-<img src =https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412120037694.png width=40%>
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121049487.png" >
-
-```
-[1] "spring"
-[1] "Rsquare: Mean is:  0.501378951400955"
-[1] "Rsquare: Minimum is:  0"
-[1] "Rsquare: Maximum is:  1"
-[1] "Rsquare: Minimum is:  0"
-[1] "# of lost origins is:  539"
-```
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409203723981.png" width=40%>
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121736514.png" width=40%>
-
-```
-[1] "summer"
-[1] "Rsquare: Mean is:  0.482639361880492"
-[1] "Rsquare: Minimum is:  0"
-[1] "Rsquare: Maximum is:  1"
-[1] "# of lost origins is:  481"
-```
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409203926216.png" width=40%>
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121804289.png" width=40%>
-
-
-----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-```
-[1] "autumn"
-[1] "Rsquare: Mean is:  0.502063617579819"
-[1] "Rsquare: Minimum is:  0"
-[1] "Rsquare: Maximum is:  1"
-[1] "# of lost origins is:  524"
-```
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409204046675.png" width=40%>
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412121904046.png" width=40%>
-
-----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-```
-[1] "winter"
-[1] "Rsquare: Mean is:  0.615269471313428"
-[1] "Rsquare: Minimum is:  0"
-[1] "Rsquare: Maximum is:  1"
-[1] "# of lost origins is:  916"
-```
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220409204154885.png" width=40%>
-
-<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220412115955286.png" width=40%>
+<img src="https://raw.githubusercontent.com/ShaunZhxiong/ImgGarage/main/ShaunZhxiong/ImgGarage/img/image-20220509211834283.png" width=60%>
