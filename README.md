@@ -3,6 +3,7 @@
 Team: Shaun Zheng, Lan Xiao, Jeff Stern, Hui Tian
 
 [Markdown](Submission/phillyPark.html)
+
 [Management Plan](https://docs.google.com/spreadsheets/d/1FgCO618cihtmxwfZZv87nweTDBh2rQip/edit?usp=sharing&ouid=107802804023877926203&rtpof=true&sd=true) (Keep Updating till the end of the project)
 
 # Additional repositories
